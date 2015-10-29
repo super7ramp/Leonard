@@ -62,7 +62,7 @@ $ sudo codesetup.sh
 
 Puis ajuster le PATH:
 ```bash
-$ echo "PATH=$PATH:/usr/local/codesourcery/arm-2009q3/bin" >> ~/.bashrc"
+$ echo "PATH=$PATH:/usr/local/codesourcery/arm-2009q3/bin" >> ~/.bashrc
 $ source ~/.bashrc
 ```
 
