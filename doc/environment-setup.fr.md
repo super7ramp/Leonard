@@ -66,6 +66,13 @@ $ echo "PATH=$PATH:/usr/local/codesourcery/arm-2009q3/bin" >> ~/.bashrc
 $ source ~/.bashrc
 ```
 
+Attention, ce compilateur est en 32 bits, donc si vous avez installé un système 64 bits, il vous faudra installer des libs 32 bits (sinon il vous sortira une erreur "File not found"). Pour Ubuntu :
+```bash
+$ sudo dpkg --add-architecture i386
+$ sudo apt-get update
+$ sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386
+```
+
 #### Cross-compilateur Parrot
 
 Tout le code source de Parrot est disponible sur https://devzone.parrot.com/. Une inscription est nécessaire mais ensuite on peut récupérer, entre autre, toute la chaîne de cross-compilation.
@@ -81,6 +88,7 @@ $ arm-linux-gnueabi-gcc4.7 -march=armv7-a source.c -o leonard.elf
 
 Ou bien, avec le compilateur codesourcery :
 ```bash
+$ codesourcery-arm-2009q3.sh
 $ arm-none-linux-gnueabi-gcc source.c -o leonard.elf
 ```
 
