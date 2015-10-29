@@ -45,7 +45,7 @@ Voir aussi : https://sites.google.com/site/projetsecinsa/documents-techniques/ou
 
 #### Cross-compilateur issu des dépôts
 
-Il y a un cross-compilateur ARM dans les dépôts d'Ubuntu qui _pourraient_ fonctionner pour nous :
+Il y a un cross-compilateur ARM dans les dépôts d'Ubuntu qui _pourrait_ fonctionner pour nous :
 ```bash
  $ sudo apt-get install gcc-arm-linux-gnueabi
 ```
