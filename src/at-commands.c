@@ -65,7 +65,7 @@ char *at_calib(char *buf, int seq, ardrone_calibration_device_t id)
     return buf;
 }
 
-char *at_config(char *buf, int seq, char *name, char *value)
+char *at_config(char *buf, int seq, const char *name, const char *value)
 {
    if (buf != NULL)
       sprintf(buf, "AT*CONFIG=%d,\"%s\",\"%s\"\r", seq, name, value);
@@ -74,7 +74,7 @@ char *at_config(char *buf, int seq, char *name, char *value)
    return buf;
 }
 
-char *at_config_ids(char *buf, int seq, char *sessionId, char *userId, char *appId)
+char *at_config_ids(char *buf, int seq, const char *sessionId, const char *userId, const char *appId)
 {
     if (buf != NULL)
         sprintf(buf, "AT*CONFIG_IDS=%d,\"%s\",\"%s\",\"%s\"\r", seq, sessionId, userId, appId);
