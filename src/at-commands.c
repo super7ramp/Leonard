@@ -1,6 +1,17 @@
 #include <stdio.h>
 #include "at-commands.h"
 
+int convert_float(float a)
+{
+    if ((a < -1.0) || (a > 1.0))
+    {
+        fprintf(stderr, "[%s:%d] Error: given float is not in [-1..1]\n", __FILE__, __LINE__);
+        return 0;
+    }
+    else
+        return *(int *)(&a);
+}
+
 char *at_ref(char *buf, int seq, int control)
 {
     if (buf != NULL)
@@ -14,14 +25,14 @@ char *at_pcmd(char *buf, int seq, pcmd_t pcmd)
 {
     if (buf != NULL)
     {
-        sprintf(buf, "AT*PCMD=%d,%d,%f,%f,%f,%f,%f\r",
+        sprintf(buf, "AT*PCMD=%d,%d,%d,%d,%d,%d,%d\r",
                 seq,
                 pcmd.progressive,
-                pcmd.lrTilt,
-                pcmd.fbTilt,
-                pcmd.verticalSpeed,
-                pcmd.angularSpeed,
-                pcmd.magPsi);
+                convert_float(pcmd.lrTilt),
+                convert_float(pcmd.fbTilt),
+                convert_float(pcmd.verticalSpeed),
+                convert_float(pcmd.angularSpeed),
+                convert_float(pcmd.magPsi));
     }
     else
         fprintf(stderr, "[%s:%d] Error: Buffer is null!", __FILE__, __LINE__);

@@ -5,6 +5,8 @@
 
 #define MAX_LENGTH 1024
 
+int convert_float(float a);
+
 char *at_ref(char *buf, int seq, int control);
 char *at_pcmd(char *buf, int seq, pcmd_t pcmd);
 char *at_pcmd_mag(char *buf, int seq, pcmd_t pcmd, float magPsiAccuracy);

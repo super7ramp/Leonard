@@ -16,7 +16,7 @@ int main()
 
     printf("[Test AT_PCMD]\n");
     pcmd_t command;
-    command.progressive = 1.0;
+    command.progressive = 1;
     command.lrTilt = 0.9;
     command.fbTilt = 0.8;
     command.verticalSpeed = 0.7;
