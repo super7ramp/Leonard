@@ -30,5 +30,7 @@ int main()
 
     printf("[Test CONFIG_IDS]\n%s\n", at_config_ids(buffer, n++, "SESSION_ID", "USER_ID", "APP_ID"));
 
+    printf("[Test COMWDG]\n%s\n", at_comwdg(buffer));
+
     return 0;
 }

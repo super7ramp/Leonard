@@ -82,3 +82,12 @@ char *at_config_ids(char *buf, int seq, const char *sessionId, const char *userI
         fprintf(stderr, "[%s:%d] Error: Buffer is null!", __FILE__, __LINE__);
     return buf;
 }
+
+char *at_comwdg(char *buf)
+{
+    if (buf != NULL)
+        sprintf(buf, "AT*COMWDG=1\r");
+    else
+        fprintf(stderr, "[%s:%d] Error: Buffer is null!", __FILE__, __LINE__);
+    return buf;
+}
