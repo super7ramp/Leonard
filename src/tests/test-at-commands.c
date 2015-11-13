@@ -21,7 +21,6 @@ int main()
     command.fbTilt = 0.8;
     command.verticalSpeed = 0.7;
     command.angularSpeed = 0.6;
-    command.magPsi = 0.5;
     printf("%s\n", at_pcmd(buffer, n++, command));
 
     printf("[Test CALIB]\n%s\n", at_calib(buffer, n++, ARDRONE_CALIBRATION_DEVICE_NUMBER));

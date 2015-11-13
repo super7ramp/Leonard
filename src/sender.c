@@ -5,7 +5,7 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
 static struct sockaddr_in serv_addr;
-static int socket_id;
+int socket_id;
 
 int send_message(char *message)
 {
@@ -15,7 +15,7 @@ int send_message(char *message)
         return 1;
     }
 
-    close(socket_id);
+    //close(socket_id);
     return 0;
 }
 

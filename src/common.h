@@ -9,12 +9,21 @@ typedef enum
 
 typedef struct pcmd
 {
-   int progressive;
-   float lrTilt;
-   float fbTilt;
-   float verticalSpeed;
-   float angularSpeed;
-   float magPsi;
+   int progressive;		//[flag]	
+   float lrTilt;		//[roll]
+   float fbTilt;		//[pitch]
+   float verticalSpeed;	//[gaz]
+   float angularSpeed;	//[yaw]
 } pcmd_t;
 
+typedef struct pcmd_mag
+{
+   	int progressive;		//[flag]	
+   	float lrTilt;		//[roll]
+   	float fbTilt;		//[pitch]
+   	float verticalSpeed;	//[gaz]
+   	float angularSpeed;	//[yaw]
+	float magPsi;
+	float magPsiAccuracy;
+} pcmd_mag_t;
 #endif

@@ -25,33 +25,32 @@ char *at_pcmd(char *buf, int seq, pcmd_t pcmd)
 {
     if (buf != NULL)
     {
-        sprintf(buf, "AT*PCMD=%d,%d,%d,%d,%d,%d,%d\r",
+        sprintf(buf, "AT*PCMD=%d,%d,%d,%d,%d,%d\r",
                 seq,
                 pcmd.progressive,
                 convert_float(pcmd.lrTilt),
                 convert_float(pcmd.fbTilt),
                 convert_float(pcmd.verticalSpeed),
-                convert_float(pcmd.angularSpeed),
-                convert_float(pcmd.magPsi));
+                convert_float(pcmd.angularSpeed));
     }
     else
         fprintf(stderr, "[%s:%d] Error: Buffer is null!", __FILE__, __LINE__);
     return buf;
 }
 
-char *at_pcmd_mag(char *buf, int seq, pcmd_t pcmd, float magPsiAccuracy)
+char *at_pcmd_mag(char *buf, int seq, pcmd_mag_t pcmd, float magPsiAccuracy)
 {
     if (buf != NULL)
     {
-        sprintf(buf, "AT*PCMD_MAG=%d,%d,%f,%f,%f,%f,%f,%f\r",
+        sprintf(buf, "AT*PCMD_MAG=%d,%d,%d,%d,%d,%d,%d,%d\r",
                 seq,
                 pcmd.progressive,
-                pcmd.lrTilt,
-                pcmd.fbTilt,
-                pcmd.verticalSpeed,
-                pcmd.angularSpeed,
-                pcmd.magPsi,
-                magPsiAccuracy);
+                convert_float(pcmd.lrTilt),
+                convert_float(pcmd.fbTilt),
+                convert_float(pcmd.verticalSpeed),
+                convert_float(pcmd.angularSpeed),
+                convert_float(pcmd.magPsi),
+                convert_float(pcmd.magPsiAccuracy));
     }
     else
         fprintf(stderr, "[%s:%d] Error: Buffer is null!", __FILE__, __LINE__);

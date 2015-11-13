@@ -1,13 +1,29 @@
 #include <stdio.h>
 #include "message_drone.h"
 
+char *emergency(char *message, int sequence)
+{
+	at_ref(message, sequence, 290717952);
+    if (send_message(message) != 0)
+    	printf("[FAILED] Message sending failed\n");
+	return message;
+}
+
+char *anti_emergency(char *message, int sequence)
+{
+	at_ref(message, sequence, 290717696);
+    if (send_message(message) != 0)
+    	printf("[FAILED] Message sending failed\n");
+	return message;
+}
 
 char *set_trim(char *message, int sequence)
 {
 	//char message [512];
 	
 	at_ftrim(message, sequence);
-	//send_message(message);
+    if (send_message(message) != 0)
+    	printf("[FAILED] Message sending failed\n");
 	return message;
 }
 
@@ -16,7 +32,8 @@ char *take_off(char *message, int sequence)
 	//char message [512];
 
 	at_ref(message, sequence, 290718208);
-	//send_message(message);
+    if (send_message(message) != 0)
+    	printf("[FAILED] Message sending failed\n");
 	return message;
 }
 
@@ -25,7 +42,8 @@ char *landing(char *message, int sequence)
 	//char message [512];
 	
 	at_ref(message, sequence, 290717696);
-	//send_message(message);
+    if (send_message(message) != 0)
+    	printf("[FAILED] Message sending failed\n");
 	return message;
 }
 
@@ -36,7 +54,7 @@ char *set_roll(char *message, int sequence, direction dir, float power)
 
 	switch(dir)
 	{
-		case GAUCHE:
+		case LEFT:
 			command.progressive=1;
 			command.lrTilt=-(power);
 			command.fbTilt=0;
@@ -44,10 +62,11 @@ char *set_roll(char *message, int sequence, direction dir, float power)
 			command.angularSpeed=0;
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
-		case DROITE:
+		case RIGHT:
 			command.progressive=1;
 			command.lrTilt=power;
 			command.fbTilt=0;
@@ -55,7 +74,8 @@ char *set_roll(char *message, int sequence, direction dir, float power)
 			command.angularSpeed=0;
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
 		default:
@@ -72,7 +92,7 @@ char *set_pitch(char *message, int sequence, direction dir, float power)
 
 	switch(dir)
 	{
-		case AVANT:
+		case FRONT:
 			command.progressive=1;
 			command.lrTilt=0;
 			command.fbTilt=-(power);
@@ -80,10 +100,11 @@ char *set_pitch(char *message, int sequence, direction dir, float power)
 			command.angularSpeed=0;
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
-		case ARRIERE:
+		case BACK:
 			command.progressive=1;
 			command.lrTilt=0;
 			command.fbTilt=power;
@@ -91,7 +112,8 @@ char *set_pitch(char *message, int sequence, direction dir, float power)
 			command.angularSpeed=0;
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
 		default:
@@ -108,7 +130,7 @@ char *set_gaz(char *message, int sequence, direction dir, float power)
 
 	switch(dir)
 	{
-		case DESCENDRE:
+		case DOWN:
 			command.progressive=1;
 			command.lrTilt=0;
 			command.fbTilt=0;
@@ -116,10 +138,11 @@ char *set_gaz(char *message, int sequence, direction dir, float power)
 			command.angularSpeed=0;
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
-		case MONTER:
+		case RIGHT:
 			command.progressive=1;
 			command.lrTilt=0;
 			command.fbTilt=0;
@@ -127,7 +150,8 @@ char *set_gaz(char *message, int sequence, direction dir, float power)
 			command.angularSpeed=0;
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
 		default:
@@ -144,32 +168,43 @@ char *set_yaw(char *message, int sequence, direction dir, float power)
 
 	switch(dir)
 	{
-		case GAUCHE:
-			command.progressive=1;
+		case LEFT:
+			command.progressive=0;
 			command.lrTilt=0;
 			command.fbTilt=0;
 			command.verticalSpeed=0;
 			command.angularSpeed=-(power);
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
-		case DROITE:
-			command.progressive=1;
+		case RIGHT:
+			command.progressive=0;
 			command.lrTilt=0;
 			command.fbTilt=0;
 			command.verticalSpeed=0;
 			command.angularSpeed=power;
 
 			at_pcmd(message, sequence, command);
-			//send_message(message);
+    		if (send_message(message) != 0)
+    			printf("[FAILED] Message sending failed\n");
 			break;
 
 		default:
 			printf("Error enum direction\n");
 			break;
 	}
+	return message;
+}
+
+char *reset_com(char *message)
+{
+	at_comwdg(message);
+    if (send_message(message) != 0)
+    	printf("[FAILED] Message sending failed\n");
+
 	return message;
 }
 	
