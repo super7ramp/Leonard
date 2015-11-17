@@ -1,3 +1,9 @@
+/* findy_al_ar.c -- A simple round-trip demontration program
+ * Copyright (C) 2015 Adrien Barre, Antoine Belvire, Valentin Douais, Alexis Lothoré, Lucille Saade
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
 #include <stdio.h>
 #include <unistd.h>
 #include "message_drone.h"
