@@ -14,6 +14,7 @@
 #define MAX_BUF_LEN 1024
 
 int initialize_socket();
+int close_socket();
 int send_message(char *message);
 
 #endif

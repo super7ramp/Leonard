@@ -16,6 +16,7 @@ int main()
         else
             printf("[SUCCESS] Message was sent!\n");
     }
-
+    
+    close_socket();
     return 0;
 }
