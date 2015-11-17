@@ -1,0 +1,20 @@
++
+@PW_ON
+#Stop advertising
+Y
+
+#Define name of the module (not useful here, cf N,**** command to use custom adv data)
+#S-,BEACON-RN4020
+#SN,FINDY-RN4020
+
+#Set Module Role, script @ boot adn UART flow during script
+SR,01001000
+
+#Set module as broadcaster and set adv content("FINDY")
+N,1146494e44592d524e34303230
+
+#Set transmission Power to -2.5dB
+SP,4
+
+#Start advertising at 1.5s
+A,0960

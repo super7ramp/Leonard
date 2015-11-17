@@ -1,0 +1,47 @@
+dim blink
+dim adv_data(17)
+
+# Boot Event listener
+event system_boot(major, minor, patch, build, ll_version, protocol_version, hw)
+	blink=0
+	#call hardware_io_port_config_direction(0, $60)
+	#call hardware_io_port_write(0, $60, $60)
+	#call hardware_set_soft_timer(32768, 0, 0)
+
+	# Advertising frequency between 1.5s & 2s
+	call gap_set_adv_parameters($960, $C80, 7)
+
+	adv_data(0)=$2
+	adv_data(1)=$1
+	adv_data(2)=$4
+	adv_data(3)=$6
+	adv_data(4)=$FF
+	adv_data(5)="F"
+	adv_data(6)="I"
+	adv_data(7)="N"
+	adv_data(8)="D"
+	adv_data(9)="Y"
+	adv_data(10)="-"
+	adv_data(11)="B"
+	adv_data(12)="L"
+	adv_data(13)="E"
+	adv_data(14)="1"
+	adv_data(15)="1"
+	adv_data(16)="2"
+
+	call gap_set_adv_data($0, $11, adv_data(0:17))
+
+ 	# Start advertising (discoverable/connectable)
+ 	call gap_set_mode(gap_user_data, gap_undirected_connectable)
+end
+
+event hardware_soft_timer(handle)
+	if blink=1
+		call hardware_io_port_write(0, $60, $00)
+		blink=0
+	else
+		call hardware_io_port_write(0, $60, $60)
+		blink=1
+	end if
+end
+
