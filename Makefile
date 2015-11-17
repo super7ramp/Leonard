@@ -31,6 +31,6 @@ test-message_drone.o: $(SRCDIR)/message_drone.c $(SRCDIR)/at-commands.c $(SRCDIR
 
 
 clean:
-	rm $(BUILDDIR)/*
-	rm $(SRCDIR)/*.o
-	rm $(TESTDIR)/*.o
+	rm -f $(BUILDDIR)/*
+	rm -f $(SRCDIR)/*.o
+	rm -f $(TESTDIR)/*.o
