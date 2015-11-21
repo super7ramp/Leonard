@@ -1,3 +1,9 @@
+/* sender.c -- UDP Client
+ * Copyright (C) 2015 Adrien Barre, Antoine Belvire, Valentin Douais, Alexis Lothoré, Lucille Saade
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "sender.h"
@@ -5,7 +11,7 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
 static struct sockaddr_in serv_addr;
-int socket_id;
+static int socket_id;
 
 int send_message(char *message)
 {
@@ -15,7 +21,6 @@ int send_message(char *message)
         return 1;
     }
 
-    //close(socket_id);
     return 0;
 }
 
@@ -36,6 +41,17 @@ int initialize_socket()
     {
         fprintf(stderr, "[%s:%d] Error: inet_aton() failed\n", __FILE__, __LINE__);
         return 2;
+    }
+
+    return 0;
+}
+
+int close_socket()
+{
+    if (close(socket_id) == -1)
+    {
+        fprintf(stderr, "[%s:%d] Error: close_socket() failed\n", __FILE__, __LINE__);
+        return 1;
     }
 
     return 0;

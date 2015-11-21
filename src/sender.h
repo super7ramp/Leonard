@@ -1,3 +1,9 @@
+/* sender.h -- UDP Client
+ * Copyright (C) 2015 Adrien Barre, Antoine Belvire, Valentin Douais, Alexis Lothoré, Lucille Saade
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
 #ifndef SENDER_H
 #define SENDER_H
 
@@ -14,6 +20,7 @@
 #define MAX_BUF_LEN 1024
 
 int initialize_socket();
+int close_socket();
 int send_message(char *message);
 
 #endif
