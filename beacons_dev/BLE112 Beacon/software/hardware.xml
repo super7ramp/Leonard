@@ -3,7 +3,7 @@
 	<sleepocs enable="true" ppm="30"/>
 	<script enable="true"/>
 	<slow_clock enable="false"/>
-	<txpower power="15" bias="5"/>
+	<txpower power="0" bias="5"/>
 	<pmux regulator_pin="7"/>
 	<sleep enable="false" />
 	<wakeup_pin enable="true" port="0" pin="6" />
