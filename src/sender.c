@@ -24,7 +24,8 @@ int send_message(char *message)
     return 0;
 }
 
-int initialize_socket()
+//Modif: add param to function in oder to use it for navdata and at-command
+int initialize_socket(string dest_ip, int dest_port)
 {
     if ((socket_id = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
@@ -35,9 +36,9 @@ int initialize_socket()
     // Addresses
     bzero(&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(DEST_PORT);
+    serv_addr.sin_port = htons(dest_port);  //num port dest
 
-    if (inet_aton(DEST_IP, &serv_addr.sin_addr) == 0)
+    if (inet_aton(dest_ip, &serv_addr.sin_addr) == 0)   //addr ip dest
     {
         fprintf(stderr, "[%s:%d] Error: inet_aton() failed\n", __FILE__, __LINE__);
         return 2;

@@ -15,7 +15,7 @@ int main ()
     int n = 0;
     int tps = 0;
 
-    if (initialize_socket() != 0)
+    if (initialize_socket(DEST_IP_AT, DEST_PORT_AT) != 0)
     {
         printf("[FAILED] Socket initialization failed\n");
     }
