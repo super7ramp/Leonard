@@ -140,7 +140,7 @@ char *set_gaz(char *message, int sequence, direction dir, float power)
                 printf("[FAILED] Message sending failed\n");
         break;
 
-        case RIGHT:
+        case UP:
             command.progressive=1;
             command.lrTilt=0;
             command.fbTilt=0;
