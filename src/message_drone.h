@@ -9,6 +9,7 @@
 
 #include "at-commands.h"
 #include "sender.h"
+#include <pthread.h>
 
 typedef enum
 {
@@ -20,15 +21,17 @@ typedef enum
     DOWN
 } direction;
 
-char *emergency(char *message, int sequence);
-char *anti_emergency(char *message, int sequence);
-char *set_trim(char *message, int sequence);
-char *take_off(char *message, int sequence);
-char *landing(char *message, int sequence);
-char *set_roll(char *message, int sequence, direction dir, float power);
-char *set_pitch(char *message, int sequence, direction dir, float power);
-char *set_gaz(char *message, int sequence, direction dir, float power);
-char *set_yaw(char *message, int sequence, direction dir, float power);
+char *set_config(char *message, const char * name, const char *value);
+char *set_ackcontrol(char *message);
+char *set_emergency(char *message);
+char *anti_emergency(char *message);
+char *set_trim(char *message);
+char *take_off(char *message);
+char *landing(char *message);
+char *set_roll(char *message, direction dir, float power);
+char *set_pitch(char *message, direction dir, float power);
+char *set_gaz(char *message, direction dir, float power);
+char *set_yaw(char *message, direction dir, float power);
 char *reset_com(char *message);
 
 #endif

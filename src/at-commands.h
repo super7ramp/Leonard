@@ -21,5 +21,6 @@ char *at_calib(char *buf, int seq, ardrone_calibration_device_t id);
 char *at_config(char *buf, int seq, const char *name, const char *value);
 char *at_config_ids(char *buf, int seq, const char *sessionId, const char *userId, const char *appId);
 char *at_comwdg(char *buf);
+char *at_ackcontrol(char *buf, int seq);
 
 #endif // AT_COMMANDS_H

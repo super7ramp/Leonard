@@ -19,7 +19,7 @@
 #define DEST_PORT_AT   5556
 #define MAX_BUF_LEN 1024
 
-int initialize_socket(string dest_ip, int dest_port);
+int initialize_socket(const char * dest_ip, int dest_port);
 int close_socket();
 int send_message(char *message);
 

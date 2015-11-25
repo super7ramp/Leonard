@@ -1,12 +1,27 @@
 #include <stdio.h>
 #include "navdata_controller.h"
+#include <pthread.h>
+#include "pcap/pcap.h"
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <net/ethernet.h>
+#include <netinet/ip_icmp.h>
+#include <netinet/udp.h>
+#include <netinet/tcp.h>
+#include <netinet/ip.h>
+#include <netinet/in.h>
+#include <stdlib.h>
 
+int m_available = 0;
+Navdata m_navdata;
+
+//Fonction qui intercepte les packets et appelle la fonction M_decode()
 void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
     // This a callback function
    int size = header->len;
 
-   struct iphdr* iph = (iphdr*)(packet + sizeof(ethhdr));
+   struct iphdr* iph = (struct iphdr*)(packet + sizeof(struct ethhdr));
    unsigned short iphdrlen = iph->ihl * 4;
 
    // Filter protocol
@@ -14,59 +29,62 @@ void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, 
        return;
 
    // Get the destination IP address and filter
-   sockaddr_in dest;
+   struct sockaddr_in dest;
    memset(&dest, 0, sizeof(dest));
    dest.sin_addr.s_addr = iph->daddr;
-   if(dest.sin_addr.s_addr != inet_addr(NAV_IP))
+   if(dest.sin_addr.s_addr != inet_addr(DEST_IP_NAV))
        return;
 
    // Get the UDP header
-   udphdr* udph = (udphdr*)(packet + iphdrlen + sizeof(ethhdr));
+   struct udphdr* udph = (struct udphdr*)(packet + iphdrlen + sizeof(struct ethhdr));
 
    // Filter out ports
-   if(ntohs(udph->dest) != NAV_PORT)
+   if(ntohs(udph->dest) != DEST_PORT_NAV)
        return;
 
    // Get the data from the sniffed packet
-   int header_size = sizeof(ethhdr) + iphdrlen + sizeof(udph) + 4; //@FIXME: why the +4 ???
+   int header_size = sizeof(struct ethhdr) + iphdrlen + sizeof(struct udphdr) + 4; //@FIXME: why the +4 ???
    const unsigned char* data = packet + header_size;
 
    M_decode(data, size - header_size);
 }
 
-void setup_pcap ()
+//Fonction bloquante à lancer dans un autre thread qui lancera l'appel à la fonction action_on_packet_reception()
+void *setup_pcap ()
 {
 	char errbuf[PCAP_ERRBUF_SIZE];
-    pcap_t *handle;
+  pcap_t *handle;
 
-    printf("Device: %s\n", IFACE);
+  printf("Device: %s\n", IFACE);
 
-    // Open device
-    handle = pcap_open_live(IFACE, BUFSIZ, 1, 0, errbuf);
-    if (handle == NULL)
-    {
-        fprintf(stderr, "Couldn't open device %s: %s\n", IFACE, errbuf);
-        return 2;
-    }
+  // Open device
+  handle = pcap_open_live(IFACE, BUFSIZ, 1, 0, errbuf);
+  if (handle == NULL)
+  {
+      fprintf(stderr, "Couldn't open device %s: %s\n", IFACE, errbuf);
+      return 0;
+  }
 
-    printf("pcap initialized\n");
+  printf("pcap initialized\n");
 
-    pcap_loop(handle, -1, &action_on_packet_reception, NULL);
+  pcap_loop(handle, -1, &action_on_packet_reception, NULL);
 
-    printf("pcap session finished");
+  printf("pcap session finished");
+  return 0;
 
 }
 
+//Analyse les packets 
 void M_decode(const u_char *data, int size)
 {
-	navdata_t* navdata = (navdata_t *)data;
+	navdata_header* navdata = (navdata_header *)data;
 	if(navdata->magic != NAVDATA_HEADER)
 	{
 		printf("wrong navdata header");
 		return;
 	}
 
-	int pos = sizeof(navdata_t);
+	int pos = sizeof(navdata_header);
 	while(pos <= size)
 	{
 		navdata_option_t* navoption = (navdata_option_t*)(data+pos);
@@ -88,7 +106,7 @@ void M_decode(const u_char *data, int size)
 	}
 
 	//use variable (of thread) to signal the availability to other thread
-	//p_available = true;
+	m_available = 1;
 }
 
 // TODO: i'm not sure of what we have to do here
@@ -97,7 +115,14 @@ void M_decode(const u_char *data, int size)
 // !!!! I modified the prototype of initialize_socket() 
 void initNavdata ()
 {
+    pthread_t setup_pcap_thread;
+    if (pthread_create(&setup_pcap_thread, NULL, setup_pcap, NULL)) 
+    {
+      perror("pthread_create");
+      exit(1);
+    }
     char data[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char message[512];
 
     //open new UDP socket for navdata
     if(initialize_socket(DEST_IP_NAV, DEST_PORT_NAV) != 0)
@@ -111,4 +136,54 @@ void initNavdata ()
     		printf("[FAILED] Send packet failed\n");
     	}
     }
+    //wait to boostrap bit
+    int i;
+    for( i = 0 ;;)
+    {
+      while(!m_available)
+        ;
+      Navdata nav = set_p_available_false();
+
+      printf("waiting for bootstrap %d\n",i);
+
+      if(nav.header.ardrone_state & navdata_bootstrap)
+        break;
+
+      if(++i > TIME_OUT)
+        exit(1);
+    }
+
+    printf("in bootstrap mode");
+
+    //!!!TODO (et modif de toute la partie at-command et send_message : mise en place mutex pour num sequence)
+    set_config(message, "general:navdata_demo", "TRUE");
+
+    printf("navdata demo set");
+
+    //waiting ack
+    for( i = 0 ;;)
+    {
+      while(!m_available)
+        ;
+      Navdata nav = set_p_available_false();
+
+      printf("waiting for ack %d\n",i);
+
+      if(nav.header.ardrone_state & command_ack)
+        break;
+
+      if(++i > TIME_OUT)
+        exit(1);
+    }
+
+    //!!!!!!TODO idem as set_config
+    set_ackcontrol(message);
+
+    printf("ack sent");
+}
+
+Navdata set_p_available_false ()
+{
+  m_available = 0;
+  return m_navdata;
 }

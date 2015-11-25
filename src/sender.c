@@ -25,7 +25,7 @@ int send_message(char *message)
 }
 
 //Modif: add param to function in oder to use it for navdata and at-command
-int initialize_socket(string dest_ip, int dest_port)
+int initialize_socket(const char * dest_ip, int dest_port)
 {
     if ((socket_id = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {

@@ -32,6 +32,7 @@ int main()
     }
 
     printf("pcap initialized\n");
+    
 
     // Make a loop; -1 means sniffing until an error occurs
     //pcap_loop(handle, -1, action_on_packet_reception, NULL);
