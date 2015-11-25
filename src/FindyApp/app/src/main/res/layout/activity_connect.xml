@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FEFEFE">
+
+    <include
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/menu" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/connectButton"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_marginTop="35dp"
+            android:onClick="onConnectButtonClick"
+            android:text="@string/connectButton"
+            android:layout_gravity="center"
+            android:textColor="#FEFEFE"
+            android:background="#303030" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -5,12 +5,17 @@ BASEDIR=$(shell pwd)
 SRCDIR=$(BASEDIR)/src
 TESTDIR=$(BASEDIR)/src/tests
 BUILDDIR=$(BASEDIR)/build
+DOCDIR=$(BASEDIR)/doc
 
 all: directories tests
 
 directories:
 	cd $(BASEDIR)
 	mkdir -p $(BUILDDIR)
+
+.PHONY: doc
+doc:
+	doxygen $(SRCDIR)/Doxyfile
 
 tests: $(SRCDIR)/at-commands.o $(SRCDIR)/sender.o $(SRCDIR)/message_drone.o $(TESTDIR)/test-at-commands.o $(TESTDIR)/test-sender.o $(TESTDIR)/test-message_drone.o
 	$(CC) $(CFLAGS) $(TESTDIR)/test-at-commands.o $(SRCDIR)/at-commands.o -o $(BUILDDIR)/test-at-commands
@@ -29,8 +34,9 @@ test-sender.o: $(SRCDIR)/sender.c $(TESTDIR)/test-sender.c
 test-message_drone.o: $(SRCDIR)/message_drone.c $(SRCDIR)/at-commands.c $(SRCDIR)/sender.c $(TESTDIR)/test-message_drone.c
 	$(CC) $(CFLAGS) -c message_drone.c at-commands.c sender.c test-message_drone.c
 
-
+.PHONY: clean
 clean:
-	rm $(BUILDDIR)/*
-	rm $(SRCDIR)/*.o
-	rm $(TESTDIR)/*.o
+	rm -f $(BUILDDIR)/*
+	rm -f $(SRCDIR)/*.o
+	rm -f $(TESTDIR)/*.o
+	rm -rf $(DOCDIR)/html

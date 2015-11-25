@@ -1,3 +1,9 @@
+/* at-commands.h -- AT commands generation
+ * Copyright (C) 2015 Adrien Barre, Antoine Belvire, Valentin Douais, Alexis Lothoré, Lucille Saade
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
 #ifndef AT_COMMANDS_H
 #define AT_COMMANDS_H
 
