@@ -11,6 +11,9 @@
 #include "sender.h"
 #include <pthread.h>
 
+#define DEST_IP_AT     "127.0.0.1" //< localhost
+#define DEST_PORT_AT   5556        //< AT commands are sent to this port
+
 typedef enum
 {
     LEFT,
@@ -21,7 +24,9 @@ typedef enum
     DOWN
 } direction;
 
-char *set_config(char *message, const char * name, const char *value);
+int initialize_at_com();
+int terminate_at_com();
+char *set_config(char *message, const char *name, const char *value);
 char *set_ackcontrol(char *message);
 char *set_emergency(char *message);
 char *anti_emergency(char *message);

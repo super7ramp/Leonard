@@ -5,37 +5,40 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 #include <stdio.h>
-#include <CUnit/CUnit.h>
 #include "../message_drone.h"
 
+// Sniff the traffic to verify
 int main()
 {
     char message [512];
-    int n = 0;// sequence number
+    
+    initialize_at_com();
     
     printf("[Test SET_TRIM]\n");
-    printf("%s\n", set_trim(message,n++));
+    set_trim(message);
 
     printf("\n[Test TAKE_OFF]\n");
-    printf("%s\n", take_off(message,n++));
+    take_off(message);
 
     printf("\n[Test LANDING]\n");
-    printf("%s\n", landing(message,n++));
+    landing(message);
 
-    printf("\n[Test SET_ROLL (gauche 10)]\n");
-    printf("%s\n", set_roll(message,n++, GAUCHE, 0.1));
+    printf("\n[Test SET_ROLL (left 10)]\n");
+    set_roll(message, LEFT, 0.1);
 
-    printf("\n[Test SET_ROLL (droite 100)]\n");
-    printf("%s\n", set_roll(message,n++, DROITE, 1.0));
+    printf("\n[Test SET_ROLL (right 100)]\n");
+    set_roll(message, RIGHT, 1.0);
 
-    printf("\n[Test SET_PITCH (avant 10)]\n");
-    printf("%s\n", set_pitch(message,n++, AVANT, 0.1));
+    printf("\n[Test SET_PITCH (front 10)]\n");
+    set_pitch(message, FRONT, 0.1);
 
-    printf("\n[Test SET_GAZ (monter 30)]\n");
-    printf("%s\n", set_gaz(message,n++, MONTER, 0.3));
+    printf("\n[Test SET_GAZ (up 30)]\n");
+    set_gaz(message, UP, 0.3);
 
-    printf("\n[Test SET_YAW (gauche 100)]\n");
-    printf("%s\n", set_yaw(message,n++, GAUCHE, 1.0));
+    printf("\n[Test SET_YAW (left 100)]\n");
+    set_yaw(message, LEFT, 1.0);
 
+    terminate_at_com();
+    
     return 0;
 }

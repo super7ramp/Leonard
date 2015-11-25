@@ -15,13 +15,17 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define DEST_IP_AT     "127.0.0.1" //localhost
-#define DEST_PORT_AT   5556
 #define MAX_BUF_LEN 1024
 
-int initialize_socket(const char * dest_ip, int dest_port);
-int close_socket();
-int send_message(char *message);
+typedef struct
+{
+    struct sockaddr_in *serv_addr;
+    int socket_id;
+} socket_info_t;
+
+socket_info_t initialize_socket(const char *dest_ip, int dest_port);
+int close_socket(socket_info_t socket);
+int send_message(char *message, socket_info_t socket);
 
 #endif
 

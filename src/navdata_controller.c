@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 
+static socket_info_t navdata_socket;
 int m_available = 0;
 Navdata m_navdata;
 
@@ -52,8 +53,8 @@ void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, 
 //Fonction bloquante à lancer dans un autre thread qui lancera l'appel à la fonction action_on_packet_reception()
 void *setup_pcap ()
 {
-	char errbuf[PCAP_ERRBUF_SIZE];
-  pcap_t *handle;
+    char errbuf[PCAP_ERRBUF_SIZE];
+    pcap_t *handle;
 
   printf("Device: %s\n", IFACE);
 
@@ -114,28 +115,36 @@ void M_decode(const u_char *data, int size)
 // I don't really understand what Alexandre do in this function
 // !!!! I modified the prototype of initialize_socket() 
 void initNavdata ()
-{
+{   
+    // Navdata socket initialization
+    navdata_socket = initialize_socket(DEST_IP_NAV, DEST_PORT_NAV);
+    
+    if (navdata_socket.socket_id < 0)
+    {
+        printf("[FAILED] Socket initialization failed\n");
+        exit(1);
+    }
+
+    // pcap thread initialization
     pthread_t setup_pcap_thread;
+    
     if (pthread_create(&setup_pcap_thread, NULL, setup_pcap, NULL)) 
     {
       perror("pthread_create");
       exit(1);
     }
+    
+    // Sending first message
     char data[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     char message[512];
 
-    //open new UDP socket for navdata
-    if(initialize_socket(DEST_IP_NAV, DEST_PORT_NAV) != 0)
-    {
-    	printf("[FAILED] Socket initialization failed\n");
-    }
-    else
-    {
-    	if(send_message(data) != 0)
-    	{
-    		printf("[FAILED] Send packet failed\n");
-    	}
-    }
+
+	if(send_message(data, navdata_socket) != 0)
+	{
+		printf("[FAILED] Send packet failed\n");
+		// TODO: do something
+	}
+	
     //wait to boostrap bit
     int i;
     for( i = 0 ;;)

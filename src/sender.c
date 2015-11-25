@@ -10,50 +10,64 @@
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
-static struct sockaddr_in serv_addr;
-static int socket_id;
-
-int send_message(char *message)
-{
-    if (sendto(socket_id, message, MIN(strlen(message), MAX_BUF_LEN), 0, (struct sockaddr *)&serv_addr, (socklen_t) sizeof(serv_addr)) == -1)
+/** @brief Send a message through the specified socket
+ *  @param message The buffer where is stored the message to send
+ *  @param socket_id Socket identifier
+ *  @return int 0 if the sendto() succeeds, -1 otherwise
+ */
+int send_message(char *message, socket_info_t socket)
+{   
+    if (sendto(socket.socket_id, message, MIN(strlen(message), MAX_BUF_LEN), 0, (struct sockaddr *) socket.serv_addr, (socklen_t) sizeof(struct sockaddr_in)) == -1)
     {
         fprintf(stderr, "[%s:%d] Error: sendto() failed\n", __FILE__, __LINE__);
-        return 1;
+        return -1;
     }
 
     return 0;
 }
 
-//Modif: add param to function in oder to use it for navdata and at-command
-int initialize_socket(const char * dest_ip, int dest_port)
+/** @brief Initialize an UDP socket (for clients)
+ *  @param dest_ip The destination ip
+ *  @param dest_port The destination port
+ *  @return socket_info_t structure
+ */
+socket_info_t initialize_socket(const char *dest_ip, int dest_port)
 {
-    if ((socket_id = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    socket_info_t info;
+    
+    if ((info.socket_id = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
         fprintf(stderr, "[%s:%d] Error: Socket creation failed\n", __FILE__, __LINE__);
-	return 1;
     }
 
     // Addresses
-    bzero(&serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(dest_port);  //num port dest
+    //info.serv_addr = calloc(1, sizeof(struct sockaddr_in));
+    info.serv_addr = calloc(1, sizeof(struct sockaddr_in));
+    info.serv_addr->sin_family = AF_INET;
+    info.serv_addr->sin_port = htons(dest_port);  //num port dest
 
-    if (inet_aton(dest_ip, &serv_addr.sin_addr) == 0)   //addr ip dest
+    if (inet_aton(dest_ip, &(info.serv_addr->sin_addr)) == 0)   //addr ip dest
     {
         fprintf(stderr, "[%s:%d] Error: inet_aton() failed\n", __FILE__, __LINE__);
-        return 2;
     }
 
-    return 0;
+    return info;
 }
 
-int close_socket()
+/** @brief Close the specified socket
+ *  @param socket_id The socket to close
+ *  @return 0 on success
+ */
+int close_socket(socket_info_t socket)
 {
-    if (close(socket_id) == -1)
+    if (close(socket.socket_id) == -1)
     {
         fprintf(stderr, "[%s:%d] Error: close_socket() failed\n", __FILE__, __LINE__);
         return 1;
     }
+    
+    if(socket.serv_addr)
+        free(socket.serv_addr);
 
     return 0;
 }

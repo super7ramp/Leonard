@@ -10,9 +10,9 @@
 
 #define DEST_IP_NAV		"127.0.0.1"
 #define DEST_PORT_NAV	5554
-#define IFACE   "lo" // loopback interface
+#define IFACE           "lo" // loopback interface
 #define NAVDATA_HEADER  0x55667788
-#define TIME_OUT  10
+#define TIME_OUT        10
 
 //! This enumeration map bitfields to the drone state word in
 //!   the navdata header.

@@ -7,15 +7,33 @@
 #include <stdio.h>
 #include "message_drone.h"
 
+static socket_info_t at_socket;
 int cpt_seq = 0;
 pthread_mutex_t m_atcommand = PTHREAD_MUTEX_INITIALIZER;
 
-char *set_config(char *message, const char * name, const char *value)
+/** @brief Initialize AT communication
+ *  @return -1 on failure
+ */
+int initialize_at_com()
+{
+    at_socket = initialize_socket(DEST_IP_AT, DEST_PORT_AT);
+    return at_socket.socket_id;
+}
+
+/** @brief Terminate AT communication
+ *  @return 0 on success
+ */
+int terminate_at_com()
+{
+    return close_socket(at_socket);
+}
+
+char *set_config(char *message, const char *name, const char *value)
 {
     pthread_mutex_lock(&m_atcommand);
     cpt_seq++;
     at_config(message, cpt_seq, name, value);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     return message;
     pthread_mutex_unlock(&m_atcommand);
@@ -26,7 +44,7 @@ char *set_ackcontrol(char *message)
     pthread_mutex_lock(&m_atcommand);
     cpt_seq++;
     at_ackcontrol(message, cpt_seq);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     return message;
     pthread_mutex_unlock(&m_atcommand);
@@ -37,7 +55,7 @@ char *set_emergency(char *message)
     pthread_mutex_lock(&m_atcommand);
     cpt_seq++;
     at_ref(message, cpt_seq, 290717952);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     return message;
     pthread_mutex_unlock(&m_atcommand);
@@ -48,7 +66,7 @@ char *anti_emergency(char *message)
     pthread_mutex_lock(&m_atcommand);
     cpt_seq++;
     at_ref(message, cpt_seq, 290717696);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     return message;
     pthread_mutex_unlock(&m_atcommand);
@@ -59,7 +77,7 @@ char *set_trim(char *message)
     pthread_mutex_lock(&m_atcommand);
     cpt_seq++;
     at_ftrim(message, cpt_seq);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     return message;
     pthread_mutex_unlock(&m_atcommand);
@@ -70,7 +88,7 @@ char *take_off(char *message)
     pthread_mutex_lock(&m_atcommand);
     cpt_seq++;
     at_ref(message, cpt_seq, 290718208);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     return message;
     pthread_mutex_unlock(&m_atcommand);
@@ -81,7 +99,7 @@ char *landing(char *message)
     pthread_mutex_lock(&m_atcommand);
     cpt_seq++;
     at_ref(message, cpt_seq, 290717696);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     return message;
     pthread_mutex_unlock(&m_atcommand);
@@ -103,7 +121,7 @@ char *set_roll(char *message, direction dir, float power)
             command.angularSpeed=0;
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -115,7 +133,7 @@ char *set_roll(char *message, direction dir, float power)
             command.angularSpeed=0;
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -144,7 +162,7 @@ char *set_pitch(char *message, direction dir, float power)
             command.angularSpeed=0;
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -156,7 +174,7 @@ char *set_pitch(char *message, direction dir, float power)
             command.angularSpeed=0;
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -184,7 +202,7 @@ char *set_gaz(char *message, direction dir, float power)
             command.angularSpeed=0;
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -196,7 +214,7 @@ char *set_gaz(char *message, direction dir, float power)
             command.angularSpeed=0;
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -224,7 +242,7 @@ char *set_yaw(char *message, direction dir, float power)
             command.angularSpeed=-(power);
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -236,7 +254,7 @@ char *set_yaw(char *message, direction dir, float power)
             command.angularSpeed=power;
 
             at_pcmd(message, cpt_seq, command);
-            if (send_message(message) != 0)
+            if (send_message(message, at_socket) != 0)
                 printf("[FAILED] Message sending failed\n");
         break;
 
@@ -252,7 +270,7 @@ char *reset_com(char *message)
 {
     pthread_mutex_lock(&m_atcommand);
     at_comwdg(message);
-    if (send_message(message) != 0)
+    if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
 
     return message;
