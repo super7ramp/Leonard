@@ -20,7 +20,7 @@ Navdata m_navdata;
 void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
 
-    printf("Received packet!\n");
+    //printf("Received packet!\n");
     
     // This a callback function
    int size = header->len;
@@ -41,7 +41,7 @@ void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, 
    dest.sin_addr.s_addr = iph->daddr;
    if(dest.sin_addr.s_addr != inet_addr(FAKE_ADDR_SRC))
    {
-       printf("dest.sin_addr.s_addr (%d) != inet_addr(FAKE_ADDR_SRC) (%d)\n", dest.sin_addr.s_addr,  inet_addr(FAKE_ADDR_SRC));
+       //printf("dest.sin_addr.s_addr (%d) != inet_addr(FAKE_ADDR_SRC) (%d)\n", dest.sin_addr.s_addr,  inet_addr(FAKE_ADDR_SRC));
        return;
    }
 
@@ -59,7 +59,7 @@ void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, 
    int header_size = sizeof(struct ethhdr) + iphdrlen + sizeof(struct udphdr); // + 4; //@FIXME: why the +4 ???
    const unsigned char* data = packet + header_size;
 
-    printf("it's a valid packet\n");
+    //printf("it's a valid packet\n");
    M_decode(data, size - header_size);
 }
 
@@ -93,11 +93,28 @@ void M_decode(const u_char *data, int size)
 {
     //printf("Entering M_decode\n");
 
-    unsigned int i;
-    for(i = 0; i < sizeof(m_navdata.header); ++i)
+    FILE* file = NULL;
+
+    file = fopen("test.txt", "a");
+
+    if (file != NULL)
     {
-        printf("%d: %x\n", i, (int) data[i]);
+        // On peut lire et écrire dans le fichier
+        unsigned int i;
+        for(i = 0; i < sizeof(m_navdata.header); ++i)
+        {
+            fprintf(file, "%d: %x\n", i, (int) data[i]);
+        }
+        
+        fclose(file);
     }
+    else
+    {
+        // On affiche un message d'erreur si on veut
+        printf("Impossible d'ouvrir le fichier test.txt");
+    }
+
+
     
     m_navdata.header = *( (navdata_header *) data);
 	
@@ -152,7 +169,7 @@ void initNavdata ()
     char data[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     char message[512];
 
-    printf("before send message\n");
+    //printf("before send message\n");
 
 	if(spoof_udp(data, 14))
 	{
@@ -160,7 +177,7 @@ void initNavdata ()
 		// TODO: do something
 	}
 
-	printf("after send message\n");
+	//printf("after send message\n");
 
     //wait to boostrap bit
     int i;
@@ -175,7 +192,7 @@ void initNavdata ()
       if(nav.header.ardrone_state & navdata_bootstrap)
         break;
 
-      printf("boucle for\n");
+      //printf("boucle for\n");
 
       if(++i > TIME_OUT)
         exit(1);

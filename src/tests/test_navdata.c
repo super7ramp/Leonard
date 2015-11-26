@@ -6,10 +6,32 @@ arm-linux-gnueabi-gcc-4.6 -march=armv7-a -I lib/libpcap/include/ src/navdata_con
 #include <stdio.h>
 #include "../navdata_controller.h"
 
+void *reset_watchdog()
+{
+    char buff[512];
+    
+    set_trim(buff);
+
+    while(1)
+    {
+        usleep(50000);
+        reset_com(buff);
+    }
+    
+    pthread_exit(NULL);
+}
+
 int main ()
 {
+    // AT communication initialization
+ 	initialize_at_com();
+
+ 	// Launch watchdog reset thread
+ 	pthread_t reset_watchdog_tid;
+ 	pthread_create(&reset_watchdog_tid, NULL, (void *) reset_watchdog, NULL);
+
+    // Launch navdata
   	Navdata navdata;
-  	initialize_at_com(); //first thing to do
 	initNavdata();
 
 	while(1)
@@ -21,6 +43,7 @@ int main ()
 		sleep(1);
 	}
 
+    pthread_cancel(reset_watchdog_tid);
     terminate_at_com();
 
 	return 0;
