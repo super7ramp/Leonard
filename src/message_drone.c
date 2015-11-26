@@ -31,12 +31,16 @@ int terminate_at_com()
 char *set_config(char *message, const char *name, const char *value)
 {
     pthread_mutex_lock(&m_atcommand);
+    printf("mutex1\n");
     cpt_seq++;
+    printf("mutex2\n");
     at_config(message, cpt_seq, name, value);
+    printf("mutex3\n");
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-    return message;
+     
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *set_ackcontrol(char *message)
@@ -46,8 +50,8 @@ char *set_ackcontrol(char *message)
     at_ackcontrol(message, cpt_seq);
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *set_emergency(char *message)
@@ -57,8 +61,8 @@ char *set_emergency(char *message)
     at_ref(message, cpt_seq, 290717952);
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *anti_emergency(char *message)
@@ -68,8 +72,8 @@ char *anti_emergency(char *message)
     at_ref(message, cpt_seq, 290717696);
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *set_trim(char *message)
@@ -79,8 +83,8 @@ char *set_trim(char *message)
     at_ftrim(message, cpt_seq);
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *take_off(char *message)
@@ -90,8 +94,8 @@ char *take_off(char *message)
     at_ref(message, cpt_seq, 290718208);
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *landing(char *message)
@@ -101,8 +105,8 @@ char *landing(char *message)
     at_ref(message, cpt_seq, 290717696);
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *set_roll(char *message, direction dir, float power)
@@ -142,8 +146,8 @@ char *set_roll(char *message, direction dir, float power)
         break;
     }
 
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *set_pitch(char *message, direction dir, float power)
@@ -182,8 +186,8 @@ char *set_pitch(char *message, direction dir, float power)
             printf("Error enum direction\n");
             break;
     }
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *set_gaz(char *message, direction dir, float power)
@@ -222,8 +226,8 @@ char *set_gaz(char *message, direction dir, float power)
             printf("Error enum direction\n");
         break;
     }
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *set_yaw(char *message, direction dir, float power)
@@ -262,8 +266,8 @@ char *set_yaw(char *message, direction dir, float power)
             printf("Error enum direction\n");
         break;
     }
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
 
 char *reset_com(char *message)
@@ -273,6 +277,6 @@ char *reset_com(char *message)
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
 
-    return message;
     pthread_mutex_unlock(&m_atcommand);
+    return message;
 }
