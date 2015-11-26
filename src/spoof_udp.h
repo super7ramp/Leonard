@@ -14,7 +14,7 @@
 #include <stdint.h>
 
 #define FAKE_ADDR_SRC		"127.0.0.2"
-#define PORT_FAKE_ADDR		50000
+#define PORT_FAKE_ADDR		5554
 #define ADDR_DEST_LOCALHOST	"127.0.0.1"
 #define PORT_LOCALHOST		5554
 

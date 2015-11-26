@@ -50,6 +50,9 @@ socket_info_t initialize_socket(const char *dest_ip, int dest_port)
     {
         fprintf(stderr, "[%s:%d] Error: inet_aton() failed\n", __FILE__, __LINE__);
     }
+    
+//    socklen_t addrlen = sizeof(info.serv_addr);
+//    printf("Port sent: %d\n", ntohs(info.serv_addr->sin_port));
 
     return info;
 }

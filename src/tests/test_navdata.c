@@ -8,7 +8,8 @@ arm-linux-gnueabi-gcc-4.6 -march=armv7-a -I lib/libpcap/include/ src/navdata_con
 
 int main ()
 {
-	Navdata navdata;
+  	Navdata navdata;
+  	initialize_at_com(); //first thing to do
 	initNavdata();
 
 	while(1)
@@ -16,10 +17,11 @@ int main ()
 		printf("theta : %f\n",navdata.demo.theta);
 		printf("phi : %f\n",navdata.demo.phi);
 		printf("psi : %f\n",navdata.demo.psi);
-		printf("\e[A\e[A\e[A");
-		sleep(2);
+		//printf("\e[A\e[A\e[A");
+		sleep(1);
 	}
 
+    terminate_at_com();
 
 	return 0;
 }

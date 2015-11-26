@@ -111,7 +111,9 @@ char *at_comwdg(char *buf)
 char *at_ackcontrol(char *buf, int seq)
 {
     if (buf != NULL)
-        sprintf(buf, "AT*CTRL=%d,5,0\r",  seq);
+    {
+        sprintf(buf, "AT*CTRL=%d,5,0\r", seq);
+    }
     else
         fprintf(stderr, "[%s:%d] Error: Buffer is null!", __FILE__, __LINE__);
     return buf;

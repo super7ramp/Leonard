@@ -16,10 +16,10 @@ int main()
     printf("[Test sender]\n");
 
     socket_info_t sock1,sock2;
-    
+
     sock1 = initialize_socket(IP_TEST, PORT_TEST1);
     sock2 = initialize_socket(IP_TEST, PORT_TEST2);
-    
+
     if(sock1.socket_id == -1 || sock2.socket_id == -1)
     {
         printf("[FAILED] Socket initialization failed\n");
@@ -34,9 +34,9 @@ int main()
         else
             printf("[SUCCESS] Messages were sent!\n");
     }
-    
+
     close_socket(sock1);
     close_socket(sock2);
-    
+
     return 0;
 }

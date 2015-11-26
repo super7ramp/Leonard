@@ -38,7 +38,6 @@ char *set_config(char *message, const char *name, const char *value)
     printf("mutex3\n");
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-     
     pthread_mutex_unlock(&m_atcommand);
     return message;
 }
@@ -276,7 +275,6 @@ char *reset_com(char *message)
     at_comwdg(message);
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
-
     pthread_mutex_unlock(&m_atcommand);
     return message;
 }

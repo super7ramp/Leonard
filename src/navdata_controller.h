@@ -120,7 +120,8 @@ enum option_tag {
 typedef struct navdata_option_t {
 	uint16_t tag;
 	uint16_t size;
-}navdata_option_t;
+	uint8_t  data[1];//add by antoine
+} __attribute__ ((packed)) navdata_option_t;
 
 /**
  * @brief Navdata structure sent over the network.
@@ -132,7 +133,7 @@ typedef struct navdata_header {
   uint32_t    vision_defined;
 
   navdata_option_t  options[1];
-}navdata_header;
+} __attribute__ ((packed)) navdata_header;
 
 /*----------------------------------------------------------------------------*/
 /**
@@ -179,7 +180,7 @@ typedef struct navdata_demo_t {
         uint32_t drone_camera_rot[3][3];
         uint32_t drone_camera_trans[3];
 
-}navdata_demo_t;
+} __attribute__ ((packed)) navdata_demo_t;
 
 //! Vision detection navdata option
 typedef struct vision_detect {
@@ -199,11 +200,12 @@ typedef struct vision_detect {
     float rotation[3][3][4];
     float translation[3][4];
     uint32_t camera_source[4];
-}vision_detect;
+} vision_detect_t;
 
 typedef struct Navdata{
   navdata_header header;
   navdata_demo_t demo;
+  vision_detect_t vision;
 }Navdata;
 
 void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
