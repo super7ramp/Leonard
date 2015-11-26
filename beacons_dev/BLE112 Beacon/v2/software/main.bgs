@@ -1,0 +1,28 @@
+dim adv_data(12)
+
+# Boot Event listener
+event system_boot(major, minor, patch, build, ll_version, protocol_version, hw)
+
+	# Advertising frequency between 200ms & 300ms
+	call gap_set_adv_parameters($140, $1E0, 7)
+
+	adv_data(0)=$2
+	adv_data(1)=$1
+	adv_data(2)=$4
+	adv_data(3)=$8
+	adv_data(4)=$FF
+	adv_data(5)="F"
+	adv_data(6)="I"
+	adv_data(7)="N"
+	adv_data(8)="D"
+	adv_data(9)="Y"
+	adv_data(10)="-"
+	adv_data(11)="C"
+
+	call gap_set_adv_data($0, $12, adv_data(0:12))
+
+ 	# Start advertising (discoverable/connectable)
+ 	call gap_set_mode(gap_user_data, gap_undirected_connectable)
+end
+
+
