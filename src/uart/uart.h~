@@ -1,0 +1,8 @@
+#ifndef UART_H
+#define UART_H
+
+ // #include bibliothèque de la carte
+
+void uart_init();
+
+#endif
