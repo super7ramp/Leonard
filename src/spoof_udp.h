@@ -27,7 +27,7 @@ struct pseudo_header
 	uint16_t udp_length;
 };
 
-int spoof_udp ();
+int spoof_udp (const char *dataToSend, size_t dataSize);
 unsigned short csum(unsigned short *ptr,int nbytes);
 
 #endif

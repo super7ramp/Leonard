@@ -36,9 +36,9 @@ int main ()
 
 	while(1)
 	{
-		printf("theta : %f\n",navdata.demo.theta);
-		printf("phi : %f\n",navdata.demo.phi);
-		printf("psi : %f\n",navdata.demo.psi);
+		printf("theta : %f\n", navdata.demo.theta);
+		printf("phi : %f\n", navdata.demo.phi);
+		printf("psi : %f\n", navdata.demo.psi);
 		//printf("\e[A\e[A\e[A");
 		sleep(1);
 	}

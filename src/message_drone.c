@@ -31,11 +31,8 @@ int terminate_at_com()
 char *set_config(char *message, const char *name, const char *value)
 {
     pthread_mutex_lock(&m_atcommand);
-    printf("mutex1\n");
     cpt_seq++;
-    printf("mutex2\n");
     at_config(message, cpt_seq, name, value);
-    printf("mutex3\n");
     if (send_message(message, at_socket) != 0)
         printf("[FAILED] Message sending failed\n");
     pthread_mutex_unlock(&m_atcommand);

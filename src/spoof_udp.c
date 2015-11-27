@@ -29,7 +29,7 @@ unsigned short csum(unsigned short *ptr,int nbytes)
     return(answer);
 }
 
-int spoof_udp(const char *dataToSend, size_t size)
+int spoof_udp(const char *dataToSend, size_t dataSize)
 {
 	int s;
 	if ((s = socket (AF_INET, SOCK_RAW, IPPROTO_RAW)) == -1)
@@ -55,7 +55,7 @@ int spoof_udp(const char *dataToSend, size_t size)
 
     //Data part
     data = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
-    strncpy(data, dataToSend, size); // data <- dataToSend
+    memcpy(data, dataToSend, dataSize); // data <- dataToSend;
 
     //some address resolution
     strcpy(source_ip, FAKE_ADDR_SRC);

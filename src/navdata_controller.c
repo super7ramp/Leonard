@@ -123,6 +123,11 @@ void M_decode(const u_char *data, int size)
 		printf("wrong navdata header: %x != %x\n", m_navdata.header.magic, NAVDATA_HEADER);
 		return;
 	}
+	
+	if(m_navdata.header.ardrone_state & navdata_bootstrap)
+	{
+	    printf("boostrap!!!\n");
+	}
 
     //printf("Right navdata header!!!!\n");
 
@@ -169,17 +174,14 @@ void initNavdata ()
     char data[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     char message[512];
 
-    //printf("before send message\n");
 
-	if(spoof_udp(data, 14))
+	if(spoof_udp(data, sizeof(data)))
 	{
 		printf("[FAILED] Spoof failed\n");
 		// TODO: do something
 	}
 
-	//printf("after send message\n");
-
-    //wait to boostrap bit
+    // Wait for boostrap bit
     int i;
     for( i = 0 ;;)
     {
@@ -195,14 +197,19 @@ void initNavdata ()
       //printf("boucle for\n");
 
       if(++i > TIME_OUT)
+      {
+        printf("Timeout, bootstrap bit not received, exiting\n");
         exit(1);
+      }
     }
 
-    printf("in bootstrap mode\n");
+    // If we are here, we have reached bootstrap mode and we need to send
+    // the config message
+    printf("Now in bootstrap mode\n");
     printf("set_config message: %s\n", set_config(message, "general:navdata_demo", "TRUE"));
-    printf("navdata demo set\n");
+    printf("Navdata demo set\n");
 
-    //waiting ack
+    // Now waiting for the ack of the config message
     for( i = 0 ;;)
     {
       while(!m_available)
@@ -219,14 +226,47 @@ void initNavdata ()
 
       if(++i > TIME_OUT)
       {
-        printf("timeout, exiting\n");
+        printf("Timeout, no ack for config message, exiting\n");
         exit(1);
       }
     }
-
-    printf("Sorti du for\n");
+    
+    // If we are here, we are almost done
+    // We need to send a ack (of the ack that the drone has just sent to us)
+    printf("Ack received, sending ack\n");
     printf("ackcontrol message = %s\n", set_ackcontrol(message));
-    printf("ack sent\n");
+    printf("Ack sent\n");
+    
+    for( i = 0 ;;)
+    {
+      while(!m_available)
+        ;
+      Navdata nav = set_p_available_false();
+
+      printf("waiting for cleared ack %d\n",i);
+      printf("nav.header.ardrone_state & command_ack = %d\n", nav.header.ardrone_state & command_ack);
+      printf("nav.header.ardrone_state = %x\n", nav.header.ardrone_state);
+      printf("navdata_m.header.ardrone_state = %x\n", m_navdata.header.ardrone_state);
+
+      if(!(nav.header.ardrone_state & command_ack))
+        break;
+
+      if(++i > TIME_OUT)
+      {
+        printf("Timeout, no message with cleared ack received, exiting\n");
+        exit(1);
+      }
+    }
+    
+    // Wow, that's a success
+    // Just configuring options now
+    printf("Cleared ack received\n");
+    int options = (0x01 << option_demo);// | (0x01 << option_vision_detect);
+    char optionsString[32];
+    sprintf(optionsString, "%d", options);
+    printf("set_config message: %s\n", set_config(message, "general:navdata_options", "%s"));
+
+    printf("Navdata initted!\n");
 }
 
 Navdata set_p_available_false ()
