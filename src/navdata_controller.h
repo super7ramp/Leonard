@@ -213,5 +213,7 @@ void *setup_pcap ();
 void M_decode(const u_char *data, int size);
 void initNavdata ();
 Navdata set_p_available_false ();
+Navdata getNavdata();
+
 
 #endif

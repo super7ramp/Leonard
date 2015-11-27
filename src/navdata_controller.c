@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "spoof_udp.h"
 
+// FIXME do a clean mutex to access m_navdata
 int m_available = 0;
 Navdata m_navdata;
 
@@ -93,6 +94,7 @@ void M_decode(const u_char *data, int size)
 {
     //printf("Entering M_decode\n");
 
+/*
     FILE* file = NULL;
 
     file = fopen("test.txt", "a");
@@ -113,9 +115,8 @@ void M_decode(const u_char *data, int size)
         // On affiche un message d'erreur si on veut
         printf("Impossible d'ouvrir le fichier test.txt");
     }
+*/
 
-
-    
     m_navdata.header = *( (navdata_header *) data);
 	
 	if(m_navdata.header.magic != NAVDATA_HEADER)
@@ -264,7 +265,7 @@ void initNavdata ()
     int options = (0x01 << option_demo);// | (0x01 << option_vision_detect);
     char optionsString[32];
     sprintf(optionsString, "%d", options);
-    printf("set_config message: %s\n", set_config(message, "general:navdata_options", "%s"));
+    printf("set_config message: %s\n", set_config(message, "general:navdata_options", optionsString));
 
     printf("Navdata initted!\n");
 }
@@ -272,5 +273,10 @@ void initNavdata ()
 Navdata set_p_available_false ()
 {
     m_available = 0;
+    return m_navdata;
+}
+
+Navdata getNavdata()
+{
     return m_navdata;
 }
