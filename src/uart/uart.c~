@@ -1,18 +1,9 @@
- 
-
 #include <stdio.h>   /* Standard input/output definitions */
 #include <string.h>  /* String function definitions */
 #include <unistd.h>  /* UNIX standard function definitions */
 #include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
-
-/*
- * 'open_port()' - Open serial port 1.
- *
- * Returns the file descriptor on success or -1 on error.
- */
-
 
 /*
  * Function done by Sheldon group
@@ -23,7 +14,7 @@ void serial_config(int fd)
 	tcgetattr(fd, &options);
 	cfsetispeed(&options, B115200);
 	cfsetospeed(&options, B115200);
-	options.c_cflag |= (CLOCAL | CREAD);  // Enable local mode
+	options.c_cflag |= (CLOCAL | CREAD);  // Enable local mode and the receiver
 	options.c_cflag &= ~PARENB;  // Disable parity
 	options.c_cflag &= ~CSTOPB;  // One stop bit
 	options.c_cflag &= ~CSIZE;  // Clear data size bits
@@ -36,6 +27,12 @@ void serial_config(int fd)
 }
 
 
+/*
+ * 'open_port()' - Open serial port 1.
+ *
+ * Returns the file descriptor on success or -1 on error.
+ */
+
 int open_port(void)
 {
     int fd; /* File descriptor for the port */
@@ -44,8 +41,7 @@ int open_port(void)
         // Changer le nom du port
 	    ////////
 
-    fd = open("/dev/ttyS2", O_RDWR | O_NOCTTY | O_NDELAY);
-    printf("open ttyS2 \n");
+    fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1)
     {
         /*
@@ -56,9 +52,7 @@ int open_port(void)
     }
     
     fcntl(fd, F_SETFL, 0);
-    printf("fcntl\n");
-    serial_config(fd);
-    printf("serial_config\n");
+   	serial_config(fd);
     
     return (fd);
 }
@@ -67,12 +61,9 @@ int open_port(void)
 int read_port(int fd) {
 
     int n = 0,
-        spot = 0,
-        read_error = 0;
+        spot = 0;
     char buf = '\0',
-        response[1024];
-
-    printf("read_port\n");
+        response[512];
    
 
     while(1) {
@@ -82,43 +73,32 @@ int read_port(int fd) {
         buf = '\0';
         spot = 0;
     
-        printf("begin read\n");
-    
         do {
             n = read( fd, &buf, 1 );
-            sprintf( &response[spot], "%c", buf );
+            //sprintf( &(response[spot]), "%c", buf );
+            //response[spot] = buf;
+            strncpy(&response[spot], buf, n);
+            printf("%c\n", buf);
             spot += n;
-        } while( buf != '\r' && buf != '\n' && buf != ' ' && n > 0);
+        } while( buf != '\r' && buf != '\n' && buf !=' ' && n > 0);
 
-        printf("end read\n");
-        
         if (n < 0) {
             perror("Error Reading - ");
-            read_error ++;
+            break;
         }
         else if (n == 0) {
             perror("Read nothing! ");
-            read_error = 0;
         }
         else {
-            printf(" %s \n", response);
-            read_error = 0;
-        }
-        
-        printf("end if\n");
-        
-        if(read_error == 20) {
-        	printf("20 error");
-        	break;
+            printf(" r : %s, size : %d \n", response,(int) strlen(response));
         }
         
     }
 }
 
 
-
 int close_port(int fd) {
-
+	close(fd);
 }
 
 
