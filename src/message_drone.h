@@ -38,5 +38,6 @@ char *set_pitch(char *message, direction dir, float power);
 char *set_gaz(char *message, direction dir, float power);
 char *set_yaw(char *message, direction dir, float power);
 char *reset_com(char *message);
+char *calibrate_magneto(char *message);
 
 #endif
