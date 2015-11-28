@@ -1,23 +1,49 @@
-/*Pour cross-compiler : 
+/* Pour cross-compiler : 
 arm-linux-gnueabi-gcc-4.6 -march=armv7-a -I lib/libpcap/include/ src/navdata_controller.c src/sender.c src/message_drone.c src/at-commands.c src/tests/test_navdata.c -o t_nav.elf -L lib/libpcap/lib -lpthread -lpcap
-
 */
 
 #include <stdio.h>
 #include "../navdata_controller.h"
 
-void *reset_watchdog()
+void *autopilot()
 {
     char buff[512];
-    
+    int t = 0;
+
+    // Tell the drone that it is on a an horizontal plane
     set_trim(buff);
 
-    while(1)
+    // Keep connection alive for 2s
+    while(t < 40)
+    {
+        reset_com(buff);
+        usleep(50000);
+        t++;
+    }
+
+    // Takeoff (5s)
+    t = 0;
+    while(t < 100)
+	{
+        take_off(buff);
+        usleep(50000);
+        t++;
+    }
+
+    // Magnetometer calibration
+    t = 0;
+    calibrate_magneto(buff);
+
+    // Keep connection alive for another 5s then land (hopefully)
+    while(t < 100)
     {
         usleep(50000);
         reset_com(buff);
+        t++;
     }
-    
+
+    landing(buff);
+
     pthread_exit(NULL);
 }
 
@@ -27,21 +53,16 @@ int main ()
  	initialize_at_com();
 
  	// Launch watchdog reset thread
- 	pthread_t reset_watchdog_tid;
- 	pthread_create(&reset_watchdog_tid, NULL, (void *) reset_watchdog, NULL);
+ 	pthread_t autopilot_tid;
+ 	pthread_create(&autopilot_tid, NULL, (void *) autopilot, NULL);
 
     // Launch navdata
   	Navdata navdata;
 	initNavdata();
-
-    // Waiting; TODO: add and check navdata thread state
-    sleep(3);
     
 	while(1)
 	{
-	    
-	    // TODO mutex
-	    if (isNavdataAvailable())
+	    if (isControllerReady())
 	    {
 	        navdata = getNavdata();
 	    
@@ -49,9 +70,6 @@ int main ()
             printf("[Checking header]\n");
             printf("magic : %x\n", navdata.header.magic);
             printf("sequence : %d\n", navdata.header.sequence);
-            //printf("options_tag: %d\n", navdata.header.options[0].tag);
-            //printf("options_size: %d\n", navdata.header.options[0].size);
-            //printf("options_data: %d\n", navdata.header.options[0].data[0]);
             
             // Checking demo
             printf("[Checking demo]\n");
@@ -63,14 +81,32 @@ int main ()
 	        printf("vx : %f\n", navdata.demo.vx);
 	        printf("vy : %f\n", navdata.demo.vy);
 	        printf("vz : %f\n", navdata.demo.vz);
-	
-	        //printf("\e[A\e[A\e[A");
-	        sleep(1);
+	        
+	        // Checking Magneto
+	        printf("[Checking magneto]\n");
+	        printf("size: %d\n", navdata.magneto.size);
+	        printf("magneto_radius: %f\n", navdata.magneto.magneto_radius);
+	        printf("isCalibrated: %d\n", navdata.magneto.magneto_calibration_ok);
+	        printf("state: %d\n", navdata.magneto.magneto_state);
+	        printf("erro_mean: %f\n", navdata.magneto.error_mean);
+	        printf("erro_var: %f\n", navdata.magneto.error_var);
+	        printf("mx: %d\n", navdata.magneto.mx);
+	        printf("my: %d\n", navdata.magneto.my);
+	        printf("mz: %d\n", navdata.magneto.mz);
+	        printf("magneto_rectified: [%f,%f,%f]\n", navdata.magneto.magneto_rectified.v[0], navdata.magneto.magneto_rectified.v[1], navdata.magneto.magneto_rectified.v[2]);
+	        printf("magneto_offset: [%f,%f,%f]\n", navdata.magneto.magneto_rectified.v[0], navdata.magneto.magneto_rectified.v[1], navdata.magneto.magneto_rectified.v[2]);
+	        printf("heading_unwrapped: %f\n", navdata.magneto.heading_unwrapped);
+	        printf("heading_gyro_unwrapped: %f\n", navdata.magneto.heading_gyro_unwrapped);
+	        printf("heading_fusion_unwrapped: %f\n", navdata.magneto.heading_fusion_unwrapped);
 	    }
-	    usleep(300000);
+	    sleep(1);
+
+	    // That was not my idea
+        printf("\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A");
+
 	}
 
-    pthread_cancel(reset_watchdog_tid);
+    pthread_cancel(autopilot_tid);
     terminate_at_com();
 
 	return 0;

@@ -102,16 +102,17 @@ int spoof_udp(const char *dataToSend, size_t dataSize)
     udph->check = csum( (unsigned short*) pseudogram , psize);
 
 	//Send the packet
+	int r;
 	if (sendto (s, datagram, iph->tot_len ,  0, (struct sockaddr *) &sin, sizeof (sin)) < 0)
     {
         perror("sendto failed");
+        r = 1;
     }
-    //Data send successfully
-    else
-    {
-        printf ("Packet Send. Length : %d \n" , iph->tot_len);
-    }
+    else //Data sent successfully
+        r = 0;
 
-	return 0;
+    free(pseudogram);
+
+	return r;
 }
 
