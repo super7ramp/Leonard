@@ -275,3 +275,14 @@ char *reset_com(char *message)
     pthread_mutex_unlock(&m_atcommand);
     return message;
 }
+
+char *calibrate_magneto(char *message)
+{
+    pthread_mutex_lock(&m_atcommand);
+    cpt_seq++;
+    at_calib(message, cpt_seq, ARDRONE_CALIBRATION_DEVICE_MAGNETOMETER); // magnetometer is device 0
+    if (send_message(message, at_socket) != 0)
+        printf("[FAILED] Message sending failed\n");
+    pthread_mutex_unlock(&m_atcommand);
+    return message;
+}
