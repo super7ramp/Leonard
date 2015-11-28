@@ -57,7 +57,7 @@ void action_on_packet_reception(u_char *args, const struct pcap_pkthdr *header, 
    }
     
    // Get the data from the sniffed packet
-   int header_size = sizeof(struct ethhdr) + iphdrlen + sizeof(struct udphdr); // + 4; //@FIXME: why the +4 ???
+   int header_size = sizeof(struct ethhdr) + iphdrlen + sizeof(struct udphdr); //@FIXME: why the +4 ???
    const unsigned char* data = packet + header_size;
 
     //printf("it's a valid packet\n");
@@ -73,7 +73,7 @@ void *setup_pcap ()
   printf("Device: %s\n", IFACE);
 
   // Open device
-  handle = pcap_open_live(IFACE, BUFSIZ, 1, 0, errbuf);
+  handle = pcap_open_live(IFACE, 65536, 1, 0, errbuf);
   if (handle == NULL)
   {
       fprintf(stderr, "Couldn't open device %s: %s\n", IFACE, errbuf);
@@ -133,22 +133,42 @@ void M_decode(const u_char *data, int size)
     //printf("Right navdata header!!!!\n");
 
     // We go at the end of the data to explore the navdata options
-	int pos = sizeof(data);
+    //printf("navdata option\n");
+	int pos = sizeof(navdata_header);
 	while(pos <= size)
 	{
 		const navdata_option_t* navoption = (const navdata_option_t*)(data+pos);
 
+        //printf("cherche navoption_tag\n");
 		if(navoption->tag == option_cks)
 		{
+		    //printf("option_cks\n");
 			break;
 		}
 		else if(navoption->tag == option_demo)
 		{
 		    m_navdata.demo = *( (navdata_demo_t*) navoption );
+		    //printf("demo\n");
 		}
 		else if(navoption->tag == option_vision_detect)
 		{
 		    m_navdata.vision = *( (vision_detect_t*) navoption );
+		    //printf("vision\n");
+		}
+		else
+		{
+		    //printf("undefined navoption tag = %d (0x%x)\n", navoption->tag, navoption->tag);
+		    /*
+		    // display bits around what should be navoption->tag to see where we are
+		    int i;
+		    const void *ptr = navoption;
+		    for (i = 0; i < 128; i+=sizeof(char))
+		    {
+		        printf("%x ", *((char *)ptr));
+       		    ptr+=sizeof(int);     
+		    }
+		    printf("\n");
+		    */
 		}
 
 		pos += navoption->size;
@@ -279,4 +299,9 @@ Navdata set_p_available_false ()
 Navdata getNavdata()
 {
     return m_navdata;
+}
+
+int isNavdataAvailable()
+{
+    return m_available;
 }

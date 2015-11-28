@@ -39,28 +39,35 @@ int main ()
     
 	while(1)
 	{
-	    navdata = getNavdata();
 	    
-	    // Checking header
-	    printf("[Checking header]\n");
-	    printf("magic : %x\n", navdata.header.magic);
-	    printf("sequence : %d\n", navdata.header.sequence);
-	    printf("options_tag: %d\n", navdata.header.options[0].tag);
-	    printf("options_size: %d\n", navdata.header.options[0].size);
-	    printf("options_data: %d\n", navdata.header.options[0].data[0]);
+	    // TODO mutex
+	    if (isNavdataAvailable())
+	    {
+	        navdata = getNavdata();
 	    
-	    // Checking demo
-	    printf("[Checking demo]\n");
-        printf("size : %d\n", navdata.demo.size);
-        printf("bat : %d\n", navdata.demo.vbat_flying_percentage);
-		printf("theta : %f\n", navdata.demo.theta);
-		printf("phi : %f\n", navdata.demo.phi);
-		printf("psi : %f\n", navdata.demo.psi);
-		printf("vx : %f\n", navdata.demo.vx);
-		printf("vy : %f\n", navdata.demo.vy);
-		printf("vz : %f\n", navdata.demo.vz);
-		//printf("\e[A\e[A\e[A");
-		sleep(1);
+            // Checking header
+            printf("[Checking header]\n");
+            printf("magic : %x\n", navdata.header.magic);
+            printf("sequence : %d\n", navdata.header.sequence);
+            //printf("options_tag: %d\n", navdata.header.options[0].tag);
+            //printf("options_size: %d\n", navdata.header.options[0].size);
+            //printf("options_data: %d\n", navdata.header.options[0].data[0]);
+            
+            // Checking demo
+            printf("[Checking demo]\n");
+            printf("size : %d\n", navdata.demo.size);
+            printf("bat : %d\n", navdata.demo.vbat_flying_percentage);
+	        printf("theta : %f\n", navdata.demo.theta);
+	        printf("phi : %f\n", navdata.demo.phi);
+	        printf("psi : %f\n", navdata.demo.psi);
+	        printf("vx : %f\n", navdata.demo.vx);
+	        printf("vy : %f\n", navdata.demo.vy);
+	        printf("vz : %f\n", navdata.demo.vz);
+	
+	        //printf("\e[A\e[A\e[A");
+	        sleep(1);
+	    }
+	    usleep(300000);
 	}
 
     pthread_cancel(reset_watchdog_tid);
