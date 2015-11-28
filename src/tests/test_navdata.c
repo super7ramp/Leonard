@@ -50,64 +50,64 @@ void *autopilot()
 int main ()
 {
     // AT communication initialization
- 	initialize_at_com();
+    initialize_at_com();
 
- 	// Launch watchdog reset thread
- 	pthread_t autopilot_tid;
- 	pthread_create(&autopilot_tid, NULL, (void *) autopilot, NULL);
+    // Launch watchdog reset thread
+    pthread_t autopilot_tid;
+    pthread_create(&autopilot_tid, NULL, (void *) autopilot, NULL);
 
     // Launch navdata
-  	Navdata navdata;
-	initNavdata();
-    
-	while(1)
-	{
-	    if (isControllerReady())
-	    {
-	        navdata = getNavdata();
-	    
+    Navdata navdata;
+    initNavdata();
+
+    while(1)
+    {
+        if (isControllerReady())
+        {
+            navdata = getNavdata();
+
             // Checking header
             printf("[Checking header]\n");
             printf("magic : %x\n", navdata.header.magic);
             printf("sequence : %d\n", navdata.header.sequence);
-            
+
             // Checking demo
             printf("[Checking demo]\n");
             printf("size : %d\n", navdata.demo.size);
             printf("bat : %d\n", navdata.demo.vbat_flying_percentage);
-	        printf("theta : %f\n", navdata.demo.theta);
-	        printf("phi : %f\n", navdata.demo.phi);
-	        printf("psi : %f\n", navdata.demo.psi);
-	        printf("vx : %f\n", navdata.demo.vx);
-	        printf("vy : %f\n", navdata.demo.vy);
-	        printf("vz : %f\n", navdata.demo.vz);
-	        
-	        // Checking Magneto
-	        printf("[Checking magneto]\n");
-	        printf("size: %d\n", navdata.magneto.size);
-	        printf("magneto_radius: %f\n", navdata.magneto.magneto_radius);
-	        printf("isCalibrated: %d\n", navdata.magneto.magneto_calibration_ok);
-	        printf("state: %d\n", navdata.magneto.magneto_state);
-	        printf("erro_mean: %f\n", navdata.magneto.error_mean);
-	        printf("erro_var: %f\n", navdata.magneto.error_var);
-	        printf("mx: %d\n", navdata.magneto.mx);
-	        printf("my: %d\n", navdata.magneto.my);
-	        printf("mz: %d\n", navdata.magneto.mz);
-	        printf("magneto_rectified: [%f,%f,%f]\n", navdata.magneto.magneto_rectified.v[0], navdata.magneto.magneto_rectified.v[1], navdata.magneto.magneto_rectified.v[2]);
-	        printf("magneto_offset: [%f,%f,%f]\n", navdata.magneto.magneto_rectified.v[0], navdata.magneto.magneto_rectified.v[1], navdata.magneto.magneto_rectified.v[2]);
-	        printf("heading_unwrapped: %f\n", navdata.magneto.heading_unwrapped);
-	        printf("heading_gyro_unwrapped: %f\n", navdata.magneto.heading_gyro_unwrapped);
-	        printf("heading_fusion_unwrapped: %f\n", navdata.magneto.heading_fusion_unwrapped);
-	    }
-	    sleep(1);
+            printf("theta : %f\n", navdata.demo.theta);
+            printf("phi : %f\n", navdata.demo.phi);
+            printf("psi : %f\n", navdata.demo.psi);
+            printf("vx : %f\n", navdata.demo.vx);
+            printf("vy : %f\n", navdata.demo.vy);
+            printf("vz : %f\n", navdata.demo.vz);
 
-	    // That was not my idea
+            // Checking Magneto
+            printf("[Checking magneto]\n");
+            printf("size: %d\n", navdata.magneto.size);
+            printf("magneto_radius: %f\n", navdata.magneto.magneto_radius);
+            printf("isCalibrated: %d\n", navdata.magneto.magneto_calibration_ok);
+            printf("state: %d\n", navdata.magneto.magneto_state);
+            printf("erro_mean: %f\n", navdata.magneto.error_mean);
+            printf("erro_var: %f\n", navdata.magneto.error_var);
+            printf("mx: %d\n", navdata.magneto.mx);
+            printf("my: %d\n", navdata.magneto.my);
+            printf("mz: %d\n", navdata.magneto.mz);
+            printf("magneto_rectified: [%f,%f,%f]\n", navdata.magneto.magneto_rectified.v[0], navdata.magneto.magneto_rectified.v[1], navdata.magneto.magneto_rectified.v[2]);
+            printf("magneto_offset: [%f,%f,%f]\n", navdata.magneto.magneto_rectified.v[0], navdata.magneto.magneto_rectified.v[1], navdata.magneto.magneto_rectified.v[2]);
+            printf("heading_unwrapped: %f\n", navdata.magneto.heading_unwrapped);
+            printf("heading_gyro_unwrapped: %f\n", navdata.magneto.heading_gyro_unwrapped);
+            printf("heading_fusion_unwrapped: %f\n", navdata.magneto.heading_fusion_unwrapped);
+        }
+        sleep(1);
+
+        // That was not my idea
         printf("\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A\e[A");
 
-	}
+    }
 
     pthread_cancel(autopilot_tid);
     terminate_at_com();
 
-	return 0;
+    return 0;
 }
