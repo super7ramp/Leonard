@@ -120,7 +120,7 @@ enum option_tag {
 typedef struct navdata_option_t {
 	uint16_t tag;
 	uint16_t size;
-	uint8_t  data[1];//add by antoine
+	//uint8_t  data[];//add by antoine
 } __attribute__ ((packed)) navdata_option_t;
 
 /**
@@ -131,8 +131,7 @@ typedef struct navdata_header {
   uint32_t    ardrone_state;    /*!< Bit mask built from def_ardrone_state_mask_t */
   uint32_t    sequence;         /*!< Sequence number, incremented for each sent packet */
   uint32_t    vision_defined;
-
-  navdata_option_t  options[1];
+  //navdata_option_t  options[1];
 } __attribute__ ((packed)) navdata_header;
 
 /*----------------------------------------------------------------------------*/
@@ -214,6 +213,6 @@ void M_decode(const u_char *data, int size);
 void initNavdata ();
 Navdata set_p_available_false ();
 Navdata getNavdata();
-
+int isNavdataAvailable();
 
 #endif
