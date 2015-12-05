@@ -1,0 +1,6 @@
+nodes:
+beacon1,0.0,1.0
+beacon2,1.0,0.0
+edges:
+beacon1,beacon2
+beacon2,beacon1
