@@ -34,7 +34,7 @@ typedef struct _graph_t
 
     /** The neighbours for each node (i.e. the neighbours of nodes[i] are
       * in the edges[i] chained list) */
-    adjacency_list_t *edges[MAX_NUMBER_OF_NODES];
+    adjacency_list_t *neighbours[MAX_NUMBER_OF_NODES];
 
     /** The number of known nodes */
     int numberOfNodes;

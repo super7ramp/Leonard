@@ -22,7 +22,7 @@ void printGraph(const graph_t *graph)
         printf("y = %f\n", graph->nodes[i].y);
 
         printf("Neighbours: ");
-        adjacency_list_t *currentNeighbour = graph->edges[i];
+        adjacency_list_t *currentNeighbour = graph->neighbours[i];
         while(currentNeighbour)
         {
             printf("%s ", currentNeighbour->node->name);
@@ -42,7 +42,7 @@ void freeGraph(graph_t *graph)
     for(i = 0; i < graph->numberOfNodes; i++)
     {
         // We only need to clean the adjacency lists (chained lists)
-        freeAdjacencyList(graph->edges[i]);
+        freeAdjacencyList(graph->neighbours[i]);
     }
 
     free(graph);

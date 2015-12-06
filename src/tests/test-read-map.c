@@ -3,7 +3,7 @@
 #include "../map/map_reader.h"
 
 /** To compile this (since Makefile is not up-to-date):
-  * gcc -Wall ../map/map_reader.c test-read-map.c -o test-read-map
+  * gcc -Wall -lm ../map/map_common.c ../map/map_reader.c test-read-map.c -o test-read-map
   * To run this:
   * ./test-read-map map.csv
   */

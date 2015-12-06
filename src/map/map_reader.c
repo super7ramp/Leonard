@@ -39,7 +39,7 @@ graph_t *createGraph(FILE* csvMap)
     graph->numberOfNodes = 0;
     int i;
     for(i = 0; i < MAX_NUMBER_OF_NODES; i++)
-        graph->edges[i] = NULL;
+        graph->neighbours[i] = NULL;
 
     // Parse nodes
     while(fgets(buf, LINE_MAX_LENGTH, csvMap) && strcmp(buf, "edges:\n"))
@@ -105,12 +105,10 @@ void addEdges(const char *buf, graph_t *graph)
         else
         {
             // Add adjacentNode as a neighbour of node
-            //printf("Before: %x\n", (void *)graph->edges[nodeId]);
             addAdjacentNode(
                     &(graph->nodes[nodeId]),
                     &(graph->nodes[adjacentNodeId]),
-                    &(graph->edges[nodeId]));
-            //printf("After: %x\n", (void *)graph->edges[nodeId]);
+                    &(graph->neighbours[nodeId]));
         }
         field = strtok(NULL, ",\n");
     }
