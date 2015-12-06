@@ -18,8 +18,9 @@ typedef struct _node_t
 typedef struct _adjacency_list_t adjacency_list_t;
 struct _adjacency_list_t
 {
-    node_t *node;
-    adjacency_list_t *next;
+    node_t *node;           //< A neighbour
+    float weight;           //< The weight between the two nodes
+    adjacency_list_t *next; //< The next neighbour
 };
 
 /** @brief The graph structure */

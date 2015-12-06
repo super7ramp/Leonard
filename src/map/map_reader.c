@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "map_reader.h"
 
 //------- These functions are meant to be used only in this file --------//
 void addNode(const char *buf, graph_t *graph);
 void addEdges(const char *buf, graph_t *graph);
-void addAdjacentNode(node_t *adjacentNode, adjacency_list_t **adjacencyList);
+void addAdjacentNode(node_t *originNode, node_t *adjacentNode, adjacency_list_t **adjacencyList);
+float computeWeight(node_t a, node_t b);
 int indexOf(const char *nodeName, const graph_t *graph);
 void freeAdjacencyList(adjacency_list_t *list);
 //-----------------------------------------------------------------------//
@@ -93,6 +95,7 @@ void printGraph(const graph_t *graph)
         while(currentNeighbour)
         {
             printf("%s ", currentNeighbour->node->name);
+            printf("(weight = %f) ", currentNeighbour->weight);
             currentNeighbour = currentNeighbour->next;
         }
         printf("\n");
@@ -152,23 +155,37 @@ void addEdges(const char *buf, graph_t *graph)
         {
             // Add adjacentNode as a neighbour of node
             //printf("Before: %x\n", (void *)graph->edges[nodeId]);
-            addAdjacentNode(&(graph->nodes[adjacentNodeId]), &(graph->edges[nodeId]));
+            addAdjacentNode(
+                    &(graph->nodes[nodeId]),
+                    &(graph->nodes[adjacentNodeId]),
+                    &(graph->edges[nodeId]));
             //printf("After: %x\n", (void *)graph->edges[nodeId]);
         }
         field = strtok(NULL, ",\n");
     }
 }
 
-/** @brief Basically, add a node to a chained list.
-    @param node Node to add
-    @param neighboursList Pointer to the list to add node to */
-void addAdjacentNode(node_t *node, adjacency_list_t **neighbourList)
+/** @brief Basically, add a neighbour node to the adjacency (chained) list
+    @param node The concerned node (origin)
+    @param neighbour The neighbour node to add (destination)
+    @param The node's list to add node to */
+void addAdjacentNode(node_t *node, node_t *neighbourNode, adjacency_list_t **neighbourList)
 {
     // add at the beginning of the chained list
     adjacency_list_t *newNeighbour = malloc(sizeof(adjacency_list_t));
-    newNeighbour->node = node;
+    newNeighbour->node = neighbourNode;
+    newNeighbour->weight = computeWeight(*node,*neighbourNode); 
     newNeighbour->next = *neighbourList;
     *neighbourList = newNeighbour;
+}
+
+/** @brief Compute weight of the path between node a and node b
+  * @param a First node
+  * @param b Second node
+  * @return The weight (basically, the distance) */
+float computeWeight(node_t a, node_t b)
+{
+    return sqrt(pow(a.x-b.x,2) + pow(a.y-b.y,2));
 }
 
 int indexOf(const char *nodeName, const graph_t *graph)
