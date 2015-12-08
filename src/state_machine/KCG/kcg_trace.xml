@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--$*************** KCG Version 6.1.3 (build i6) ****************
+** Command: s2c613 -config U:/Windows/Bureau/Drone_state_machine/KCG\kcg_s2c_config.txt
+** Generation date: 2015-12-03T12:01:41
+*************************************************************$-->
+<Model date="2015-12-03T12:01:41" commandLine="s2c613 -config U:/Windows/Bureau/Drone_state_machine/KCG\kcg_s2c_config.txt">
+  <RootNode scadeName="system_state_machine" headerFile="system_state_machine.h" targetCycleFct="system_state_machine"
+      targetInitFct="system_state_machine_reset">
+    <Input scadeName="flag_land" scadeType="int" targetName="flag_land" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_takeoff" scadeType="int" targetName="flag_takeoff" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_control_e" scadeType="int" targetName="flag_control_e" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_emergency" scadeType="int" targetName="flag_emergency" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_control_s" scadeType="int" targetName="flag_control_s" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_calibM" scadeType="int" targetName="flag_calibM" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_calibH" scadeType="int" targetName="flag_calibH" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_rollcalled" scadeType="int" targetName="flag_rollcalled" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_yawcalled" scadeType="int" targetName="flag_yawcalled" targetType="kcg_int" inCtx="true"/>
+    <Input scadeName="flag_rollpitchcalled" scadeType="int" targetName="flag_rollpitchcalled" targetType="kcg_int"
+        inCtx="true"/>
+    <Input scadeName="flag_pitchcalled" scadeType="int" targetName="flag_pitchcalled" targetType="kcg_int"
+        inCtx="true"/>
+    <Input scadeName="falg_antiemergency" scadeType="int" targetName="falg_antiemergency" targetType="kcg_int"
+        inCtx="true"/>
+    <Output scadeName="order_called" scadeType="int" targetName="order_called" targetType="kcg_int" inCtx="true"/>
+    <Local scadeName="landCalled" scadeType="int" targetName="flag_land" targetType="kcg_int"/>
+    <Local scadeName="takeoffCalled" scadeType="int" targetName="flag_takeoff" targetType="kcg_int"/>
+    <Local scadeName="emergencyCalled" scadeType="int" targetName="flag_emergency" targetType="kcg_int"/>
+    <Local scadeName="calibMagnCalled" scadeType="int" targetName="flag_calibM" targetType="kcg_int"/>
+    <Local scadeName="calibHorCalled" scadeType="int" targetName="flag_calibH" targetType="kcg_int"/>
+    <Local scadeName="controlEnable" scadeType="int" targetName="flag_control_e" targetType="kcg_int"/>
+    <Local scadeName="controlState" scadeType="int" targetName="flag_control_s" targetType="kcg_int"/>
+    <Local scadeName="rollCalled" scadeType="int" targetName="flag_rollcalled" targetType="kcg_int"/>
+    <Local scadeName="yawCalled" scadeType="int" targetName="flag_yawcalled" targetType="kcg_int"/>
+    <Local scadeName="rollpitchCalled" scadeType="int" targetName="flag_rollpitchcalled" targetType="kcg_int"/>
+    <Local scadeName="pitchCalled" scadeType="int" targetName="flag_pitchcalled" targetType="kcg_int"/>
+    <Local scadeName="anti_emergency_called" scadeType="int" targetName="falg_antiemergency" targetType="kcg_int"/>
+    <Local scadeName="_L5" scadeType="int" targetName="flag_land" targetType="kcg_int"/>
+    <Local scadeName="_L7" scadeType="int" targetName="flag_takeoff" targetType="kcg_int"/>
+    <Local scadeName="_L8" scadeType="int" targetName="flag_control_e" targetType="kcg_int"/>
+    <Local scadeName="_L9" scadeType="int" targetName="flag_emergency" targetType="kcg_int"/>
+    <Local scadeName="_L10" scadeType="int" targetName="flag_control_s" targetType="kcg_int"/>
+    <Local scadeName="_L11" scadeType="int" targetName="flag_calibM" targetType="kcg_int"/>
+    <Local scadeName="_L12" scadeType="int" targetName="flag_calibH" targetType="kcg_int"/>
+    <Local scadeName="_L20" scadeType="int" targetName="flag_rollcalled" targetType="kcg_int"/>
+    <Local scadeName="_L21" scadeType="int" targetName="flag_yawcalled" targetType="kcg_int"/>
+    <Local scadeName="_L22" scadeType="int" targetName="flag_rollpitchcalled" targetType="kcg_int"/>
+    <Local scadeName="_L23" scadeType="int" targetName="flag_pitchcalled" targetType="kcg_int"/>
+    <Local scadeName="_L24" scadeType="int" targetName="falg_antiemergency" targetType="kcg_int"/>
+    <Automaton scadeName="SM1" targetStatesType="SSM_ST_SM1" targetTransitionsType="SSM_TR_SM1">
+      <State scadeName="FIRST_STAT" targetName="SSM_st_FIRST_STAT_SM1">
+        <Fork priority="1">
+          <Condition/>
+          <Transition targetName="SSM_TR_FIRST_STAT_1_SM1" kind="strong" scadeDest="LAST_STATE"/>
+        </Fork>
+        <Fork priority="2">
+          <Condition/>
+          <Transition targetName="SSM_TR_FIRST_STAT_2_SM1" kind="strong" scadeDest="STATE_MANUAL"/>
+        </Fork>
+        <Fork priority="3">
+          <Condition/>
+          <Transition targetName="SSM_TR_FIRST_STAT_3_SM1" kind="strong" scadeDest="STATE_MISSION"/>
+        </Fork>
+      </State>
+      <State scadeName="STATE_MANUAL" targetName="SSM_st_STATE_MANUAL_SM1">
+        <Automaton scadeName="SM2" targetStatesType="SSM_ST_SM2_SM1_STATE_MANUAL"
+            targetTransitionsType="SSM_TR_SM2_SM1_STATE_MANUAL">
+          <State scadeName="Init" targetName="SSM_st_Init_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="MOVE_ROLL"/>
+            </Fork>
+            <Fork priority="2">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_2_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="MOVE_PITCHROLL"/>
+            </Fork>
+            <Fork priority="3">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_3_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAND"/>
+            </Fork>
+            <Fork priority="4">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_4_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="TAKE_OFF"/>
+            </Fork>
+            <Fork priority="5">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_5_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="SET_MAGN"/>
+            </Fork>
+            <Fork priority="6">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_6_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="SET_TRIM"/>
+            </Fork>
+            <Fork priority="7">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_7_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="EMERGENCY"/>
+            </Fork>
+            <Fork priority="8">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_8_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="MOVE_PITCH"/>
+            </Fork>
+            <Fork priority="9">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_9_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="ANTI_EMERGENCY"/>
+            </Fork>
+            <Fork priority="10">
+              <Condition/>
+              <Transition targetName="SSM_TR_Init_10_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="MOVE_YAW"/>
+            </Fork>
+          </State>
+          <State scadeName="LAST_STATE" targetName="SSM_st_LAST_STATE_SM1_STATE_MANUAL_SM2">
+          </State>
+          <State scadeName="MOVE_PITCHROLL" targetName="SSM_st_MOVE_PITCHROLL_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_MOVE_PITCHROLL_1_SM2_SM1_STATE_MANUAL" kind="strong"
+                  scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="LAND" targetName="SSM_st_LAND_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_LAND_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="TAKE_OFF" targetName="SSM_st_TAKE_OFF_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_TAKE_OFF_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="EMERGENCY" targetName="SSM_st_EMERGENCY_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_EMERGENCY_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="SET_TRIM" targetName="SSM_st_SET_TRIM_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_SET_TRIM_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="SET_MAGN" targetName="SSM_st_SET_MAGN_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_SET_MAGN_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="MOVE_ROLL" targetName="SSM_st_MOVE_ROLL_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_MOVE_ROLL_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="MOVE_PITCH" targetName="SSM_st_MOVE_PITCH_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_MOVE_PITCH_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="ANTI_EMERGENCY" targetName="SSM_st_ANTI_EMERGENCY_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_ANTI_EMERGENCY_1_SM2_SM1_STATE_MANUAL" kind="strong"
+                  scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <State scadeName="MOVE_YAW" targetName="SSM_st_MOVE_YAW_SM1_STATE_MANUAL_SM2">
+            <Fork priority="1">
+              <Transition targetName="SSM_TR_MOVE_YAW_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
+            </Fork>
+          </State>
+          <ActiveState targetName="SM2_state_act_SM1_STATE_MANUAL"/>
+          <NextState targetName="SM2_state_nxt_SM1_STATE_MANUAL" inCtx="true"/>
+          <SelectedState targetName="SM2_state_sel_SM1_STATE_MANUAL"/>
+          <Clock targetName="SM2_state_sel_SM1_STATE_MANUAL" targetType="SSM_ST_SM2_SM1_STATE_MANUAL"
+              clockVar="SM1_state_act" clockVal="SSM_st_STATE_MANUAL_SM1"/>
+          <Clock targetName="SM2_state_act_SM1_STATE_MANUAL" targetType="SSM_ST_SM2_SM1_STATE_MANUAL"
+              clockVar="SM1_state_act" clockVal="SSM_st_STATE_MANUAL_SM1"/>
+        </Automaton>
+        <Fork priority="1">
+          <Transition targetName="SSM_TR_STATE_MANUAL_1_SM1" kind="strong" scadeDest="LAST_STATE"/>
+        </Fork>
+      </State>
+      <State scadeName="STATE_MISSION" targetName="SSM_st_STATE_MISSION_SM1">
+        <Fork priority="1">
+          <Transition targetName="SSM_TR_STATE_MISSION_1_SM1" kind="strong" scadeDest="LAST_STATE"/>
+        </Fork>
+      </State>
+      <State scadeName="LAST_STATE" targetName="SSM_st_LAST_STATE_SM1">
+      </State>
+      <ActiveState targetName="SM1_state_act"/>
+      <NextState targetName="SM1_state_nxt" inCtx="true"/>
+      <SelectedState targetName="SM1_state_sel"/>
+      <ResetActiveState targetName="SM1_reset_act"/>
+    </Automaton>
+    <Init targetName="init1" targetType="kcg_bool" clockVar="SM1_state_act" clockVal="SSM_st_STATE_MANUAL_SM1"
+        inCtx="true"/>
+    <Init targetName="init" targetType="kcg_bool" inCtx="true"/>
+    <OutCtxType targetName="outC_system_state_machine"/>
+    <InCtxType targetName="inC_system_state_machine"/>
+  </RootNode>
+  <Package scadeName="digital"/>
+  <Package scadeName="truthtables">
+    <EnumType scadeName="TruthTableValues" targetName="TruthTableValues_truthtables">
+      <EnumVal scadeName="T" targetName="T_truthtables"/>
+      <EnumVal scadeName="F" targetName="F_truthtables"/>
+      <EnumVal scadeName="X" targetName="X_truthtables"/>
+    </EnumType>
+  </Package>
+  <Package scadeName="linear"/>
+  <Package scadeName="filters"/>
+  <Package scadeName="vect"/>
+  <Package scadeName="math"/>
+  <Package scadeName="mathext"/>
+  <Package scadeName="pwlinear"/>
+  <Package scadeName="lut">
+    <NamedType scadeName="LutIndex" targetName="LutIndex_lut" refType="struct__5293"/>
+  </Package>
+  <Package scadeName="verif"/>
+  <Option name="root_node_name" value="system_state_machine"/>
+  <Option name="target" value="C"/>
+  <Option name="target_dir" value="U:/Windows/Bureau/Drone_state_machine/KCG"/>
+  <Option name="exp" value="#off#"/>
+  <Option name="noexp" value="#off#"/>
+  <Option name="expall" value="#off#"/>
+  <Option name="global_root_context" value="#off#"/>
+  <Option name="optimization_level" value="1"/>
+  <Option name="macro_on_assert" value="#off#"/>
+  <Option name="global_prefix" value="#off#"/>
+  <Option name="name_length" value="200"/>
+  <Option name="significance_length" value="31"/>
+  <Option name="header" value="#off#"/>
+  <Option name="input_threshold" value="#off#"/>
+  <Option name="user_config" value="./user_macros.h"/>
+  <Option name="observe" value="#off#"/>
+  <Option name="no_observe" value="#off#"/>
+  <Option name="debug" value="#off#"/>
+  <Option name="probes" value="#off#"/>
+  <Option name="input_file" value="U:/Windows/Bureau/Drone_state_machine/KCG\kcg_xml_filter_out.scade"/>
+  <Option name="wrap_c_ops" value="#off#"/>
+  <Option name="no_bitwise" value="#off#"/>
+  <Option name="warn_error" value="#on#"/>
+  <Option name="static" value="#off#"/>
+  <Option name="state_vector" value="#off#"/>
+  <PredefType scadeName="real" targetName="kcg_real"/>
+  <PredefType scadeName="bool" targetName="kcg_bool"/>
+  <PredefType scadeName="char" targetName="kcg_char"/>
+  <PredefType scadeName="int" targetName="kcg_int"/>
+  <StructType targetName="struct__5293" targetCopyFct="kcg_copy_struct__5293" targetCompFct="kcg_comp_struct__5293">
+    <Field scadeName="k" scadeType="int" targetName="k" targetType="kcg_int"/>
+    <Field scadeName="f" scadeType="real" targetName="f" targetType="kcg_real"/>
+  </StructType>
+</Model>
+<!--$*************** KCG Version 6.1.3 (build i6) ****************
+** kcg_trace.xml
+** Generation date: 2015-12-03T12:01:41
+*************************************************************$-->

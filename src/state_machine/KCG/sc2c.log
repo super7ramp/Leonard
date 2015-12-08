@@ -1,0 +1,38 @@
+$**************  SCADETOC Version 6.4.2 (build i26) **************
+** Generation date: 2015-12-03T12:01:39
+** Command: scade -code "U:\Windows\Bureau\Drone_state_machine\Drone_state_machine.etp" -node system_state_machine -conf KCG
+*************************************************************$
+*** Generated Files Information (GENFIL): KCG- Generated files
+ ~kcg.log
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg.log, line 0, character 0
+ ~kcg_xml_filter_out.scade
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_xml_filter_out.scade, line 0, character 0
+ ~kcg_s2c_config.txt
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_s2c_config.txt, line 0, character 0
+ ~kcg_trace.xml
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_trace.xml, line 0, character 0
+ ~kcg_metrics.txt
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_metrics.txt, line 0, character 0
+ ~system_state_machine.c
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\system_state_machine.c, line 0, character 0
+ ~system_state_machine.h
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\system_state_machine.h, line 0, character 0
+ ~kcg_types.h
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_types.h, line 0, character 0
+ ~kcg_consts.h
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_consts.h, line 0, character 0
+ ~kcg_sensors.h
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_sensors.h, line 0, character 0
+ ~kcg_types.c
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_types.c, line 0, character 0
+ ~kcg_consts.c
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\kcg_consts.c, line 0, character 0
+*** Generated Files Information (GENFIL): Code Generator Generated files
+ ~sc2c.log
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\sc2c.log, line 0, character 0
+ ~sc2c_integration_files.txt
+  at file U:\Windows\Bureau\Drone_state_machine\KCG\sc2c_integration_files.txt, line 0, character 0
+$**************  SCADETOC Version 6.4.2 (build i26) **************
+** Generation date: 2015-12-03T12:01:42
+** sc2c.log
+*************************************************************$

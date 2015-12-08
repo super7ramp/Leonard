@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Operator xmlns="http://www.esterel-technologies.com/ns/scade/4" xmlns:ed="http://www.esterel-technologies.com/ns/scade/pragmas/editor/4" xmlns:kcg="http://www.esterel-technologies.com/ns/scade/pragmas/codegen/2" xmlns:mtc="http://www.esterel-technologies.com/ns/scade/pragmas/mtc/1" kind="node" name="FOLDWI_MTC_OBS">
+	<inputs>
+		<Variable name="Size">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="int"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c1a/257C/146C/4a16c058837" hidden="true"/>
+			</pragmas>
+		</Variable>
+		<Variable name="Exit_Index">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="int"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c18/257C/146C/4a16c0586e59" hidden="true"/>
+			</pragmas>
+		</Variable>
+	</inputs>
+	<locals>
+		<Variable probe="true" name="MTC_ALL1">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="MTC::Result"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c1b/257C/146C/4a16c058271c"/>
+			</pragmas>
+		</Variable>
+		<Variable name="MTC_PART_ITER">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c19/257C/146C/4a16c0583e4b"/>
+			</pragmas>
+		</Variable>
+		<Variable name="MTC_NOT_ITER">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c17/257C/146C/4a16c05876e4"/>
+			</pragmas>
+		</Variable>
+		<Variable name="MTC_ALL_ITER">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c16/257C/146C/4a16c05895d"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L8">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c2c/257C/146C/4a16c0585b72"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L7">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="MTC::Result"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c2a/257C/146C/4a16c05811e1"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L4">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="int"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c24/257C/146C/4a16c0587454"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L3">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="int"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c21/257C/146C/4a16c0586b97"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L2">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="int"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c1f/257C/146C/4a16c0585ed7"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L1">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/8c1d/257C/146C/4a16c0585cfa"/>
+			</pragmas>
+		</Variable>
+	</locals>
+	<data>
+		<!-- _L1 =  not MTC_NOT_ITER; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L1"/>
+			</lefts>
+			<right>
+				<!--  not MTC_NOT_ITER -->
+				<UnaryOp name="1" operator="not">
+					<operand>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_NOT_ITER"/>
+							</path>
+						</IdExpression>
+					</operand>
+				</UnaryOp>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c1c/257C/146C/4a16c058169e"/>
+			</pragmas>
+		</Equation>
+		<!-- _L2 = 0; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L2"/>
+			</lefts>
+			<right>
+				<ConstValue value="0"/>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c1e/257C/146C/4a16c0581ef1"/>
+			</pragmas>
+		</Equation>
+		<!-- _L3 = Exit_Index; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L3"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="Exit_Index"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c20/257C/146C/4a16c0587ef6"/>
+			</pragmas>
+		</Equation>
+		<!-- MTC_ALL1 = _L7; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="MTC_ALL1"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="_L7"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c22/257C/146C/4a16c0583968"/>
+			</pragmas>
+		</Equation>
+		<!-- _L4 = Size; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L4"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="Size"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c23/257C/146C/4a16c05864c9"/>
+			</pragmas>
+		</Equation>
+		<!-- MTC_NOT_ITER = _L3 = _L2; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="MTC_NOT_ITER"/>
+			</lefts>
+			<right>
+				<!-- _L3 = _L2 -->
+				<BinaryOp name="1" operator="=">
+					<operands>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="_L3"/>
+							</path>
+						</IdExpression>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="_L2"/>
+							</path>
+						</IdExpression>
+					</operands>
+				</BinaryOp>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c25/257C/146C/4a16c058601d"/>
+			</pragmas>
+		</Equation>
+		<!-- MTC_PART_ITER = _L1 and _L8; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="MTC_PART_ITER"/>
+			</lefts>
+			<right>
+				<!-- _L1 and _L8 -->
+				<NAryOp name="1" operator="and">
+					<operands>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="_L1"/>
+							</path>
+						</IdExpression>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="_L8"/>
+							</path>
+						</IdExpression>
+					</operands>
+				</NAryOp>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c27/257C/146C/4a16c058257a"/>
+			</pragmas>
+		</Equation>
+		<!-- _L7 = MTC::LATCHALL03(MTC_NOT_ITER, MTC_PART_ITER, MTC_ALL_ITER); -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L7"/>
+			</lefts>
+			<right>
+				<!-- MTC::LATCHALL03(MTC_NOT_ITER, MTC_PART_ITER, MTC_ALL_ITER) -->
+				<CallExpression>
+					<operator>
+						<OpCall name="1">
+							<operator>
+								<OperatorRef name="MTC::LATCHALL03"/>
+							</operator>
+						</OpCall>
+					</operator>
+					<callParameters>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_NOT_ITER"/>
+							</path>
+						</IdExpression>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_PART_ITER"/>
+							</path>
+						</IdExpression>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_ALL_ITER"/>
+							</path>
+						</IdExpression>
+					</callParameters>
+				</CallExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c29/257C/146C/4a16c0586e7"/>
+			</pragmas>
+		</Equation>
+		<!-- _L8 =  not MTC_ALL_ITER; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L8"/>
+			</lefts>
+			<right>
+				<!--  not MTC_ALL_ITER -->
+				<UnaryOp name="2" operator="not">
+					<operand>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_ALL_ITER"/>
+							</path>
+						</IdExpression>
+					</operand>
+				</UnaryOp>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c2b/257C/146C/4a16c05828a5"/>
+			</pragmas>
+		</Equation>
+		<!-- MTC_ALL_ITER = _L3 = _L4; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="MTC_ALL_ITER"/>
+			</lefts>
+			<right>
+				<!-- _L3 = _L4 -->
+				<BinaryOp name="2" operator="=">
+					<operands>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="_L3"/>
+							</path>
+						</IdExpression>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="_L4"/>
+							</path>
+						</IdExpression>
+					</operands>
+				</BinaryOp>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/8c2d/257C/146C/4a16c058432b"/>
+			</pragmas>
+		</Equation>
+	</data>
+	<pragmas>
+		<ed:Operator oid="!ed/8bf6/257C/146C/4a16c01229e" symbolFile="FOLDWI_MTC_OBS.ssl" xmlns="http://www.esterel-technologies.com/ns/scade/pragmas/editor/4">
+			<diagrams>
+				<NetDiagram name="FoldwiInstrumentation" landscape="true" format="A4 (210 297)" oid="!ed/8bf7/257C/146C/4a16c0122f3">
+					<presentationElements>
+						<EquationGE presentable="!ed/8c1c/257C/146C/4a16c058169e">
+							<position>
+								<Point x="6535" y="1984"/>
+							</position>
+							<size>
+								<Size width="1005" height="662"/>
+							</size>
+						</EquationGE>
+						<EquationGE kind="OBJ_LIT" presentable="!ed/8c1e/257C/146C/4a16c0581ef1">
+							<position>
+								<Point x="1984" y="1984"/>
+							</position>
+							<size>
+								<Size width="555" height="318"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c20/257C/146C/4a16c0587ef6">
+							<position>
+								<Point x="2699" y="1005"/>
+							</position>
+							<size>
+								<Size width="265" height="503"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c22/257C/146C/4a16c0583968">
+							<position>
+								<Point x="20241" y="2223"/>
+							</position>
+							<size>
+								<Size width="212" height="318"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c23/257C/146C/4a16c05864c9">
+							<position>
+								<Point x="2170" y="4180"/>
+							</position>
+							<size>
+								<Size width="265" height="503"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c25/257C/146C/4a16c058601d">
+							<position>
+								<Point x="4789" y="1323"/>
+							</position>
+							<size>
+								<Size width="1006" height="661"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c27/257C/146C/4a16c058257a">
+							<position>
+								<Point x="8943" y="2117"/>
+							</position>
+							<size>
+								<Size width="1006" height="661"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c29/257C/146C/4a16c0586e7">
+							<position>
+								<Point x="14711" y="847"/>
+							</position>
+							<size>
+								<Size width="3863" height="3227"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c2b/257C/146C/4a16c05828a5">
+							<position>
+								<Point x="6562" y="2778"/>
+							</position>
+							<size>
+								<Size width="1006" height="661"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/8c2d/257C/146C/4a16c058432b">
+							<position>
+								<Point x="4604" y="3995"/>
+							</position>
+							<size>
+								<Size width="1006" height="662"/>
+							</size>
+						</EquationGE>
+						<Edge leftVarIndex="1" rightExprIndex="2" srcEquation="!ed/8c23/257C/146C/4a16c05864c9" dstEquation="!ed/8c2d/257C/146C/4a16c058432b">
+							<positions>
+								<Point x="2434" y="4445"/>
+								<Point x="3440" y="4445"/>
+								<Point x="3440" y="4445"/>
+								<Point x="4604" y="4445"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/8c29/257C/146C/4a16c0586e7" dstEquation="!ed/8c22/257C/146C/4a16c0583968">
+							<positions>
+								<Point x="18574" y="2461"/>
+								<Point x="19447" y="2461"/>
+								<Point x="19447" y="2461"/>
+								<Point x="20346" y="2461"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/8c20/257C/146C/4a16c0587ef6" dstEquation="!ed/8c25/257C/146C/4a16c058601d">
+							<positions>
+								<Point x="2963" y="1270"/>
+								<Point x="3995" y="1270"/>
+								<Point x="3995" y="1535"/>
+								<Point x="4789" y="1535"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="2" srcEquation="!ed/8c27/257C/146C/4a16c058257a" dstEquation="!ed/8c29/257C/146C/4a16c0586e7">
+							<positions>
+								<Point x="9948" y="2461"/>
+								<Point x="13467" y="2461"/>
+								<Point x="13467" y="2461"/>
+								<Point x="14711" y="2461"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/8c25/257C/146C/4a16c058601d" dstEquation="!ed/8c29/257C/146C/4a16c0586e7">
+							<positions>
+								<Point x="5794" y="1667"/>
+								<Point x="10689" y="1667"/>
+								<Point x="10689" y="1667"/>
+								<Point x="14711" y="1667"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/8c1c/257C/146C/4a16c058169e" dstEquation="!ed/8c27/257C/146C/4a16c058257a">
+							<positions>
+								<Point x="7541" y="2328"/>
+								<Point x="8229" y="2328"/>
+								<Point x="8229" y="2328"/>
+								<Point x="8943" y="2328"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="2" srcEquation="!ed/8c1e/257C/146C/4a16c0581ef1" dstEquation="!ed/8c25/257C/146C/4a16c058601d">
+							<positions>
+								<Point x="2540" y="2143"/>
+								<Point x="4286" y="2143"/>
+								<Point x="4286" y="1773"/>
+								<Point x="4789" y="1773"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/8c25/257C/146C/4a16c058601d" dstEquation="!ed/8c1c/257C/146C/4a16c058169e">
+							<positions>
+								<Point x="5794" y="1667"/>
+								<Point x="6244" y="1667"/>
+								<Point x="6244" y="2328"/>
+								<Point x="6535" y="2328"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/8c2d/257C/146C/4a16c058432b" dstEquation="!ed/8c2b/257C/146C/4a16c05828a5">
+							<positions>
+								<Point x="5609" y="4339"/>
+								<Point x="5953" y="4339"/>
+								<Point x="5953" y="3122"/>
+								<Point x="6562" y="3122"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="2" srcEquation="!ed/8c2b/257C/146C/4a16c05828a5" dstEquation="!ed/8c27/257C/146C/4a16c058257a">
+							<positions>
+								<Point x="7567" y="3122"/>
+								<Point x="8255" y="3122"/>
+								<Point x="8255" y="2566"/>
+								<Point x="8943" y="2566"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="3" srcEquation="!ed/8c2d/257C/146C/4a16c058432b" dstEquation="!ed/8c29/257C/146C/4a16c0586e7">
+							<positions>
+								<Point x="5609" y="4339"/>
+								<Point x="10636" y="4339"/>
+								<Point x="10636" y="3281"/>
+								<Point x="14711" y="3281"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/8c20/257C/146C/4a16c0587ef6" dstEquation="!ed/8c2d/257C/146C/4a16c058432b">
+							<positions>
+								<Point x="2963" y="1270"/>
+								<Point x="3519" y="1270"/>
+								<Point x="3519" y="4207"/>
+								<Point x="4604" y="4207"/>
+							</positions>
+						</Edge>
+					</presentationElements>
+				</NetDiagram>
+			</diagrams>
+		</ed:Operator>
+		<mtc:Operator xmlns="http://www.esterel-technologies.com/ns/scade/pragmas/mtc/1">
+			<Observer observedOperator="$foldwi"/>
+		</mtc:Operator>
+	</pragmas>
+</Operator>
