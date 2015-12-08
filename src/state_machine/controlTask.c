@@ -3,10 +3,10 @@
 
 void* controlTask(void* arg)
 { 
-  pthread_mutex_t verrou; 
+  pthread_mutex_t verrou_control; 
   pthread_cond_t cond;  
   pthread_cond_init(&cond, NULL); 
-  pthread_mutex_init(&verrou, NULL);
+  pthread_mutex_init(&verrou_control, NULL);
 
   struct timeval tp;
   struct timespec ts;
@@ -17,226 +17,249 @@ void* controlTask(void* arg)
   float angular_speed_cmd = 0.0;
   float vertical_speed_cmd = 0.0; 
 
-  //initControl(); fonction à créer permettant d'initialiser le socket pour l'envoie des commande AT
-  //et la réception des nvdata pour la régulation.
+  initialize_at_com();    //initialisation du soket pour les commandes AT.
+  //initNavdata();          //initialisation du soket pour les navdata.
+  //initialisation_uart();  //initialisation de la commuication Uart.
 
   pthread_mutex_lock(&mutex_control);
-  control_enable = CONTROL_ENABLED;
-  control_state  = STATE_MANUAL;
-  seqNumber = 1;
-  takeOffCalled = 0;
-  landCalled = 0;
-  moveCalled = 0;
-  emergencyCalled = 0;
-  calibHorCalled = 0;
-  calibMagnCalled = 0;
-  initNavDataCalled = 1;
-  move_done = 0;
+  inC.flag_control_e = CONTROL_ENABLED;
+  inC.flag_control_s = STATE_MANUAL;
+  inC.flag_takeoff = 0;
+  inC.flag_land = 0;
+  inC.flag_emergency = 0;
+  inC.flag_calibH = 0;
+  inC.flag_calibM = 0;
+  inC.flag_pitchcalled = 0;
+  inC.flag_rollcalled = 0;
+  inC.flag_rollpitchcalled = 0;
+  inC.flag_yawcalled = 0;
+  system_state_machine_reset(&outC);
   pthread_mutex_unlock(&mutex_control);
 
   while(1)
   {
+    //printf("Debut de la boucle while(1) du thread controlTask\n");
   	//récupération de la clock courante
     gettimeofday(&tp, NULL);
     ts.tv_sec = tp.tv_sec;
     ts.tv_nsec = tp.tv_usec * 1000;
     //application de la nouvelle période d'éxécution du thread_envoi_ordre
-    ts.tv_nsec += CONTROLTASK_PERIOD_MS * 1000000;
+    ts.tv_nsec += CONTROLTASK_PERIOD_CONTROLE_MS * 1000000;
     ts.tv_sec += ts.tv_nsec / 1000000000L;
     ts.tv_nsec = ts.tv_nsec % 1000000000L;
-    pthread_mutex_lock(&verrou);
+    pthread_mutex_lock(&verrou_control);
+    //printf("Passage du pthread_mutex_lock(&verrou_control) dans controlTask\n"); 
     pthread_mutex_lock(&mutex_control);
-	printf("valeur de ts.tv_nsec : %ld\n", ts.tv_nsec);
-    if(control_enable == CONTROL_ENABLED)
-    {
+    //printf("Passage du pthread_mutex_lock(&mutex_control) dans controlTask\n");
+
+    system_state_machine(&inC,&outC); //CODE SCADE
     
-      if(control_state == STATE_MISSION)
-      {
-        /*mission(x_cons, y_cons, z_cons, angle_cons, &pitch_cmd, &roll_cmd, &angular_speed_cmd, &vertical_speed_cmd);
-        sendMovement(seqNumber, 1, pitch_cmd, roll_cmd, vertical_speed_cmd, angular_speed_cmd);
-        //printf("x=%f\ty=%f\tz=%f\tangle=%f\t\tpitch=%f\troll=%f\taspeed=%f\tvspeed=%f\n",getX(),getY(),getZ(),getAngle(),pitch_cmd,roll_cmd,angular_speed_cmd,vertical_speed_cmd);
-        */
-        checkEndOfMission_();
-      }
-      else if(control_state==STATE_MANUAL || move_done==1)
-      {
-        if(move_done==1)
-        {
-          movement(message, seqNumber, 12, power);
-          move_done = 0;
-        }
-        else if(landCalled==1)
-        {
-          landing(message, seqNumber);
+    switch(outC.order_called){
+
+      case 0 : 
+          //printf("Auncun ordre envoyé donc passage envoi de l'ordre reset_com\n");
+          reset_com(message);
+          break;
+
+      case 1 :
+          //printf("Envoi de la commande AT=land\n");
+          landing(message);
           landCalled = 0;
-        }
-        else if(takeOffCalled==1) 
-        {
-          take_off(message, seqNumber);
+          break;
+
+      case 2 :
+          //printf("Envoi de la commande AT=takeoff\n");
+          take_off(message);
           takeOffCalled = 0;
-        }
-        else if(emergencyCalled==1) 
-        {
-          emergency(message, seqNumber);
-          emergencyCalled = 0;
-        }
-        else if(calibHorCalled==1) 
-        {
-          set_trim(message, seqNumber);
+          break;
+
+      case 3 :
+          set_roll(message, roll_move, roll_power);
+          rollCalled = 0;
+          break;
+
+      case 4 :
+          set_pitch(message, pitch_move, pitch_power);
+          pitchCalled = 0;
+          break;
+
+      case 5 :
+          //set_Yaw(message, yaw_move, pitch_power);
+          yawCalled = 0;
+          break;
+
+      case 6 :
+          set_roll(message, roll_move, roll_power);
+          set_pitch(message, pitch_move, pitch_power);
+          rollpitchCalled = 0;
+          break;
+
+      case 7 :
+          set_trim(message);
           calibHorCalled = 0;
-        }
-        else if(calibMagnCalled==1) 
-        {
+          break;
+
+      case 8 :
           //sendCalibMagn(seqNumber);
           calibMagnCalled = 0;
-        }
-        else
-        {
-          reset_com(message);
-        }
-        seqNumber++;
-      }
+          break;
+
+      case 9 :
+          set_emergency(message);
+          emergencyCalled = 0;
+          break;
+
+      case 10 :
+          anti_emergency(message);
+          emergencyCalled = 0;
+          break;
+
+      case 20 : 
+          start_mission(0.0,0.0);
+          break;
+
+      default :
+          printf("Scade ne marche pas si bien que ça finalement\n");
+          break;
     }
-    pthread_mutex_unlock(&mutex_control);    
-    pthread_cond_timedwait(&cond, &verrou, &ts); 
-    pthread_mutex_unlock(&verrou);      
+    pthread_mutex_unlock(&mutex_control);
+    pthread_cond_timedwait(&cond, &verrou_control, &ts);
+    pthread_mutex_unlock(&verrou_control);    
   } 
 }
 
 
-int executeMission_(float x_obj, float y_obj, float z_obj, float angle_obj)
+void takeOff() //OK
 {
-	/*if(!canStartMission()) {
-		printf("controlTask : can't start mission\n");
-		return -1;
-	}*/
-	printf("controlTask : executeMission called and running\n");
+	//printf("controlTask : takeOff called\n");
 	pthread_mutex_lock(&mutex_control);
-	x_cons = x_obj;
-	y_cons = y_obj;
-	z_cons = z_obj;
-	angle_cons = angle_obj;
-	control_state = STATE_MISSION;
-	pthread_mutex_unlock(&mutex_control);
-	return 0;
-}
-
-
-void executeManual_()
-{		
-	printf("controlTask : executeManual called\n");
-	pthread_mutex_lock(&mutex_control);
-	takeOffCalled = 0;
-	landCalled = 0;
-	moveCalled = 0;
-	emergencyCalled = 0;
-	calibHorCalled = 0
-;	calibMagnCalled = 0;
-	move_done = 1;
-	control_state = STATE_MANUAL;
+	inC.flag_takeoff = 1;
 	pthread_mutex_unlock(&mutex_control);
 }
 
 
-void enableControl_(int enable) 
+void land() //OK
 {
-	printf("controlTask : enableControl called with enable=%d\n",enable);
+	//printf("controlTask : land called\n");
 	pthread_mutex_lock(&mutex_control);
-	if(enable==CONTROL_ENABLED || enable==CONTROL_DISABLED) {
-		control_enable = enable;
-	}
-	control_state = STATE_MANUAL;
-	takeOffCalled = 0;
-	landCalled = 0;
-	moveCalled = 0;
-	emergencyCalled = 0;
-	calibHorCalled = 0;
-	calibMagnCalled = 0;
-	initNavDataCalled = 0;
-	move_done = 0;
+	inC.flag_land = 1;
 	pthread_mutex_unlock(&mutex_control);
 }
 
-
-void initNavData_()
+//FONCTIONS : MOVE BACK,FRONT,LEFT,RIGHT,BACK-LEFT,BACK-RIGHT,FRONT-LEFT,FRONT-RIGHT
+void move_PitchRoll(direction pitch_dir, direction roll_dir, float p_power, float r_power) //OK
 {
-	printf("controlTask : initNavData called\n");
+	//printf("controlTask : move called\n");
 	pthread_mutex_lock(&mutex_control);
-	initNavDataCalled = 1; 
+  pitch_move  = pitch_dir;
+  pitch_power = p_power;
+  roll_move   = roll_dir;
+  roll_power  = r_power;
+  inC.flag_rollpitchcalled = 1;
 	pthread_mutex_unlock(&mutex_control);
 }
-
-
-void takeOff_() 
+void move_Pitch(direction pitch_dir, float p_power) //OK
 {
-	printf("controlTask : takeOff called\n");
-	pthread_mutex_lock(&mutex_control);
-	takeOffCalled = 1;
-	pthread_mutex_unlock(&mutex_control);
+  //printf("controlTask : move_Pitch called\n");
+  pthread_mutex_lock(&mutex_control);
+  pitch_move  = pitch_dir;
+  pitch_power = p_power;
+  inC.flag_pitchcalled = 1;
+  pthread_mutex_unlock(&mutex_control);
 }
-
-
-void land_() 
+void move_Roll(direction roll_dir, float r_power) //OK
 {
-	printf("controlTask : land called\n");
-	pthread_mutex_lock(&mutex_control);
-	landCalled = 1;
-	pthread_mutex_unlock(&mutex_control);
+  //printf("controlTask : move_Roll called\n");
+  pthread_mutex_lock(&mutex_control);
+  roll_move  = roll_dir;
+  roll_power = r_power;
+  inC.flag_rollcalled = 1;
+  pthread_mutex_unlock(&mutex_control);
 }
-
-
-void move_(float pitch, float roll, float angular_speed, float vertical_speed) 
+void move_Yaw(direction yaw_dir, float y_power)
 {
-	printf("controlTask : move called\n");
-	pthread_mutex_lock(&mutex_control);
-	pitch_move = pitch;
-	roll_move = roll;
-	angular_speed_move = angular_speed;
-	vertical_speed_move = vertical_speed;
-	moveCalled = 1;
-	pthread_mutex_unlock(&mutex_control);
+  //printf("controlTask : move_Yaw called\n");
+  pthread_mutex_lock(&mutex_control);
+  yaw_move  = yaw_dir;
+  yaw_power = y_power;
+  inC.flag_yawcalled = 1;
+  pthread_mutex_unlock(&mutex_control);
 }
+//END FONCTIONS : MOVE BACK,FRONT,LEFT,RIGHT,BACK-LEFT,BACK-RIGHT,FRONT-LEFT,FRONT-RIGHT
 
 
-void calibHor_() 
+//FONCTIONS : CALIBRATION TRIM AND MAGNETO
+void calibHor() //OK
 {
 	printf("controlTask : calibHor called\n");
 	pthread_mutex_lock(&mutex_control);
-	calibHorCalled = 1;
+	inC.flag_calibH = 1;
 	pthread_mutex_unlock(&mutex_control);
 }
-
-
-void calibMagn_()
+void calibMagn() //OK
 {
 	printf("controlTask : calibMagn called\n");
 	pthread_mutex_lock(&mutex_control);
-	calibMagnCalled = 1;
+	inC.flag_calibM = 1;
 	pthread_mutex_unlock(&mutex_control);
 }
+//END FONCTIONS : CALIBRATION TRIM AND MAGNETO
 
-
-void emergency_()
+//FONCTIONS : EMERGENCY
+void emergency_() //OK
 {
 	printf("controlTask : emergency called\n");
 	pthread_mutex_lock(&mutex_control);
-	emergencyCalled = 1;
+	inC.flag_emergency = 1;
 	pthread_mutex_unlock(&mutex_control);
 }
-
-
-/*****************************/
-/**         PRIVATE         **/
-/*****************************/
-
-
-void checkEndOfMission_()
+void anti_emergency_() //OK
 {
-	/*if( fabs(x_cons-getX()) < PRECISION_X && fabs(y_cons-getY()) < PRECISION_Y && fabs(z_cons-getZ()) < PRECISION_Z && fabs(diff_angle(angle_cons, getAngle())) < PRECISION_ANGLE ) {
-		move_done = 1;
-		pthread_mutex_unlock(&mutex_control);
-		executeManual();
-		pthread_mutex_lock(&mutex_control);
-		//sendFrame(MISSION_FRAME, 0, 0, 0, MISSION_FINISHED);
-	}*/
+  printf("controlTask : emergency called\n");
+  pthread_mutex_lock(&mutex_control);
+  inC.falg_antiemergency = 1;
+  pthread_mutex_unlock(&mutex_control);
+}
+//END FONCTIONS : EMERGENCY
+
+void start_mission(float x_map, float y_map)
+{
+  printf("controlTask : start_mission called\n");
+  pthread_mutex_lock(&mutex_control);
+  map.x = x_map;
+  map.y = y_map;
+  inC.flag_control_s = STATE_MISSION;
+  pthread_mutex_unlock(&mutex_control);
+}
+
+void stop_mission()
+{
+  printf("controlTask : end_mission called\n");
+  pthread_mutex_lock(&mutex_control);
+  inC.flag_control_s = STATE_MANUAL;
+  pthread_mutex_unlock(&mutex_control);
+
+}
+
+void calcul_mission()
+{
+  struct coordinates_ C_blue; //coordinates of drone
+  float nav_z,calcul_x, calcul_y, calcul_a;
+  read_data_bluetooth(&C_blue.x,&C_blue.y);
+  nav_z = GetYaw();  //à changer
+  calcul_x = map.x - C_blue.x;
+  calcul_y = map.y - C_blue.y;
+  calcul_a = atanf(abs(map.y-C_blue.y)/abs(map.x-C_blue.x)); //calcul de l'angle
+  calcul_a = calcul_a / (PI/2) * 180.0; //radians en dergrées
+  if(calcul_x>0.0 && calcul_y>0.0) //si quadrant haut droite
+    calcul_a;
+  else if (calcul_x<0.0 && calcul_y>0.0) //si quadrant bas droite
+    calcul_a = - calcul_a;
+  else if (calcul_x>0.0 && calcul_y<0.0) //Si quadrant haut gauche
+    calcul_a = 180.0 - calcul_a;
+  else if (calcul_x<0.0 && calcul_y<0.0) //Si quadrant bas gauche
+    calcul_a = -180.0 + calcul_a;
+
+  if(calcul_a > 150.0) //nécessaire au vu des donnée renvoyées par le navdata. [-210:0:+150]
+    calcul_a = calcul_a - 360.0;
 }

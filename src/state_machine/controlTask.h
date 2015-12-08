@@ -17,7 +17,10 @@
 #include <time.h>
 #include <pthread.h>
 
-#include "message_drone.h"
+#include "../message_drone.h"
+#include "KCG/system_state_machine.h"
+#include "regulation.h"
+#include "var_coord.h"
 
 /**
  * \brief State of the control task : manual (drone controled by the user).
@@ -69,10 +72,12 @@
  */
 #define SPEED_AMPLITUDE 0.6
 
+#define PI (float)3.141592653589793
+
 /**
  * \brief Period of the control task (ms).
  */
-#define CONTROLTASK_PERIOD_MS 30
+#define CONTROLTASK_PERIOD_CONTROLE_MS 30
 
 /**
  * \brief Control task. This task manages le movement of the drone.
@@ -80,74 +85,85 @@
  */
 void *controlTask(void *arg);
 
-/**
- * \brief Start a mission with a specified objective. Set the state of the task to mission.
- * \param[in]	x_obj		Objective (X)
- * \param[in]	y_obj		Objective (Y)
- * \param[in]	z_obj		Objective (Z)
- * \param[in]	angle_obj	Objective (Angle)
- */
-int executeMission_(float x_obj, float y_obj, float z_obj, float angle_obj);
 
 /**
  * \brief Set the state of the task to manual : the drone is controled by the user.
  */
-void executeManual_();
+void executeManual();
 
 /**
  * \brief Enable or disable the control task on the drone.
  * \param[in]	enable CONTROL_ENABLED or CONTROL_DISABLED
  */
-void enableControl_(int enable);
-
-/**
- * \brief Initialize the reception of navData.
- */
-void initNavData_();
+void enableControl(int enable);
 
 /**
  * \brief The drone takes off.
  */
-void takeOff_();
+void takeOff();
 
 /**
  * \brief The drone lands.
  */
-void land_();
+void land();
 
 /**
- * \brief Move the drone 
- * \param[in]	pitch
- * \param[in]	roll
- * \param[in]	angular_speed
- * \param[in]	vertical_speed
+ * \brief The drone move in any direction.
  */
-void move_(float pitch, float roll, float angular_speed, float vertical_speed);
+void move_PitchRoll(direction pitch_dir, direction roll_dir, float p_power, float r_power);
+
+/**
+ * \brief The drone move left or right.
+ */
+void move_Pitch(direction pitch_dir, float p_power);
+
+/**
+ * \brief The drone move front or back.
+ */
+void move_Roll(direction roll_dir, float r_power);
+
+/**
+ * \brief The drone move front or back.
+ */
+void move_Yaw(direction yaw_dir, float y_power);
+
+/**
+ * \brief start mission for guide person with drone
+ */
+ void start_mission(float x_map, float y_map);
+
+ /**
+ * \brief end mission for guide person with drone
+ */
+ void stop_mission();
 
 /**
  * \brief Calibrate the horizontal plane of the drone (must be landed).
  */
-void calibHor_();
+void calibHor();
 
 /**
  * \brief Calibrate the magnetometer of the drone (must be flying).
  */
-void calibMagn_();
+void calibMagn();
 
 /**
- * \brief Leave the emergency mode (red leds).
+ * \brief Go in emergency mode (green leds to red leds).
  */
 void emergency_();
 
 /**
+ * \brief Leave the emergency mode (red leds to green leds).
+ */
+void anti_emergency_();
+/**
  * PRIVATE
  */
  
-/**
- * \brief Check the end of the mission (if the objective is reached).
- */
-void checkEndOfMission_();
- 
+struct coordinates_ map;
+
+inC_system_state_machine inC;
+outC_system_state_machine outC;
 /**
  * \brief Mutex to protect the control task data.
  */
@@ -162,6 +178,7 @@ float y_cons;
 float z_cons;
 float angle_cons;
 
+//FLAGS
 int takeOffCalled;
 int initNavDataCalled;
 int landCalled;
@@ -169,10 +186,19 @@ int moveCalled;
 int emergencyCalled;
 int calibHorCalled;
 int calibMagnCalled;
-int move_done;
+int rollpitchCalled;
+int rollCalled;
+int pitchCalled;
+int yawCalled;
+int own_position;
+//END FLAGS
 
-float pitch_move;
-float roll_move;
+direction pitch_move;
+direction roll_move;
+direction yaw_move;
+float pitch_power;
+float roll_power;
+float yaw_power;
 float angular_speed_move;
 float vertical_speed_move;
 float power;
