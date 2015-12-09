@@ -55,13 +55,8 @@ t_data extract_data(char * data)
 	int i;
 	
 	ret.rssi = rssi;
-	printf("rssi : %u\n", ret.rssi);
-	for( i=0; i < 6; i++) {
-		printf("adr : %u\n", ret.address[i]);}
+	
 	convertToAddress(ret.address, addr);
-
-	for( i=0; i < 6; i++) {
-		printf("adr : %u\n", ret.address[i]);}
 	updateBeaconTab(ret.address, ret.rssi);
 	
 	return ret;
