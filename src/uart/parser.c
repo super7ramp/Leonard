@@ -2,6 +2,7 @@
 #include <stdlib.h> 
 #include <string.h>  /* String function definitions */
 #include <stdint.h>
+#include <inttypes.h>
 #include "parser.h"
 #include "parameters.h"
 
@@ -51,26 +52,33 @@ t_data extract_data(char * data)
 		}
 	}
 	
+	int i;
+	
 	ret.rssi = rssi;
-	convertToAddress(&ret.address, addr);
+	printf("rssi : %u\n", ret.rssi);
+	for( i=0; i < 6; i++) {
+		printf("adr : %u\n", ret.address[i]);}
+	convertToAddress(ret.address, addr);
+
+	for( i=0; i < 6; i++) {
+		printf("adr : %u\n", ret.address[i]);}
 	updateBeaconTab(ret.address, ret.rssi);
 	
 	return ret;
 }
 
 
-void convertToAddress(address_t * res, char * address) {
+
+void convertToAddress(address_t res, char * address) {
 	char * ptr;
 	char * aux = malloc(sizeof(char) * 2);
 	int8_t n;
-	printf("strlen : %d\n", (int) strlen(address));
 	
-	
-	for(n = 0; n < strlen(address); n= n+2) {
-		strncpy(aux, &address[n], 2);
-		printf("aux : %s \n",aux);
-		*res[n/2] = strtol(aux, &ptr, 16);
-		printf("res : %u \n", *res[n/2]);
+	// Copie octet par octet l'adresse de la balise puis le convertit
+	for(n = 0; n < strlen(address); n = n+2) {
+		memcpy(aux, &address[n], 2);
+		(res[n/2]) = (uint8_t) strtol(aux, &ptr, 16);
+		printf("res : %u, n : %d \n", res[n/2], n/2);
 	}
 
 }
@@ -81,10 +89,13 @@ int8_t findBeaconInTab(address_t addr)
     int found=0;
     uint8_t i=0;
     
-    while(i<ADDR_LEN && !found)
+    
+    while(i<NUMBER_BEACONS && !found)
     {
-        if(compareAddresses(addr, beaconTab[i].beaconInfo.id))
+        if(compareAddresses(addr, beaconTab[i].beaconInfo.id)) {
             found=1;
+            printf("found\n");
+        } 
         else
             i++;
     }
@@ -102,7 +113,9 @@ int compareAddresses(address_t addrA, address_t addrB)
 	
 	for(i=0; i<ADDR_LEN; i++)
 	{
+   		//printf("beacon %u vs %u\n",addrA[i], addrB[i]);
 		if(addrA[i]!=addrB[i]) {
+			
 			result=0;
 			break;
 		}
@@ -118,7 +131,7 @@ void updateBeaconTab(address_t addr, int8_t rssi)
     {
         refreshBeaconTTL(index);
         beaconTab[index].rssi=rssi;
-        printf("wesh\n");
+        printf("update\n");
     }
 }
 
