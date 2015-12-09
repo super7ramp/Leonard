@@ -19,7 +19,7 @@ t_data;
 
 // extract data from one message received
 t_data extract_data(char * data);
-void convertToAddress(address_t * res, char * address);
+void convertToAddress(address_t res, char * address);
 int8_t findBeaconInTab(address_t addr);
 int compareAddresses(address_t addrA, address_t addrB);
 void updateBeaconTab(address_t addr, int8_t rssi);

@@ -9,3 +9,4 @@ main.o : main.c parser.h
 
 clean:
 	rm -f *.o core
+	rm -f *~ core
