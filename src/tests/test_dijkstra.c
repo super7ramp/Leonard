@@ -3,7 +3,7 @@
 #include "../map/map_reader.h"
 #include "../shortest_path.h"
 
-// gcc -Wall -lm test_dijkstra.c ../map/map_common.c ../map_reader.c ../shortest_path.c -o test-dijsktra
+// gcc -Wall -lm test_dijkstra.c ../map/map_common.c ../map/map_reader.c ../shortest_path.c -o test-dijsktra
 // ./test-dijkstra map_adrien.csv
 
 int main(int argc, char *argv[])
