@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:l2="http://www.eclipse.org/uml2/4.0.0/UML/Profile/L2" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML">
+  <uml:Model xmi:id="_-8LBt6EHEdyt3aizUshLbA" name="libscade">
+    <packagedElement xmi:type="uml:DataType" xmi:id="SCADE__bool" name="bool"/>
+    <packagedElement xmi:type="uml:DataType" xmi:id="SCADE__int" name="int"/>
+    <packagedElement xmi:type="uml:DataType" xmi:id="SCADE__real" name="real"/>
+    <packagedElement xmi:type="uml:DataType" xmi:id="SCADE__char" name="char"/>
+    <packagedElement xmi:type="uml:DataType" xmi:id="SCADE__array" name="array">
+      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="SCADE__array__template_signature" name="array" parameter="SCADE__array__T SCADE__array__S">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="SCADE__array__T" parameteredElement="SCADE__array__T__placeholder">
+          <ownedParameteredElement xmi:type="uml:DataType" xmi:id="SCADE__array__T__placeholder" name="T" templateParameter="SCADE__array__T"/>
+        </ownedParameter>
+        <ownedParameter xmi:id="SCADE__array__S" parameteredElement="SCADE__array__S__placeholder">
+          <ownedParameteredElement xmi:type="uml:InstanceSpecification" xmi:id="SCADE__array__S__placeholder" name="S" templateParameter="SCADE__array__S" classifier="SCADE__int"/>
+        </ownedParameter>
+      </ownedTemplateSignature>
+      <ownedAttribute xmi:id="SCADE__array__items" name="items" visibility="private" type="SCADE__array__T__placeholder" aggregation="composite">
+        <lowerValue xmi:type="uml:InstanceValue" xmi:id="_OiapIAFMEeG1IvZ_ro5A2A" name="lowerSize" type="SCADE__int" instance="SCADE__array__S__placeholder"/>
+        <upperValue xmi:type="uml:InstanceValue" xmi:id="_gnQXsP8UEeCPNc0KAxcXOA" name="upperSize" type="SCADE__int" instance="SCADE__array__S__placeholder"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:DataType" xmi:id="SCADE__typedef" name="typedef">
+      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="SCADE__typedef__template_signature" name="typedef" parameter="SCADE__typedef__T">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="SCADE__typedef__T" parameteredElement="SCADE__typedef__T__placeholder">
+          <ownedParameteredElement xmi:type="uml:DataType" xmi:id="SCADE__typedef__T__placeholder" name="T" templateParameter="SCADE__typedef__T"/>
+        </ownedParameter>
+      </ownedTemplateSignature>
+      <generalization xmi:id="_9McUADfXEeKbaLwk_8kPFA" general="SCADE__typedef__T__placeholder"/>
+    </packagedElement>
+    <profileApplication xmi:id="__Tac0KEHEdyt3aizUshLbA">
+      <eAnnotations xmi:id="__Tac0aEHEdyt3aizUshLbA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/uml2/4.0.0/UML/Profile/L2#/"/>
+      </eAnnotations>
+      <appliedProfile href="pathmap://UML_PROFILES/StandardL2.profile.uml#_0"/>
+    </profileApplication>
+  </uml:Model>
+  <l2:ModelLibrary xmi:id="__Z0m0KEHEdyt3aizUshLbA" base_Package="_-8LBt6EHEdyt3aizUshLbA"/>
+</xmi:XMI>

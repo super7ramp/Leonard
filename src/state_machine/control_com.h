@@ -9,8 +9,14 @@
 #include <pthread.h>
 
 #include "controlTask.h"
-#include "regulation.h"
+#include "var_coord.h"
 
-void* thread_com(void* arg);
+#define DONE 	 0
+#define NOTDONE  1
+
+struct coordinates_ destination;
+
+void* thread_com(void* arg); 
+
 
 #endif

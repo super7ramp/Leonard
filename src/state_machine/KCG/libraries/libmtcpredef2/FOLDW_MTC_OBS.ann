@@ -1,0 +1,30 @@
+Notes-Types { Esterel-Technologies }  DEFINITIONS ::=
+BEGIN
+    MtcCriterionElement ::= SEQUENCE OF { SEQUENCE {
+    annot_object OID,
+    name STRING,
+        information {
+            Name STRING
+            {
+            	 NT_LEFT_LABEL "Name:" ,
+            	 NT_DEFAULT_VALUE "Name" ,
+            	 NT_EDITABLE T },
+            Description TEXT
+            {
+            	 NT_LEFT_LABEL "Description:" ,
+            	 NT_DEFAULT_VALUE "Description" ,
+            	 NT_FIELD_WIDTH 30 ,
+            	 NT_FIELD_HEIGHT 4 ,
+            	 NT_EDITABLE T }
+    } } }
+
+END
+
+Notes-Values { Esterel-Technologies }  DEFINITIONS ::=
+BEGIN
+    MtcCriterionElement ::= {
+        {"!ed/4e7/13F4/BD4/4a16c54765e7", "MtcCriterionElement_1","Partial Iteration" , "FOLDW is partially iterated" },
+        {"!ed/4e5/13F4/BD4/4a16c5474f00", "MtcCriterionElement_1","No Iteration" , "FOLDW is not iterated" },
+        {"!ed/4e4/13F4/BD4/4a16c5475ece", "MtcCriterionElement_1","Complete Iteration" , "FOLDW is completely iterated" }}
+END
+

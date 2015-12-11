@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project id="1" oid_count="260" defaultConfiguration="2">
+	<props>
+		<Prop id="3" name="@STUDIO:PRODUCT">
+			<value>SC</value>
+		</Prop>
+		<Prop id="4" name="@GENERATOR:GENERATOR">
+			<value>C QUAL61</value>
+			<configuration>2</configuration>
+		</Prop>
+		<Prop id="9" name="@SCADE:SAVEVERSION">
+			<value>default</value>
+		</Prop>
+		<Prop id="10" name="@SCADE:SAVENOTESASCOMMENTS">
+			<value>f</value>
+		</Prop>
+		<Prop id="11" name="@ESTUDIO_COMPILATION:prefix">
+			<value>libmtcpredef1</value>
+		</Prop>
+		<Prop id="12" name="@ESTUDIO_COMPILATION:language">
+			<value>Esterel V7</value>
+		</Prop>
+		<Prop id="13" name="@STUDIO:TOOLCONF">
+			<value>Instrumenter</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="14" name="@STUDIO:TOOLCONF">
+			<value>Reporter</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="29" name="@SCADE:CHECKED">
+			<value>false</value>
+		</Prop>
+		<Prop id="36" name="@SCADE:SEMFILE">
+			<value>libmtcpredef1.err</value>
+		</Prop>
+		<Prop id="38" name="@SCADE:OCCBASE">
+			<value>10</value>
+		</Prop>
+		<Prop id="39" name="@SCADE:VERIFYTYPE">
+			<value>0</value>
+		</Prop>
+		<Prop id="40" name="@SCADE:NOTEFILE">
+			<value>$(SCADE)/lib/mtc.aty</value>
+		</Prop>
+		<Prop id="67" name="@STUDIO:TOOLCONF">
+			<value>Code Generator - Simulator</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="81" name="@STUDIO:TOOLCONF">
+			<value>Checker</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="83" name="@SCADE:NEWVARIABLESYMBOLS">
+			<value>true</value>
+		</Prop>
+		<Prop id="84" name="@STUDIO:TOOLCONF">
+			<value>Timing and Stack Verifier</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="85" name="@STUDIO:TOOLCONF">
+			<value>DiffAnalyzer</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="134" name="@STUDIO:TOOLCONF">
+			<value>Code Generator</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="135" name="@STUDIO:TOOLCONF">
+			<value>Timing and Stack Verifiers</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="259" name="@STUDIO:TOOLCONF">
+			<value>Dashboard</value>
+			<value>2</value>
+		</Prop>
+		<Prop id="260" name="@STUDIO:TOOLCONF">
+			<value>Timing and Stack Analysis Tools</value>
+			<value>2</value>
+		</Prop>
+	</props>
+	<roots>
+		<Folder id="15" extensions="etp" name="SCADE Libraries">
+			<elements>
+				<FileRef id="250" persistAs="..\libmtc\libmtc.etp"/>
+			</elements>
+		</Folder>
+		<Folder id="48" extensions="xscade;scade" name="Model Files">
+			<elements>
+				<FileRef id="5" persistAs="mtcpredef1.xscade"/>
+				<Folder id="138" extensions="xscade" name="Separate Files">
+					<elements>
+						<FileRef id="171" persistAs="AND_MTC_OBS.xscade">
+							<props>
+								<Prop id="170" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="173" persistAs="ACTIVATE_MTC_OBS.xscade">
+							<props>
+								<Prop id="172" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="175" persistAs="ACTIVATE_NOINIT_MTC_OBS.xscade">
+							<props>
+								<Prop id="174" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="181" persistAs="CLOCKED_ACTIVATE_MTC_OBS.xscade">
+							<props>
+								<Prop id="180" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="183" persistAs="FBY_MTC_OBS.xscade">
+							<props>
+								<Prop id="182" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="185" persistAs="FOLDW_MTC_OBS.xscade">
+							<props>
+								<Prop id="184" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="187" persistAs="FOLDWI_MTC_OBS.xscade">
+							<props>
+								<Prop id="186" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="189" persistAs="IFTHENELSE_MTC_OBS.xscade">
+							<props>
+								<Prop id="188" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="191" persistAs="INIT_MTC_OBS.xscade">
+							<props>
+								<Prop id="190" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="193" persistAs="MAPW_MTC_OBS.xscade">
+							<props>
+								<Prop id="192" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="195" persistAs="MAPWI_MTC_OBS.xscade">
+							<props>
+								<Prop id="194" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="197" persistAs="MERGE_MTC_OBS.xscade">
+							<props>
+								<Prop id="196" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="199" persistAs="RESTART_MTC_OBS.xscade">
+							<props>
+								<Prop id="198" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="201" persistAs="SIGNAL_MTC_OBS.xscade">
+							<props>
+								<Prop id="200" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="203" persistAs="WHEN_MTC_OBS.xscade">
+							<props>
+								<Prop id="202" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="207" persistAs="OR_MTC_OBS.xscade">
+							<props>
+								<Prop id="206" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="211" persistAs="XOR_MTC_OBS.xscade">
+							<props>
+								<Prop id="210" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="215" persistAs="NOT_MTC_OBS.xscade">
+							<props>
+								<Prop id="214" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="219" persistAs="TIMES_MTC_OBS.xscade">
+							<props>
+								<Prop id="218" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="223" persistAs="SHARP_MTC_OBS.xscade">
+							<props>
+								<Prop id="222" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="229" persistAs="NEQ_MTC_OBS.xscade">
+							<props>
+								<Prop id="228" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="233" persistAs="LTE_MTC_OBS.xscade">
+							<props>
+								<Prop id="232" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="237" persistAs="LT_MTC_OBS.xscade">
+							<props>
+								<Prop id="236" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="241" persistAs="GTE_MTC_OBS.xscade">
+							<props>
+								<Prop id="240" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="245" persistAs="GT_MTC_OBS.xscade">
+							<props>
+								<Prop id="244" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="249" persistAs="EQ_MTC_OBS.xscade">
+							<props>
+								<Prop id="248" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="252" persistAs="CASE1_MTC_OBS.xscade">
+							<props>
+								<Prop id="251" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="254" persistAs="CASE2_MTC_OBS.xscade">
+							<props>
+								<Prop id="253" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="256" persistAs="PRJ_DYN_MTC_OBS.xscade">
+							<props>
+								<Prop id="255" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+						<FileRef id="258" persistAs="CHG_ITH_MTC_OBS.xscade">
+							<props>
+								<Prop id="257" name="@SCADE:NONROOT">
+									<value>true</value>
+								</Prop>
+							</props>
+						</FileRef>
+					</elements>
+				</Folder>
+			</elements>
+		</Folder>
+		<Folder id="49" extensions="cdf;crf" name="MTC Files">
+			<elements>
+				<FileRef id="47" persistAs="mtcpredef1.cdf"/>
+			</elements>
+		</Folder>
+	</roots>
+	<configurations>
+		<Configuration id="2" name="SCADE"/>
+	</configurations>
+</Project>

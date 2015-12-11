@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<File xmlns="http://www.esterel-technologies.com/ns/scade/4" xmlns:ed="http://www.esterel-technologies.com/ns/scade/pragmas/editor/4" xmlns:kcg="http://www.esterel-technologies.com/ns/scade/pragmas/codegen/2" xmlns:mtc="http://www.esterel-technologies.com/ns/scade/pragmas/mtc/1">
+	<declarations>
+		<Package name="MTC1">
+			<declarations>
+				<Operator name="CASE1_MTC_OBS" href="CASE1_MTC_OBS.xscade"/>
+				<Operator name="IFTHENELSE_MTC_OBS" href="IFTHENELSE_MTC_OBS.xscade"/>
+				<Operator name="CASE2_MTC_OBS" href="CASE2_MTC_OBS.xscade"/>
+				<Operator name="INIT_MTC_OBS" href="INIT_MTC_OBS.xscade"/>
+				<Operator name="FBY_MTC_OBS" href="FBY_MTC_OBS.xscade"/>
+				<Operator name="RESTART_MTC_OBS" href="RESTART_MTC_OBS.xscade"/>
+				<Operator name="ACTIVATE_MTC_OBS" href="ACTIVATE_MTC_OBS.xscade"/>
+				<Operator name="MERGE_MTC_OBS" href="MERGE_MTC_OBS.xscade"/>
+				<Operator name="MAPW_MTC_OBS" href="MAPW_MTC_OBS.xscade"/>
+				<Operator name="MAPWI_MTC_OBS" href="MAPWI_MTC_OBS.xscade"/>
+				<Operator name="FOLDW_MTC_OBS" href="FOLDW_MTC_OBS.xscade"/>
+				<Operator name="FOLDWI_MTC_OBS" href="FOLDWI_MTC_OBS.xscade"/>
+				<Operator name="AND_MTC_OBS" href="AND_MTC_OBS.xscade"/>
+				<Operator name="ACTIVATE_NOINIT_MTC_OBS" href="ACTIVATE_NOINIT_MTC_OBS.xscade"/>
+				<Operator name="CLOCKED_ACTIVATE_MTC_OBS" href="CLOCKED_ACTIVATE_MTC_OBS.xscade"/>
+				<Operator name="OR_MTC_OBS" href="OR_MTC_OBS.xscade"/>
+				<Operator name="NOT_MTC_OBS" href="NOT_MTC_OBS.xscade"/>
+				<Operator name="SHARP_MTC_OBS" href="SHARP_MTC_OBS.xscade"/>
+				<Operator name="NEQ_MTC_OBS" href="NEQ_MTC_OBS.xscade"/>
+				<Operator name="LTE_MTC_OBS" href="LTE_MTC_OBS.xscade"/>
+				<Operator name="LT_MTC_OBS" href="LT_MTC_OBS.xscade"/>
+				<Operator name="GTE_MTC_OBS" href="GTE_MTC_OBS.xscade"/>
+				<Operator name="GT_MTC_OBS" href="GT_MTC_OBS.xscade"/>
+				<Operator name="EQ_MTC_OBS" href="EQ_MTC_OBS.xscade"/>
+				<Operator name="PRJ_DYN_MTC_OBS" href="PRJ_DYN_MTC_OBS.xscade"/>
+				<Operator name="CHG_ITH_MTC_OBS" href="CHG_ITH_MTC_OBS.xscade"/>
+				<Operator name="SIGNAL_MTC_OBS" href="SIGNAL_MTC_OBS.xscade"/>
+				<Operator name="XOR_MTC_OBS" href="XOR_MTC_OBS.xscade"/>
+				<Operator name="WHEN_MTC_OBS" href="WHEN_MTC_OBS.xscade"/>
+				<Operator name="TIMES_MTC_OBS" href="TIMES_MTC_OBS.xscade"/>
+			</declarations>
+			<pragmas>
+				<ed:Package oid="oid1" xmlns="http://www.esterel-technologies.com/ns/scade/pragmas/editor/4">
+					<diagrams>
+						<TreeDiagram landscape="true" format="A4 (210 297)" oid="!ed/4C92/7C78/290/468CACC4/3C21" blockKind="constants"/>
+						<TreeDiagram landscape="true" format="A4 (210 297)" oid="!ed/4C93/7C78/290/468CACC4/1D56" blockKind="types"/>
+						<TreeDiagram landscape="true" format="A4 (210 297)" oid="!ed/4C94/7C78/290/468CACC4/2460" blockKind="sensors"/>
+					</diagrams>
+				</ed:Package>
+			</pragmas>
+		</Package>
+	</declarations>
+</File>
