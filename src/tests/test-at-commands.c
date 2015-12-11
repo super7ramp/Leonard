@@ -5,7 +5,6 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 #include <stdio.h>
-#include <CUnit/CUnit.h>
 #include "../at-commands.h"
 
 #define BUFLEN 512

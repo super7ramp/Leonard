@@ -1,6 +1,6 @@
 # Edit CC with your cross-compiler before compiling for the drone
-CC=gcc
-CFLAGS=-Wall
+CC=arm-linux-gnueabi-gcc 
+CFLAGS=-Wall -march=armv7-a
 BASEDIR=$(shell pwd)
 SRCDIR=$(BASEDIR)/src
 TESTDIR=$(BASEDIR)/src/tests
