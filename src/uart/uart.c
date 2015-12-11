@@ -4,10 +4,15 @@
 #include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
-
 /*
  * Function done by Sheldon group
  */
+
+FILE *result;
+void parseSerialRead(char *buffer);
+int checkAnswer(char *response);
+
+
 void serial_config(int fd)
 {
 	struct termios options;
@@ -41,14 +46,14 @@ int open_port(void)
         // Changer le nom du port
 	    ////////
 
-    fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
+    fd = open("/dev/ttyO3", O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1)
     {
         /*
          * Could not open the port.
          */
 
-        perror("open_port: Unable to open /dev/ttyO3 - ");
+        perror("open_port: Unable to open /dev/ttyO3. Is the cable plugged ?");
     }
     
     fcntl(fd, F_SETFL, 0);
@@ -78,24 +83,16 @@ int read_port(int fd) {
             //sprintf( &(response[spot]), "%c", buf );
             //response[spot] = buf;
             strncpy(&response[spot], &buf, n);
-            printf("%c\n", buf);
+            printf("%c", buf);
             spot += n;
         } while( buf != '\r' && buf != '\n' && buf !=' ' && n > 0);
-
-        if (n < 0) {
-            perror("Error Reading - ");
-            break;
-        }
-        else if (n == 0) {
-            perror("Read nothing! ");
-        }
-        else {
-            printf(" r : %s, size : %d \n", response,(int) strlen(response));
-        }
+	
+	if(n>0)
+	    fprintf(result, "%s\n", response);
+	
         
     }
 }
-
 
 int close_port(int fd) {
 	close(fd);
@@ -103,7 +100,9 @@ int close_port(int fd) {
 
 
 int main() {
-    int fd = open_port();
+   result=fopen("resultat.txt", "w");
+ 	
+   int fd = open_port();
     read_port(fd);
 }
 
