@@ -23,16 +23,12 @@ void convertToAddress(address_t res, char * address);
 int8_t findBeaconInTab(address_t addr);
 int compareAddresses(address_t addrA, address_t addrB);
 void updateBeaconTab(address_t addr, int8_t rssi);
-int8_t getBeaconRssi(uint8_t index);
-uint8_t getBeaconTTL(uint8_t index);
-const t_beacon_info* getBeaconTab(void);
 void refreshBeaconTTL(uint8_t index);
-void decreaseAllTTLs(void);
-
+void UpdateTTLBeacons();
 
 // GETTER
 int8_t getBeaconRssi(uint8_t index);
-uint8_t getBeaconTTL(uint8_t index);
+double getBeaconTTL(uint8_t index);
 const t_beacon_info* getBeaconTab(void);
 
 
