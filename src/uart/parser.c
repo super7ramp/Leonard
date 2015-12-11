@@ -23,12 +23,13 @@ t_beacon_info beaconTab[NUMBER_BEACONS]={
 t_data extract_data(char * data)
 {
 	t_data ret;
-	char aux[100];
+	char aux[10];
 	char addr[TAB_ADDR_LEN];
-	int8_t rssi;
+	int8_t rssi, cpt_addr = 0;
 	int n = 0, cpt_res = 0;
 	
 	memset(aux, '\0', sizeof(aux));
+	memset(addr, '\0', sizeof(addr));
 	
 	for (n=0; n <= strlen(data); n++, cpt_res++)
 	{
@@ -36,13 +37,15 @@ t_data extract_data(char * data)
 		{
 			aux[cpt_res] = data[n];
 			//printf("data : %s, %s\n", data, aux);
+			
 		}
 		else if(data[n] == ' ') 
 		{
-			strncpy(addr, aux,TAB_ADDR_LEN);
-			printf("addr : %s\n", addr);
+			strcat(addr, aux);
+			//printf("addr : %s\n", addr);
 			memset(aux, '\0', sizeof(aux));
 			cpt_res = -1;
+			cpt_addr += 1;
 		}
 		
 		else if (data[n] == '\r') 
@@ -52,9 +55,9 @@ t_data extract_data(char * data)
 		}
 	}
 	
-	int i;
-	
 	ret.rssi = rssi;
+	
+	//printf("addr : %s\n", addr);
 	
 	convertToAddress(ret.address, addr);
 	updateBeaconTab(ret.address, ret.rssi);
@@ -89,7 +92,6 @@ int8_t findBeaconInTab(address_t addr)
     {
         if(compareAddresses(addr, beaconTab[i].beaconInfo.id)) {
             found=1;
-            printf("found\n");
         } 
         else
             i++;
@@ -126,7 +128,9 @@ void updateBeaconTab(address_t addr, int8_t rssi)
     {
         refreshBeaconTTL(index);
         beaconTab[index].rssi=rssi;
-        printf("update\n");
+    }
+    else {
+    	printf("ADDRESS ERROR \n");
     }
 }
 
