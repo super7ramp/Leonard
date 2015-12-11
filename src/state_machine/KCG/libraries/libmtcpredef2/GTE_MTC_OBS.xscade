@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Operator xmlns="http://www.esterel-technologies.com/ns/scade/4" xmlns:ed="http://www.esterel-technologies.com/ns/scade/pragmas/editor/4" xmlns:kcg="http://www.esterel-technologies.com/ns/scade/pragmas/codegen/2" xmlns:mtc="http://www.esterel-technologies.com/ns/scade/pragmas/mtc/1" kind="node" name="GTE_MTC_OBS">
+	<inputs>
+		<Variable name="Input1">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="'Type"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="win_6CC/5C09/1684/408F96DE/1F97"/>
+			</pragmas>
+		</Variable>
+		<Variable name="Input2">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="'Type"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="win_6CD/5C09/1684/408F96DE/15B0"/>
+			</pragmas>
+		</Variable>
+		<Variable name="Output">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="win_6CB/5C09/1684/408F96DE/77FE"/>
+			</pragmas>
+		</Variable>
+	</inputs>
+	<numericTypes>
+		<NumericType>
+			<typeVar>
+				<TypeRef name="'Type"/>
+			</typeVar>
+		</NumericType>
+	</numericTypes>
+	<locals>
+		<Variable probe="true" name="MTC_ALL1">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="MTC::Result"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="win_DCD/64CE/2B4/4263860C/777C"/>
+			</pragmas>
+		</Variable>
+		<Variable name="MTC_F">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="win_E90/64CE/2B4/426387F1/7D06"/>
+			</pragmas>
+		</Variable>
+		<Variable name="MTC_T">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="bool"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="win_119B/3B8B/6D4/42885CD3/492A"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L59">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="MTC::Result"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="win_1108/3B8B/6D4/42885C2D/2A74"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L61">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="'Type"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/542/6496/A38/4b6a7f94a8b"/>
+			</pragmas>
+		</Variable>
+		<Variable name="_L60">
+			<type>
+				<NamedType>
+					<type>
+						<TypeRef name="'Type"/>
+					</type>
+				</NamedType>
+			</type>
+			<pragmas>
+				<ed:Variable oid="!ed/540/6496/A38/4b6a7f947b5a"/>
+			</pragmas>
+		</Variable>
+	</locals>
+	<data>
+		<!-- _L59 = MTC::LATCHALL02(MTC_T, MTC_F); -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L59"/>
+			</lefts>
+			<right>
+				<!-- MTC::LATCHALL02(MTC_T, MTC_F) -->
+				<CallExpression>
+					<operator>
+						<OpCall name="2">
+							<operator>
+								<OperatorRef name="MTC::LATCHALL02"/>
+							</operator>
+						</OpCall>
+					</operator>
+					<callParameters>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_T"/>
+							</path>
+						</IdExpression>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_F"/>
+							</path>
+						</IdExpression>
+					</callParameters>
+				</CallExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="win_1107/3B8B/6D4/42885C2D/39F1"/>
+			</pragmas>
+		</Equation>
+		<!-- MTC_ALL1 = _L59; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="MTC_ALL1"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="_L59"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="win_1109/3B8B/6D4/42885C2D/48C1"/>
+			</pragmas>
+		</Equation>
+		<!-- MTC_F =  not MTC_T; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="MTC_F"/>
+			</lefts>
+			<right>
+				<!--  not MTC_T -->
+				<UnaryOp name="3" operator="not">
+					<operand>
+						<IdExpression>
+							<path>
+								<ConstVarRef name="MTC_T"/>
+							</path>
+						</IdExpression>
+					</operand>
+				</UnaryOp>
+			</right>
+			<pragmas>
+				<ed:Equation oid="win_110A/3B8B/6D4/42885C2D/C8"/>
+			</pragmas>
+		</Equation>
+		<!-- MTC_T = Output; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="MTC_T"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="Output"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="win_60B/3AD/BC8/430F3578/779D"/>
+			</pragmas>
+		</Equation>
+		<!-- _ = _L60; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="_L60"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/53d/6496/A38/4b6a7f94d05"/>
+			</pragmas>
+		</Equation>
+		<!-- _ = _L61; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="_L61"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/53e/6496/A38/4b6a7f942284"/>
+			</pragmas>
+		</Equation>
+		<!-- _L60 = Input1; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L60"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="Input1"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/53f/6496/A38/4b6a7f944465"/>
+			</pragmas>
+		</Equation>
+		<!-- _L61 = Input2; -->
+		<Equation>
+			<lefts>
+				<VariableRef name="_L61"/>
+			</lefts>
+			<right>
+				<IdExpression>
+					<path>
+						<ConstVarRef name="Input2"/>
+					</path>
+				</IdExpression>
+			</right>
+			<pragmas>
+				<ed:Equation oid="!ed/541/6496/A38/4b6a7f9475a0"/>
+			</pragmas>
+		</Equation>
+	</data>
+	<pragmas>
+		<ed:Operator oid="win_6CA/5C09/1684/408F96DE/15CC" symbolFile="GTE_MTC_OBS.ssl" xmlns="http://www.esterel-technologies.com/ns/scade/pragmas/editor/4">
+			<diagrams>
+				<NetDiagram name="diagram_GTE_MTC_OBS" landscape="false" format="A4 (210 297)" oid="!ed/553A/7C78/290/468CACD9/1073">
+					<presentationElements>
+						<EquationGE presentable="win_1107/3B8B/6D4/42885C2D/39F1">
+							<position>
+								<Point x="10787" y="839"/>
+							</position>
+							<size>
+								<Size width="2821" height="1550"/>
+							</size>
+						</EquationGE>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="win_60B/3AD/BC8/430F3578/779D" dstEquation="win_1107/3B8B/6D4/42885C2D/39F1">
+							<positions>
+								<Point x="3149" y="1376"/>
+								<Point x="6853" y="1376"/>
+								<Point x="6853" y="1376"/>
+								<Point x="10795" y="1376"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="2" srcEquation="win_110A/3B8B/6D4/42885C2D/C8" dstEquation="win_1107/3B8B/6D4/42885C2D/39F1">
+							<positions>
+								<Point x="6535" y="2381"/>
+								<Point x="9816" y="2381"/>
+								<Point x="9816" y="1879"/>
+								<Point x="10795" y="1879"/>
+							</positions>
+						</Edge>
+						<EquationGE kind="OBJ_VAR_OUT" presentable="win_1109/3B8B/6D4/42885C2D/48C1">
+							<position>
+								<Point x="15822" y="1376"/>
+							</position>
+							<size>
+								<Size width="212" height="317"/>
+							</size>
+						</EquationGE>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="win_1107/3B8B/6D4/42885C2D/39F1" dstEquation="win_1109/3B8B/6D4/42885C2D/48C1">
+							<positions>
+								<Point x="13600" y="1614"/>
+								<Point x="14526" y="1614"/>
+								<Point x="14526" y="1614"/>
+								<Point x="15928" y="1614"/>
+							</positions>
+						</Edge>
+						<EquationGE presentable="win_110A/3B8B/6D4/42885C2D/C8">
+							<position>
+								<Point x="5512" y="2032"/>
+							</position>
+							<size>
+								<Size width="1016" height="660"/>
+							</size>
+						</EquationGE>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="win_60B/3AD/BC8/430F3578/779D" dstEquation="win_110A/3B8B/6D4/42885C2D/C8">
+							<positions>
+								<Point x="3149" y="1376"/>
+								<Point x="4207" y="1376"/>
+								<Point x="4207" y="2381"/>
+								<Point x="5503" y="2381"/>
+							</positions>
+						</Edge>
+						<EquationGE presentable="win_60B/3AD/BC8/430F3578/779D">
+							<position>
+								<Point x="2705" y="1111"/>
+							</position>
+							<size>
+								<Size width="443" height="503"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/53d/6496/A38/4b6a7f94d05">
+							<position>
+								<Point x="5503" y="3810"/>
+							</position>
+							<size>
+								<Size width="503" height="502"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/53e/6496/A38/4b6a7f942284">
+							<position>
+								<Point x="5503" y="5424"/>
+							</position>
+							<size>
+								<Size width="503" height="503"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/53f/6496/A38/4b6a7f944465">
+							<position>
+								<Point x="2884" y="3810"/>
+							</position>
+							<size>
+								<Size width="265" height="502"/>
+							</size>
+						</EquationGE>
+						<EquationGE presentable="!ed/541/6496/A38/4b6a7f9475a0">
+							<position>
+								<Point x="2884" y="5424"/>
+							</position>
+							<size>
+								<Size width="265" height="503"/>
+							</size>
+						</EquationGE>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/53f/6496/A38/4b6a7f944465" dstEquation="!ed/53d/6496/A38/4b6a7f94d05">
+							<positions>
+								<Point x="3149" y="4075"/>
+								<Point x="4815" y="4075"/>
+								<Point x="4815" y="4075"/>
+								<Point x="5768" y="4075"/>
+							</positions>
+						</Edge>
+						<Edge leftVarIndex="1" rightExprIndex="1" srcEquation="!ed/541/6496/A38/4b6a7f9475a0" dstEquation="!ed/53e/6496/A38/4b6a7f942284">
+							<positions>
+								<Point x="3149" y="5689"/>
+								<Point x="4815" y="5689"/>
+								<Point x="4815" y="5689"/>
+								<Point x="5768" y="5689"/>
+							</positions>
+						</Edge>
+					</presentationElements>
+				</NetDiagram>
+			</diagrams>
+		</ed:Operator>
+		<mtc:Operator xmlns="http://www.esterel-technologies.com/ns/scade/pragmas/mtc/1">
+			<Observer observedOperator="$gte"/>
+		</mtc:Operator>
+	</pragmas>
+</Operator>

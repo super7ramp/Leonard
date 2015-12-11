@@ -1,0 +1,29 @@
+Notes-Types { Esterel-Technologies }  DEFINITIONS ::=
+BEGIN
+    MtcCriterionElement ::= SEQUENCE OF { SEQUENCE {
+    annot_object OID,
+    name STRING,
+        information {
+            Name STRING
+            {
+            	 NT_LEFT_LABEL "Name:" ,
+            	 NT_DEFAULT_VALUE "Name" ,
+            	 NT_EDITABLE T },
+            Description TEXT
+            {
+            	 NT_LEFT_LABEL "Description:" ,
+            	 NT_DEFAULT_VALUE "Description" ,
+            	 NT_FIELD_WIDTH 30 ,
+            	 NT_FIELD_HEIGHT 4 ,
+            	 NT_EDITABLE T }
+    } } }
+
+END
+
+Notes-Values { Esterel-Technologies }  DEFINITIONS ::=
+BEGIN
+    MtcCriterionElement ::= {
+        {"win_FA2/64CE/2B4/426389AC/366E", "MtcCriterionElement_1","False" , "Condition is FALSE" },
+        {"win_FA1/64CE/2B4/426389AC/2951", "MtcCriterionElement_1","True" , "Condition is TRUE" }}
+END
+

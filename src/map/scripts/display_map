@@ -1,0 +1,30 @@
+#!/bin/bash
+
+which display &>/dev/null
+if [ $? -ne 0 ]
+then
+    echo "Please install Imagemagick"
+    exit 1
+fi
+
+which ./map2dot &>/dev/null
+if [ $? -ne 0 ]
+then
+    echo "map2dot not found"
+    exit 1
+fi
+
+which ./dot2svg &>/dev/null
+if [ $? -ne 0 ]
+then
+    echo "dot2svg not found"
+    exit 1
+fi
+
+if [ $# -lt 1 ]
+then
+    echo "Syntax: $0 input.map"
+    exit 2
+fi
+
+./map2dot $1 | ./dot2svg | display

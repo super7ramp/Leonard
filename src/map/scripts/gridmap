@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+
+import sys
+
+#
+# Grid map generator
+#
+
+if(len(sys.argv) < 5):
+    sys.exit("Syntax: " + sys.argv[0] + " height width nodesH nodesW")
+
+height = float(sys.argv[1])
+width = float(sys.argv[2])
+nodesByHeight = int(sys.argv[3])
+nodesByWidth = int(sys.argv[4])
+
+print('nodes:')
+
+for i in range(1, nodesByWidth+1):
+    for j in range(1, nodesByHeight+1):
+        print("node{0},{1},{2}".format((i-1)*nodesByHeight + j, i*width/nodesByWidth, j*height/nodesByHeight))
+
+print('edges:')
+
+for i in range(1, nodesByWidth+1):
+    for j in range(1, nodesByHeight+1):
+
+        node = "node" + str((i-1)*nodesByHeight + j)
+
+        upLeft = ",node" + str((i-2)*nodesByHeight + j -1 );
+        left = ",node" + str((i-2)*nodesByHeight + j)
+        downLeft = ",node" + str((i-2)*nodesByHeight + j + 1)
+        up = ",node" + str((i-1)*nodesByHeight + j - 1)
+        down = ",node" + str((i-1)*nodesByHeight + j + 1)
+        upRight = ",node" + str(i*nodesByHeight + j - 1)
+        right = ",node" + str(i*nodesByHeight + j)
+        downRight = ",node" + str(i*nodesByHeight + j + 1)
+        
+        # Top-left corner
+        # Also special cases (h=1 or w=1) are handled here
+        if (i == 1 and j == 1):
+            if not (nodesByWidth == 1 and nodesByHeight == 1):
+                if (nodesByWidth == 1):
+                    print(node + down)
+                elif (nodesByHeight == 1):
+                    print(node + right)
+                else:
+                    print(node + down + right + downRight)
+        
+        # Top-right corner
+        elif (i == nodesByWidth and j == 1):
+            print(node + left + downLeft + down)
+
+        # Bottom-left corner
+        elif (i == 1 and j == nodesByHeight):
+            print(node + up + upRight + right)
+
+        # Bottom-right corner
+        elif (i == nodesByWidth and j == nodesByHeight):
+            print(node + upLeft + left + up)
+
+        # First line
+        elif (j == 1):
+            print(node + left + downLeft + down + right + downRight)
+
+        # First column
+        elif (i == 1):
+            print(node + up + down + upRight + right + downRight)
+
+        # Last line
+        elif (j == nodesByHeight):
+            print(node + upLeft + left + up + upRight + right)
+
+        # Last column
+        elif (i == nodesByWidth):
+            print(node + upLeft + left + downLeft + up + down)
+
+        # Other cases
+        else:
+            print(node + upLeft + left + downLeft + up + down + upRight + right + downRight)

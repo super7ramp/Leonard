@@ -1,0 +1,1 @@
+-target C -name_length 200 -significance_length 31 -user_config ./user_macros.h -warn_error -node system_state_machine -target_dir U:/Windows/Bureau/Drone_state_machine/KCG U:/Windows/Bureau/Drone_state_machine/KCG\kcg_xml_filter_out.scade 

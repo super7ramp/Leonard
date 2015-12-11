@@ -208,7 +208,7 @@ typedef struct _navdata_magneto_t {
     float         heading_unwrapped;
     float         heading_gyro_unwrapped;
     //!< heading_fusion_unwrapped seems to provide a usable value in degrees
-    float         heading_fusion_unwrapped; /*!< Warning, the range is [0°,150°]U[-210°,0°] */
+    float         heading_fusion_unwrapped; /*!< Warning, the range is [0°,180+heading_unwrapped]U[-180+heading_unwrapped,0°] */
     char          magneto_calibration_ok;
     uint32_t      magneto_state;
     float         magneto_radius;
