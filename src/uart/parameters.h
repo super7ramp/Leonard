@@ -2,6 +2,7 @@
 #define PARAMETERS_H
 
 #include <stdint.h>
+#include <time.h>
 
 #define ADDR_LEN		6
 #define NUMBER_BEACONS  6
@@ -33,7 +34,7 @@ typedef struct
 {
     t_beacon_parameters beaconInfo;
     int8_t rssi;
-    uint8_t TTL;
+   	double TTL;
 }t_beacon_info;
 
 #endif

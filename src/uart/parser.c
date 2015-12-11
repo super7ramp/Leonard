@@ -3,12 +3,13 @@
 #include <string.h>  /* String function definitions */
 #include <stdint.h>
 #include <inttypes.h>
+#include <sys/time.h>
 #include "parser.h"
 #include "parameters.h"
 
 
 
-/*{{{id}, {beaconLocation}, {detectedLocation}},rssi,ttl}
+/*{{{id}, {beaconLocation}, {detectedLocation}} , rssi, ttl}
 */
 t_beacon_info beaconTab[NUMBER_BEACONS]={ 
 	{{{0x46, 0x09, 0xad, 0x80, 0x07, 0x00}, {0, 0}, {2, 2}},0,0}, //A
@@ -41,17 +42,25 @@ t_data extract_data(char * data)
 		}
 		else if(data[n] == ' ') 
 		{
-			strcat(addr, aux);
-			//printf("addr : %s\n", addr);
-			memset(aux, '\0', sizeof(aux));
-			cpt_res = -1;
-			cpt_addr += 1;
+			if (atoi(aux) < 256) {
+				strcat(addr, aux);
+				//printf("addr : %s\n", addr);
+				memset(aux, '\0', sizeof(aux));
+				cpt_res = -1;
+				cpt_addr += 1;
+			
+			}
+			else
+				exit -1;
 		}
 		
 		else if (data[n] == '\r') 
 		{
 			rssi = atoi(aux);
 			//printf("rssi : %d \n", rssi); 
+			if (rssi >= 0) {
+				exit -1;
+			}
 		}
 	}
 	
@@ -92,6 +101,7 @@ int8_t findBeaconInTab(address_t addr)
     {
         if(compareAddresses(addr, beaconTab[i].beaconInfo.id)) {
             found=1;
+            printf("found %d\n", i);
         } 
         else
             i++;
@@ -135,23 +145,29 @@ void updateBeaconTab(address_t addr, int8_t rssi)
 }
 
 
-void refreshBeaconTTL(uint8_t index)
-{
-    beaconTab[index].TTL=TTL_INIT;   
+void UpdateTTLBeacons() {
+  
+	uint8_t i;
+	struct timeval time;
+	gettimeofday(&time, NULL);
+	
+	long long currentTime = time.tv_sec*1000 + time.tv_usec/1000;
+  
+	for(i = 0; i<NUMBER_BEACONS; i++) {
+		
+	  	if(currentTime - beaconTab[i].TTL >= 1500) {
+	  		beaconTab[i].TTL = 0;
+	  	}
+	}
+  
 }
 
 
-void decreaseAllTTLs(void)
-{
-	uint8_t index;
-    for (index=0; index<NUMBER_BEACONS; index++)
-    {
-        if(beaconTab[index].TTL!=0)
-            beaconTab[index].TTL--;
-            
-        if(beaconTab[index].TTL==0)
-            beaconTab[index].rssi=0;
-    }
+void refreshBeaconTTL(uint8_t index) {
+
+	struct timeval time;
+	gettimeofday(&time, NULL);
+    beaconTab[index].TTL= time.tv_sec*1000 + time.tv_usec/1000;   
 }
 
 
@@ -164,7 +180,7 @@ int8_t getBeaconRssi(uint8_t index)
     return beaconTab[index].rssi;
 }
 
-uint8_t getBeaconTTL(uint8_t index)
+double getBeaconTTL(uint8_t index)
 {
     return beaconTab[index].TTL;
 }
