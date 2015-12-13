@@ -42,16 +42,24 @@ t_data extract_data(char * data)
 		}
 		else if(data[n] == ' ') 
 		{
-			if (atoi(aux) < 256) {
+			if (strlen(aux) > 0 && strlen(aux) < 3  && atoi(aux) >= 0) {
+			printf("aux size %d\n", (int) strlen(aux));
 				strcat(addr, aux);
 				//printf("addr : %s\n", addr);
 				memset(aux, '\0', sizeof(aux));
 				cpt_res = -1;
 				cpt_addr += 1;
 			
-			}
-			else
+			} 
+			else if (atoi(aux) < 0) {
+				printf("Error address must have positive byte\n");
 				exit -1;
+			}
+			else {
+				printf("aux size %d\n", (int) strlen(aux));
+				printf("Error address format : %%x %%x %%x %%x %%x %%x\n");
+				exit -1;
+			}
 		}
 		
 		else if (data[n] == '\r') 
@@ -59,9 +67,16 @@ t_data extract_data(char * data)
 			rssi = atoi(aux);
 			//printf("rssi : %d \n", rssi); 
 			if (rssi >= 0) {
+				printf("Error rssi positive\n");
 				exit -1;
 			}
 		}
+	}
+
+
+	if(cpt_addr >6) {
+		printf("Error address format 6 bytes : %%x %%x %%x %%x %%x %%x\n");
+		exit -1;
 	}
 	
 	ret.rssi = rssi;
@@ -70,6 +85,7 @@ t_data extract_data(char * data)
 	
 	convertToAddress(ret.address, addr);
 	updateBeaconTab(ret.address, ret.rssi);
+	UpdateTTLBeacons();
 	
 	return ret;
 }
@@ -141,6 +157,7 @@ void updateBeaconTab(address_t addr, int8_t rssi)
     }
     else {
     	printf("ADDRESS ERROR \n");
+    	exit -1;
     }
 }
 

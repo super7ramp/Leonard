@@ -8,13 +8,15 @@
 
 t_location currentPos={0,0};
 
-void updateCurrentLocation()
+void UpdateCurrentLocation()
 {
     const t_beacon_info* beaconTab=getBeaconTab();
     uint8_t index1 = getIndexOfCloserBeacon(-1, -1);
     uint8_t index2 = getIndexOfCloserBeacon(index1, -1);
     uint8_t index3 = getIndexOfCloserBeacon(index1, index2);
-    
+    	
+    printf("ind1 %u, ind2 %u, ind3 %u\n",index1, index2, index3);
+    	
     //If three beacon has been discovered
     if (index1!=-1 && index2!=-1 && index3!=-1) {
     	currentPos.x = (beaconTab[index1].beaconInfo.detectedLocation.x + beaconTab[index2].beaconInfo.detectedLocation.x + beaconTab[index3].beaconInfo.detectedLocation.x)/3;
@@ -40,24 +42,26 @@ void updateCurrentLocation()
 uint8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
 {
     const t_beacon_info* beaconTab=getBeaconTab();
-    uint8_t index = 0, i;
-    int8_t highestRssi=beaconTab[index].rssi;
+    uint8_t index = -1, i;
+    int8_t highestRssi = -1000;
     
     for (i=0; i<NUMBER_BEACONS; i++)   
     {
-        if (ind1==-1 && ind2==-1 && beaconTab[i].rssi!=0 && (highestRssi==0||beaconTab[i].rssi>highestRssi))
-        {
-			index=i;
-            highestRssi=beaconTab[i].rssi;
-        }
-        else if (ind1!=-1 && ind2==-1 && beaconTab[i].rssi!=0 && i!=ind1 && (highestRssi==0||beaconTab[i].rssi>highestRssi)) {
-        	index=i;
-            highestRssi=beaconTab[i].rssi;
-        } 
-        else if (ind1!=-1 && ind2!=-1 && beaconTab[i].rssi!=0 && i!=ind1 && i!=ind2 && (highestRssi==0||beaconTab[i].rssi>highestRssi)) {
-         	index=i;
-            highestRssi=beaconTab[i].rssi;
-        }
+    	if (beaconTab[i].TTL != 0) {
+		    if (ind1==-1 && ind2==-1 && beaconTab[i].rssi!=0 && (highestRssi==0||beaconTab[i].rssi>highestRssi))
+		    {
+				index=i;
+		        highestRssi=beaconTab[i].rssi;
+		    }
+		    else if (ind1!=-1 && ind2==-1 && beaconTab[i].rssi!=0 && i!=ind1 && (highestRssi==0||beaconTab[i].rssi>highestRssi)) {
+		    	index=i;
+		        highestRssi=beaconTab[i].rssi;
+		    } 
+		    else if (ind1!=-1 && ind2!=-1 && beaconTab[i].rssi!=0 && i!=ind1 && i!=ind2 && (highestRssi==0||beaconTab[i].rssi>highestRssi)) {
+		     	index=i;
+		        highestRssi=beaconTab[i].rssi;
+		    }
+		}
     }
     return index;
 }

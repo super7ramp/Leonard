@@ -1,5 +1,5 @@
 parser : parser.o localisation.o  main.o
-	gcc -o parser parser.o main.o
+	gcc -o parser parser.o localisation.o main.o
 	
 localisation.o : localisation.c 
 	gcc -o localisation.o -c localisation.c -Wall
@@ -7,7 +7,7 @@ localisation.o : localisation.c
 parser.o : parser.c 
 	gcc -o parser.o -c parser.c -Wall
 	
-main.o : main.c parser.h localisation.h
+main.o : main.c parser.h localisation.h parameters.h
 	gcc -o main.o -c main.c -Wall
 
 clean:
