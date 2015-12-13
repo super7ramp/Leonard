@@ -3,6 +3,8 @@
 #include <math.h>
 #include "shortest_path.h"
 
+#define FLOAT_COMPARISON_THRESHOLD 0.001
+
 //------- These functions are meant to be used only in this file --------//
 
 /** @brief Return the index of a point in the map, according to its coordinates
@@ -49,6 +51,8 @@ node_t **dijkstra(float current_x, float current_y, float dest_x, float dest_y, 
     if(start_point < 0)
     {
         fprintf(stderr, "[%s:%d] Error: Starting point not found\n", __FILE__, __LINE__);
+        free(previous);
+        free(path);
         return NULL;
     }
 
@@ -57,6 +61,8 @@ node_t **dijkstra(float current_x, float current_y, float dest_x, float dest_y, 
     if(end_point < 0)
     {
         fprintf(stderr, "[%s:%d] Error: Arrival point not found\n", __FILE__, __LINE__);
+        free(previous);
+        free(path);
         return NULL;
     }
 
@@ -110,6 +116,14 @@ node_t **dijkstra(float current_x, float current_y, float dest_x, float dest_y, 
     path[i] = &(map->nodes[end_point]);
     index = find_index_map(map, dest_x, dest_y);
 
+    if (index < 0)
+    {
+        fprintf(stderr, "[%s:%d] Error: Cannot find index of point [%f,%f]\n", __FILE__, __LINE__, dest_x, dest_y);
+        free(previous);
+        free(path);
+        return NULL;
+    }
+
     while((previous[index]->x != map->nodes[start_point].x) ||
           (previous[index]->y != map->nodes[start_point].y))
     {
@@ -154,7 +168,9 @@ int find_index_map(const graph_t *map, float other_x, float other_y)
     int i;
     for(i = 0; i < map->numberOfNodes; i++)
     {
-        if((map->nodes[i].x == other_x) && (map->nodes[i].y == other_y))
+        // We cannot really test an equality between two floats, we need a comparison with a threshold
+        if( fabs(map->nodes[i].x - other_x) < FLOAT_COMPARISON_THRESHOLD &&
+            fabs(map->nodes[i].y - other_y) < FLOAT_COMPARISON_THRESHOLD )
             return i;
     }
     return -1;
