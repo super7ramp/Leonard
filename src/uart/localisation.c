@@ -11,6 +11,9 @@ t_location currentPos={0,0};
 void UpdateCurrentLocation()
 {
     const t_beacon_info* beaconTab=getBeaconTab();
+   
+	UpdateTTLBeacons();
+   
     uint8_t index1 = getIndexOfCloserBeacon(-1, -1);
     uint8_t index2 = getIndexOfCloserBeacon(index1, -1);
     uint8_t index3 = getIndexOfCloserBeacon(index1, index2);
@@ -43,7 +46,7 @@ uint8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
 {
     const t_beacon_info* beaconTab=getBeaconTab();
     uint8_t index = -1, i;
-    int8_t highestRssi = -1000;
+    int8_t highestRssi = -100;
     
     for (i=0; i<NUMBER_BEACONS; i++)   
     {
