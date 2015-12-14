@@ -11,8 +11,7 @@
 #include "controlTask.h"
 #include "var_coord.h"
 
-#define DONE 	 0
-#define NOTDONE  1
+
 
 struct coordinates_ destination;
 

@@ -21,6 +21,7 @@
 #include "KCG/system_state_machine.h"
 #include "regulation.h"
 #include "var_coord.h"
+#include "../navdata_controller.h"
 
 /**
  * \brief State of the control task : manual (drone controled by the user).
@@ -36,12 +37,13 @@
  * \brief The control taks is running.
  */
 #define CONTROL_ENABLED 0
+#define CONTROL_ENABLED_SCADE 1
 
 /**
  * \brief The control taks is not running.
  */
 #define CONTROL_DISABLED 1
-
+#define CONTROL_DISABLED_SCADE 0
 /**
  * \brief Precision to determine the end of the mission (m).
  */
@@ -159,11 +161,24 @@ void anti_emergency_();
 /**
  * PRIVATE
  */
- 
-struct coordinates_ map;
 
+ void SWITCH_DRONE_COMMANDE(int order);
+ 
+ //structure for coordinates
+ struct coordinates_ map;
+
+//structure for different direction
+direction gofindygo;
+
+//Input and Outpu for SCADE
 inC_system_state_machine inC;
 outC_system_state_machine outC;
+
+//Données de navigation
+Navdata Main_Nav;
+
+float nav_prec, nav_suiv;
+
 /**
  * \brief Mutex to protect the control task data.
  */

@@ -1,11 +1,11 @@
 /* $*************** KCG Version 6.1.3 (build i6) ****************
 ** Command: s2c613 -config U:/Windows/Bureau/Drone_state_machine/KCG\kcg_s2c_config.txt
-** Generation date: 2015-12-03T12:01:41
+** Generation date: 2015-12-03T19:26:25
 *************************************************************$ */
 
 #include "kcg_types.h"
 
-kcg_bool kcg_comp_struct__5293(struct__5293 *kcg_c1, struct__5293 *kcg_c2)
+kcg_bool kcg_comp_struct__5325(struct__5325 *kcg_c1, struct__5325 *kcg_c2)
 {
   kcg_bool kcg_equ;
   
@@ -17,6 +17,6 @@ kcg_bool kcg_comp_struct__5293(struct__5293 *kcg_c1, struct__5293 *kcg_c2)
 
 /* $*************** KCG Version 6.1.3 (build i6) ****************
 ** kcg_types.c
-** Generation date: 2015-12-03T12:01:41
+** Generation date: 2015-12-03T19:26:25
 *************************************************************$ */
 

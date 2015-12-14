@@ -13,8 +13,7 @@ int main(int argc, char *argv[])
 {
   pthread_t threadCom ;
   pthread_t threadControl;
-  //pthread_t threadNavdata;
-  //pthread_t threadBluetooth;
+  pthread_t threadBluetooth;
   printf("Lancement des deux thread---------------------------- \n");
 
   printf("\nStart\n\n") ;
@@ -29,12 +28,7 @@ int main(int argc, char *argv[])
     perror("pthread_create");
     return 1;
   }
-  /*if(pthread_create(&threadNavdata, NULL, thread_nvadata, NULL) == -1)
-  {
-    perror("pthread_create");
-    return 1;
-  }
-  if(pthread_create(&threadBluetooth, NULL, thread_Bluetooth, NULL) == -1)
+  /*if(pthread_create(&threadBluetooth, NULL, thread_Bluetooth, NULL) == -1)
   {
     perror("pthread_create");
     return 1;
@@ -49,12 +43,7 @@ int main(int argc, char *argv[])
     perror("pthread_join");
     return 1;
   }
-  /*if (pthread_join(threadNavdata, NULL)) 
-  {
-    perror("pthread_join");
-    return 1;
-  }
-  if (pthread_join(threadBluetooth, NULL)) 
+  /*if (pthread_join(threadBluetooth, NULL)) 
   {
     perror("pthread_join");
     return 1;

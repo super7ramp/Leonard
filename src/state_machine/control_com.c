@@ -3,13 +3,13 @@
 void* thread_com(void* arg)
 {
 	//initialisation de la connection UDP entre le logiciel embarqué et l'IHM
-	int ORDER;
+	
 	int order_recept;
 	ORDER = NOTDONE;
 	int i = 0;
 	order_recept = 0;
 	destination.x = 40.0;
-	destination.y = 20.0;
+	destination.y = 40.0;
 	while(1)
 	{
 		//récupération des donnée envoyé par le connectin Wifi
@@ -55,35 +55,42 @@ void* thread_com(void* arg)
 					break; 
 
 				case 9: 
+					printf("start_mission => communication\n");
 					start_mission(destination.x, destination.y);
 					ORDER = DONE;
 					break;
 
 				case 10:
 					stop_mission();
-					ORDER = DONE;
+					break;
+
+				case 11 :
 					break;
 
 				default:
 					break;
 			}
-			if(i<460){
+			
+			if(i<1000){
 				order_recept = 3; //takeOff
 			}
-			else if(i>460 && i<1200){
+			else if(i>1000 && i<1800){
 				order_recept = 11; //reset_com
+				if(i==1010)
+					order_recept = 1;
 			}
-			else if(i>1200 && i<2600){
-				order_recept = 2; //start_mission
+			else if(i==1801){
+				order_recept = 9; //start_mission
 			}
-			else if(i>2600){
-				order_recept = 11; //reset_com
+			else if(i>1801){
+				order_recept = 2; //attérisage
 			}
-			printf("order_recept = %d      et i = %d\n", order_recept,i);
+			//printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
 			i++;
 			//printf("Debut de la pause de 20ms dans thread_com\n");
-			usleep(20000);
+			usleep(10000);
 			//printf("Fin de la pause de 20ms dans le thread_com\n");
+			
 		}
 	}  
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--$*************** KCG Version 6.1.3 (build i6) ****************
 ** Command: s2c613 -config U:/Windows/Bureau/Drone_state_machine/KCG\kcg_s2c_config.txt
-** Generation date: 2015-12-03T12:01:41
+** Generation date: 2015-12-03T19:26:25
 *************************************************************$-->
-<Model date="2015-12-03T12:01:41" commandLine="s2c613 -config U:/Windows/Bureau/Drone_state_machine/KCG\kcg_s2c_config.txt">
+<Model date="2015-12-03T19:26:25" commandLine="s2c613 -config U:/Windows/Bureau/Drone_state_machine/KCG\kcg_s2c_config.txt">
   <RootNode scadeName="system_state_machine" headerFile="system_state_machine.h" targetCycleFct="system_state_machine"
       targetInitFct="system_state_machine_reset">
     <Input scadeName="flag_land" scadeType="int" targetName="flag_land" targetType="kcg_int" inCtx="true"/>
@@ -21,7 +21,8 @@
         inCtx="true"/>
     <Input scadeName="falg_antiemergency" scadeType="int" targetName="falg_antiemergency" targetType="kcg_int"
         inCtx="true"/>
-    <Output scadeName="order_called" scadeType="int" targetName="order_called" targetType="kcg_int" inCtx="true"/>
+    <Output scadeName="order_called" scadeType="int" targetName="order_called" targetType="kcg_int" mem="true"
+        inCtx="true"/>
     <Local scadeName="landCalled" scadeType="int" targetName="flag_land" targetType="kcg_int"/>
     <Local scadeName="takeoffCalled" scadeType="int" targetName="flag_takeoff" targetType="kcg_int"/>
     <Local scadeName="emergencyCalled" scadeType="int" targetName="flag_emergency" targetType="kcg_int"/>
@@ -105,6 +106,9 @@
               <Condition/>
               <Transition targetName="SSM_TR_Init_10_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="MOVE_YAW"/>
             </Fork>
+            <Fork priority="11">
+              <Transition targetName="SSM_TR_Init_11_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="State17"/>
+            </Fork>
           </State>
           <State scadeName="LAST_STATE" targetName="SSM_st_LAST_STATE_SM1_STATE_MANUAL_SM2">
           </State>
@@ -160,6 +164,8 @@
               <Transition targetName="SSM_TR_MOVE_YAW_1_SM2_SM1_STATE_MANUAL" kind="strong" scadeDest="LAST_STATE"/>
             </Fork>
           </State>
+          <State scadeName="State17" targetName="SSM_st_State17_SM1_STATE_MANUAL_SM2">
+          </State>
           <ActiveState targetName="SM2_state_act_SM1_STATE_MANUAL"/>
           <NextState targetName="SM2_state_nxt_SM1_STATE_MANUAL" inCtx="true"/>
           <SelectedState targetName="SM2_state_sel_SM1_STATE_MANUAL"/>
@@ -184,9 +190,9 @@
       <SelectedState targetName="SM1_state_sel"/>
       <ResetActiveState targetName="SM1_reset_act"/>
     </Automaton>
-    <Init targetName="init1" targetType="kcg_bool" clockVar="SM1_state_act" clockVal="SSM_st_STATE_MANUAL_SM1"
+    <Init targetName="init1" targetType="kcg_bool" inCtx="true"/>
+    <Init targetName="init" targetType="kcg_bool" clockVar="SM1_state_act" clockVal="SSM_st_STATE_MANUAL_SM1"
         inCtx="true"/>
-    <Init targetName="init" targetType="kcg_bool" inCtx="true"/>
     <OutCtxType targetName="outC_system_state_machine"/>
     <InCtxType targetName="inC_system_state_machine"/>
   </RootNode>
@@ -205,7 +211,7 @@
   <Package scadeName="mathext"/>
   <Package scadeName="pwlinear"/>
   <Package scadeName="lut">
-    <NamedType scadeName="LutIndex" targetName="LutIndex_lut" refType="struct__5293"/>
+    <NamedType scadeName="LutIndex" targetName="LutIndex_lut" refType="struct__5325"/>
   </Package>
   <Package scadeName="verif"/>
   <Option name="root_node_name" value="system_state_machine"/>
@@ -237,12 +243,12 @@
   <PredefType scadeName="bool" targetName="kcg_bool"/>
   <PredefType scadeName="char" targetName="kcg_char"/>
   <PredefType scadeName="int" targetName="kcg_int"/>
-  <StructType targetName="struct__5293" targetCopyFct="kcg_copy_struct__5293" targetCompFct="kcg_comp_struct__5293">
+  <StructType targetName="struct__5325" targetCopyFct="kcg_copy_struct__5325" targetCompFct="kcg_comp_struct__5325">
     <Field scadeName="k" scadeType="int" targetName="k" targetType="kcg_int"/>
     <Field scadeName="f" scadeType="real" targetName="f" targetType="kcg_real"/>
   </StructType>
 </Model>
 <!--$*************** KCG Version 6.1.3 (build i6) ****************
 ** kcg_trace.xml
-** Generation date: 2015-12-03T12:01:41
+** Generation date: 2015-12-03T19:26:25
 *************************************************************$-->
