@@ -1,5 +1,5 @@
 $**************  SCADETOC Version 6.4.2 (build i26) **************
-** Generation date: 2015-12-03T12:01:39
+** Generation date: 2015-12-03T19:26:23
 ** Command: scade -code "U:\Windows\Bureau\Drone_state_machine\Drone_state_machine.etp" -node system_state_machine -conf KCG
 *************************************************************$
 *** Generated Files Information (GENFIL): KCG- Generated files
@@ -33,6 +33,6 @@ $**************  SCADETOC Version 6.4.2 (build i26) **************
  ~sc2c_integration_files.txt
   at file U:\Windows\Bureau\Drone_state_machine\KCG\sc2c_integration_files.txt, line 0, character 0
 $**************  SCADETOC Version 6.4.2 (build i26) **************
-** Generation date: 2015-12-03T12:01:42
+** Generation date: 2015-12-03T19:26:25
 ** sc2c.log
 *************************************************************$

@@ -1,6 +1,6 @@
 /* $*************** KCG Version 6.1.3 (build i6) ****************
 ** Command: s2c613 -config U:/Windows/Bureau/Drone_state_machine/KCG\kcg_s2c_config.txt
-** Generation date: 2015-12-03T12:01:41
+** Generation date: 2015-12-03T19:26:25
 *************************************************************$ */
 #ifndef _KCG_TYPES_H_
 #define _KCG_TYPES_H_
@@ -84,6 +84,7 @@ typedef enum {
   SSM_TR_Init_8_SM2_SM1_STATE_MANUAL,
   SSM_TR_Init_9_SM2_SM1_STATE_MANUAL,
   SSM_TR_Init_10_SM2_SM1_STATE_MANUAL,
+  SSM_TR_Init_11_SM2_SM1_STATE_MANUAL,
   SSM_TR_MOVE_PITCHROLL_1_SM2_SM1_STATE_MANUAL,
   SSM_TR_LAND_1_SM2_SM1_STATE_MANUAL,
   SSM_TR_TAKE_OFF_1_SM2_SM1_STATE_MANUAL,
@@ -108,30 +109,31 @@ typedef enum {
   SSM_st_MOVE_ROLL_SM1_STATE_MANUAL_SM2,
   SSM_st_MOVE_PITCH_SM1_STATE_MANUAL_SM2,
   SSM_st_ANTI_EMERGENCY_SM1_STATE_MANUAL_SM2,
-  SSM_st_MOVE_YAW_SM1_STATE_MANUAL_SM2
+  SSM_st_MOVE_YAW_SM1_STATE_MANUAL_SM2,
+  SSM_st_State17_SM1_STATE_MANUAL_SM2
 } SSM_ST_SM2_SM1_STATE_MANUAL;
-typedef struct { kcg_int k; kcg_real f; } struct__5293;
+typedef struct { kcg_int k; kcg_real f; } struct__5325;
 
 /* lut::LutIndex */
-typedef struct__5293 LutIndex_lut;
+typedef struct__5325 LutIndex_lut;
 
-#ifndef kcg_copy_struct__5293
-#define kcg_copy_struct__5293(kcg_C1, kcg_C2) (kcg_assign_struct((kcg_C1), (kcg_C2), sizeof (struct__5293)))
-#endif /* kcg_copy_struct__5293 */
+#ifndef kcg_copy_struct__5325
+#define kcg_copy_struct__5325(kcg_C1, kcg_C2) (kcg_assign_struct((kcg_C1), (kcg_C2), sizeof (struct__5325)))
+#endif /* kcg_copy_struct__5325 */
 
-#ifndef kcg_comp_struct__5293
-extern kcg_bool kcg_comp_struct__5293(
-  struct__5293 *kcg_c1,
-  struct__5293 *kcg_c2);
-#endif /* kcg_comp_struct__5293 */
+#ifndef kcg_comp_struct__5325
+extern kcg_bool kcg_comp_struct__5325(
+  struct__5325 *kcg_c1,
+  struct__5325 *kcg_c2);
+#endif /* kcg_comp_struct__5325 */
 
-#define kcg_comp_LutIndex_lut kcg_comp_struct__5293
+#define kcg_comp_LutIndex_lut kcg_comp_struct__5325
 
-#define kcg_copy_LutIndex_lut kcg_copy_struct__5293
+#define kcg_copy_LutIndex_lut kcg_copy_struct__5325
 
 #endif /* _KCG_TYPES_H_ */
 /* $*************** KCG Version 6.1.3 (build i6) ****************
 ** kcg_types.h
-** Generation date: 2015-12-03T12:01:41
+** Generation date: 2015-12-03T19:26:25
 *************************************************************$ */
 

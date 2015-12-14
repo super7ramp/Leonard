@@ -11,18 +11,20 @@ void* controlTask(void* arg)
   struct timeval tp;
   struct timespec ts;
 
-  char message [64];
+
   float pitch_cmd = 0.0;
   float roll_cmd = 0.0;
   float angular_speed_cmd = 0.0;
   float vertical_speed_cmd = 0.0; 
 
   initialize_at_com();    //initialisation du soket pour les commandes AT.
-  //initNavdata();          //initialisation du soket pour les navdata.
+  
+  initNavdata();          //initialisation du soket pour les navdata.
+  Main_Nav = getNavdata();
   //initialisation_uart();  //initialisation de la commuication Uart.
 
   pthread_mutex_lock(&mutex_control);
-  inC.flag_control_e = CONTROL_ENABLED;
+  inC.flag_control_e = CONTROL_ENABLED_SCADE;
   inC.flag_control_s = STATE_MANUAL;
   inC.flag_takeoff = 0;
   inC.flag_land = 0;
@@ -52,76 +54,13 @@ void* controlTask(void* arg)
     pthread_mutex_lock(&mutex_control);
     //printf("Passage du pthread_mutex_lock(&mutex_control) dans controlTask\n");
 
+    system_state_machine_reset(&outC);
     system_state_machine(&inC,&outC); //CODE SCADE
+    printf("ordre genere par la machine scade = %d\r", outC.order_called);
+
+    SWITCH_DRONE_COMMANDE(outC.order_called);//SWITCH pour l'envoi des ordres
     
-    switch(outC.order_called){
-
-      case 0 : 
-          //printf("Auncun ordre envoyé donc passage envoi de l'ordre reset_com\n");
-          reset_com(message);
-          break;
-
-      case 1 :
-          //printf("Envoi de la commande AT=land\n");
-          landing(message);
-          landCalled = 0;
-          break;
-
-      case 2 :
-          //printf("Envoi de la commande AT=takeoff\n");
-          take_off(message);
-          takeOffCalled = 0;
-          break;
-
-      case 3 :
-          set_roll(message, roll_move, roll_power);
-          rollCalled = 0;
-          break;
-
-      case 4 :
-          set_pitch(message, pitch_move, pitch_power);
-          pitchCalled = 0;
-          break;
-
-      case 5 :
-          //set_Yaw(message, yaw_move, pitch_power);
-          yawCalled = 0;
-          break;
-
-      case 6 :
-          set_roll(message, roll_move, roll_power);
-          set_pitch(message, pitch_move, pitch_power);
-          rollpitchCalled = 0;
-          break;
-
-      case 7 :
-          set_trim(message);
-          calibHorCalled = 0;
-          break;
-
-      case 8 :
-          //sendCalibMagn(seqNumber);
-          calibMagnCalled = 0;
-          break;
-
-      case 9 :
-          set_emergency(message);
-          emergencyCalled = 0;
-          break;
-
-      case 10 :
-          anti_emergency(message);
-          emergencyCalled = 0;
-          break;
-
-      case 20 : 
-          start_mission(0.0,0.0);
-          break;
-
-      default :
-          printf("Scade ne marche pas si bien que ça finalement\n");
-          break;
-    }
+    
     pthread_mutex_unlock(&mutex_control);
     pthread_cond_timedwait(&cond, &verrou_control, &ts);
     pthread_mutex_unlock(&verrou_control);    
@@ -232,34 +171,238 @@ void start_mission(float x_map, float y_map)
   pthread_mutex_unlock(&mutex_control);
 }
 
-void stop_mission()
+void stop_mission()  //fonction appelée dans la boucle whil(1) déjà protégée par un mutex
 {
   printf("controlTask : end_mission called\n");
-  pthread_mutex_lock(&mutex_control);
   inC.flag_control_s = STATE_MANUAL;
-  pthread_mutex_unlock(&mutex_control);
-
+  ORDER = NOTDONE;
 }
 
 void calcul_mission()
 {
   struct coordinates_ C_blue; //coordinates of drone
-  float nav_z,calcul_x, calcul_y, calcul_a;
-  read_data_bluetooth(&C_blue.x,&C_blue.y);
-  nav_z = GetYaw();  //à changer
-  calcul_x = map.x - C_blue.x;
-  calcul_y = map.y - C_blue.y;
-  calcul_a = atanf(abs(map.y-C_blue.y)/abs(map.x-C_blue.x)); //calcul de l'angle
-  calcul_a = calcul_a / (PI/2) * 180.0; //radians en dergrées
-  if(calcul_x>0.0 && calcul_y>0.0) //si quadrant haut droite
-    calcul_a;
-  else if (calcul_x<0.0 && calcul_y>0.0) //si quadrant bas droite
-    calcul_a = - calcul_a;
-  else if (calcul_x>0.0 && calcul_y<0.0) //Si quadrant haut gauche
-    calcul_a = 180.0 - calcul_a;
-  else if (calcul_x<0.0 && calcul_y<0.0) //Si quadrant bas gauche
-    calcul_a = -180.0 + calcul_a;
+  int indice = 0;
+  float angle_actuel,calcul_x, calcul_y, angle_desire;
 
-  if(calcul_a > 150.0) //nécessaire au vu des donnée renvoyées par le navdata. [-210:0:+150]
-    calcul_a = calcul_a - 360.0;
+  map.tab_algo_x[0] = map.x - map.x; //Simulation
+  map.tab_algo_y[0] = map.y;  //Simulation
+  map.tab_algo_x[1] = map.x;  //Simulation
+  map.tab_algo_y[1] = map.y;  //Simulation
+
+  map.tab_algo_x[2] = 100.0; //Simulation
+  map.tab_algo_y[2] = 100.0; //Simulation
+
+  read_data_bluetooth(&C_blue.x,&C_blue.y);
+  printf("                                                                           \n");
+  
+  while(map.tab_algo_x[indice] != 100.0)
+  {
+    printf("Valeur de l'indice du pour le tab_algox/y[] = %d\n", indice);
+    printf("Valeurs des coordonnees bluetooth   (x,y) = (%2.f,%2.f) \n" ,C_blue.x,C_blue.y);
+    printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,map.tab_algo_x[indice],map.tab_algo_y[indice]);
+    int mission_finie = 0;
+
+    while(isControllerReady()==0); //attente données navdata actualisées
+
+    Main_Nav = getNavdata();
+    angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
+
+    calcul_x = map.tab_algo_x[indice] - C_blue.x;
+    calcul_y = map.tab_algo_y[indice] - C_blue.y;
+
+    printf("Valeur de calcul_x (x : destination-bluetooth) = %2.f\n" ,calcul_x);
+    printf("Valeur de calcul_y (y : destination-bluetooth) = %2.f\n" ,calcul_y);
+
+    if(map.tab_algo_x[indice]-C_blue.x == 0.0)
+      angle_desire = 0.0;
+    else
+      angle_desire = atanf(abs(map.tab_algo_y[indice]-C_blue.y)/abs(map.tab_algo_x[indice]-C_blue.x)); //calcul de l'angle
+    
+    printf("Calcul angle desire (rad)   : %2.f\n", angle_desire);
+    angle_desire = angle_desire / (PI/2) * 180.0 / 2.0; //radians en dergrées
+    printf("Calcul angle desire (degree): %2.f\n", angle_desire);
+    if(calcul_x == 0.0 && calcul_y > 0.0)
+      angle_desire = 0.0;
+    else if(calcul_x == 0.0 && calcul_y < 0.0)
+      angle_desire = 180.0;
+    else if(calcul_y == 0.0 && calcul_x > 0.0)
+      angle_desire = 90.0;
+    else if(calcul_y == 0.0 && calcul_x < 0.0)
+      angle_desire = -90.0;
+    else if(calcul_x>0.0 && calcul_y>0.0) //si quadrant haut droite
+      angle_desire = angle_desire;
+    else if (calcul_x<0.0 && calcul_y>0.0) //si quadrant bas droite
+      angle_desire = - angle_desire;
+    else if (calcul_x>0.0 && calcul_y<0.0) //Si quadrant haut gauche
+      angle_desire = 180.0 - angle_desire;
+    else if (calcul_x<0.0 && calcul_y<0.0) //Si quadrant bas gauche
+      angle_desire = -180.0 + angle_desire;
+
+    printf("Calcul angle desire final v0.1 : %2.f\n", angle_desire);
+    /*
+    angle désiré
+    */
+    //On doit récuperer la valeur de heading_unwrapped pour trouver le min et max de la plage de variation des valeurs MAG pfff (thank parrot)
+    printf("Valeur de heading_unwrapped = %.2f                        | Valeur de angle desire = %.2f\n", Main_Nav.magneto.heading_unwrapped, angle_desire);   
+    printf("Valeut de 180 + Main_Nav.magneto.heading_unwrapped = %.2f | Valeur de -180 + Main_Nav.magneto.heading_unwrapped = %.2f \n", (180.0+Main_Nav.magneto.heading_unwrapped), (-180.0+Main_Nav.magneto.heading_unwrapped));
+    printf("                                                                                                                           \n");
+    if(angle_desire > nav_prec)// (180.0 + Main_Nav.magneto.heading_unwrapped)) 
+    {
+      angle_desire = angle_desire - 360.0;
+    }
+    else if(angle_desire < nav_suiv) 
+    {
+      angle_desire = angle_desire + 360.0;
+    }
+
+    printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
+    
+    //Calcul du sens de rotation de l'axe Z pour un positionnement le plus rapide.
+    if(angle_actuel < 0 && angle_desire > 0){
+      if((angle_desire - angle_actuel)>180)
+        yaw_move = LEFT;
+      else
+        yaw_move = RIGHT;
+    }
+    else if(angle_actuel > 0 && angle_desire < 0){
+      if((angle_actuel - angle_desire) > 180)
+        yaw_move = RIGHT;
+      else
+        yaw_move = LEFT;
+    }
+    else if(angle_actuel > 0 && angle_desire > 0)
+      yaw_move = RIGHT;
+    else if(angle_actuel < 0 && angle_desire < 0)
+      yaw_move = LEFT;
+    //fin du calcul
+
+    yaw_power = 0.2;
+    
+    printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
+    //Début de la rotation
+    while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
+    {
+      SWITCH_DRONE_COMMANDE(5);
+
+      while(isControllerReady()==0);printf("Valeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  \r", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
+      Main_Nav = getNavdata();
+    }
+
+    printf("\n");
+    //Début du déplacement FRONT
+    pitch_move = FRONT;
+    pitch_power = 0.2;
+
+    int ploki=0; //Simulation
+
+    printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, map.tab_algo_x[indice], C_blue.x);
+    printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, map. tab_algo_y[indice], C_blue.y);
+
+    while((map.tab_algo_x[indice] != C_blue.x) || (map.tab_algo_y[indice] != C_blue.y))
+    {
+      SWITCH_DRONE_COMMANDE(4);
+      //read_data_bluetooth(&C_blue.x,&C_blue.y);
+      ploki = ploki + 1; //Simulation      
+      if(ploki > 4000) //Simulation
+      {
+        printf("ploki vaut = %d\n", ploki);
+        C_blue.y = map.tab_algo_y[indice]; //Simulation
+        C_blue.x = map.tab_algo_x[indice]; //Simulation
+      } //Simulation
+    }
+    indice = indice + 1;
+  }
+  stop_mission();
+}
+
+void SWITCH_DRONE_COMMANDE(int _order)
+{
+  char message [64];
+  
+  switch(_order){
+
+        case 0 : 
+            reset_com(message);
+            break;
+
+        case 1 :
+            landing(message);
+            inC.flag_land = 0;
+            break;
+
+        case 2 :
+            take_off(message);
+            inC.flag_takeoff = 0;
+            break;
+
+        case 3 :
+            set_roll(message, roll_move, roll_power);
+            inC.flag_rollcalled = 0;
+            break;
+
+        case 4 :
+            set_pitch(message, pitch_move, pitch_power);
+            inC.flag_pitchcalled = 0;
+            break;
+
+        case 5 :
+            set_yaw(message, yaw_move, yaw_power);
+            inC.flag_yawcalled = 0;
+            break;
+
+        case 6 :
+            set_roll(message, roll_move, roll_power);
+            set_pitch(message, pitch_move, pitch_power);
+            inC.flag_rollpitchcalled = 0;
+            break;
+
+        case 7 :
+            set_trim(message);
+            inC.flag_calibH = 0;
+            break;
+
+        case 8 :
+            calibrate_magneto(message);
+            sleep(3);
+            while(1)
+            {
+              set_yaw(message, RIGHT, 0.1);
+              while(isControllerReady()==0);
+              
+              Main_Nav = getNavdata();
+              if (Main_Nav.magneto.heading_fusion_unwrapped > 0.0)
+                nav_suiv = Main_Nav.magneto.heading_fusion_unwrapped - 360.0;
+              else
+                nav_suiv = Main_Nav.magneto.heading_fusion_unwrapped + 360.0;
+              
+              printf("angle_trouve et angle +/- 360 = %.2f, %.2f                   \r", Main_Nav.magneto.heading_fusion_unwrapped, nav_suiv);
+              if(nav_suiv < 0.0 && nav_prec > 0.0 || nav_suiv > 0.0 && nav_prec < 0.0)
+              {
+                inC.flag_calibM = 0;
+                printf("\nnav_suiv = %.2f | nav_prec = %.2f\n", nav_suiv, nav_prec);
+                break;
+              }
+              nav_prec = nav_suiv;
+            }
+            inC.flag_calibM = 0;
+            break;
+
+        case 9 :
+            set_emergency(message);
+            inC.flag_emergency = 0;
+            break;
+
+        case 10 :
+            anti_emergency(message);
+            inC.falg_antiemergency = 0;
+            break;
+
+        case 20 : 
+            calcul_mission();
+            break;
+
+        default :
+            printf("Scade ne marche pas si bien que ça finalement\n");
+            break;
+      }  
 }
