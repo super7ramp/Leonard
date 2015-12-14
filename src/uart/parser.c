@@ -85,7 +85,6 @@ t_data extract_data(char * data)
 	
 	convertToAddress(ret.address, addr);
 	updateBeaconTab(ret.address, ret.rssi);
-	UpdateTTLBeacons();
 	
 	return ret;
 }
