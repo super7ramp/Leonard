@@ -4,6 +4,8 @@
 #include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
+#include "parser.h"
+
 /*
  * Function done by Sheldon group
  */
@@ -11,7 +13,15 @@
 FILE *result;
 void parseSerialRead(char *buffer);
 int checkAnswer(char *response);
+char rawResponse[512];
+int n=0;
+int TTL=20;
+int fd;
+  
+int sizeRawResponse;
+char message [512];
 
+int open_port(void);
 
 void serial_config(int fd)
 {
@@ -28,6 +38,8 @@ void serial_config(int fd)
 	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);  // Set raw input (unbuffered, no echo)
 	options.c_iflag &= ~(IXON | IXOFF | IXANY);  // Disable software flow control
 	options.c_oflag &= ~OPOST;  // Set raw output
+ 	options.c_cc[VMIN]=0;
+        options.c_cc[VTIME]=1;
 	tcsetattr(fd, TCSAFLUSH, &options);
 }
 
@@ -40,69 +52,62 @@ void serial_config(int fd)
 
 int open_port(void)
 {
-    int fd; /* File descriptor for the port */
-
-	    /////////////
-        // Changer le nom du port
-	    ////////
-
     fd = open("/dev/ttyO3", O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1)
     {
-        /*
-         * Could not open the port.
-         */
-
-        perror("open_port: Unable to open /dev/ttyO3. Is the cable plugged ?");
+         perror("open_port: Unable to open /dev/ttyO3. Is the cable plugged ?");
     }
+    else
+      printf("Port opened\n");
     
+    //fcntl(fd, F_SETFL|O_NONBLOCK, 0);
     fcntl(fd, F_SETFL, 0);
-   	serial_config(fd);
+    serial_config(fd);
     
+    printf("Port configured\n");
     return (fd);
 }
 
 
-int read_port(int fd) {
+void read_port()
+{
+  int spot = 0;
+  char buf = '\0';
+  
+  /* Whole response*/
 
-    int n = 0,
-        spot = 0;
-    char buf = '\0',
-        response[512];
-   
-
-    while(1) {
-
-        /* Whole response*/
-        memset(response, '\0', sizeof response);
-        buf = '\0';
-        spot = 0;
-    
-        do {
-            n = read( fd, &buf, 1 );
-            //sprintf( &(response[spot]), "%c", buf );
-            //response[spot] = buf;
-            strncpy(&response[spot], &buf, n);
-            printf("%c", buf);
-            spot += n;
-        } while( buf != '\r' && buf != '\n' && buf !=' ' && n > 0);
-	
-	if(n>0)
-	    fprintf(result, "%s\n", response);
-	
-        
+  memset(rawResponse, '\0', sizeof rawResponse);
+  buf = '\0';
+  spot = 0;
+  do {
+    n = read( fd, &buf, 1 );
+    if (n>0 && buf!='\n' && buf!='\r' && buf!=0)
+      {
+	strncpy(&rawResponse[spot], &buf, n);
+	spot += n;
+      }
+  } while(buf!='\0' && buf != '\r' && buf != '\n' && n > 0);
+  
+  //Si information reçue, alors traitement (mise à jour tab)
+  if(spot>0)
+    {
+      extract_data(rawResponse, spot);
     }
+  increaseTTLBeacons();
+  printTab();
 }
 
-int close_port(int fd) {
+void close_port(int fd) {
 	close(fd);
 }
 
-
-int main() {
-   result=fopen("resultat.txt", "w");
- 	
-   int fd = open_port();
-    read_port(fd);
+int main()
+{
+ fd=open_port();
+ while(1)
+   {
+     read_port();
+   }	        
+ return 0;
 }
 
