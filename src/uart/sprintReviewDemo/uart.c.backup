@@ -77,7 +77,7 @@ int open_port(void)
 }
 
 
-void read_port()
+void read_port(void *arg)
 {
   int spot = 0;
   char buf = '\0';
@@ -85,6 +85,8 @@ void read_port()
   /* Whole response*/
 
   printf("Read port thread started\n");
+  while(1)
+    {
       memset(rawResponse, '\0', sizeof rawResponse);
       buf = '\0';
       spot = 0;
@@ -114,24 +116,7 @@ void read_port()
 	  else
 	    printf ("Unrecognized beacon : %c\n", rawResponse[13]);
 	}
-   
-      if(commande==DECOLLAGE)
-	{
-	  printf("Decollage !\n");
-	  take_off(message);
-	  
-	}
-      else if (commande ==ATTERISSAGE)
-	{
-	  printf("Atterissage !\n");
-	  landing(message);
-	}
-      else
-	{
-	  printf("Erreur : commande inconnue\n");
-	}
-  
-
+    }
 }
 
 void close_port(int fd) {
@@ -167,12 +152,36 @@ int main()
  set_trim(message);
  sleep(1);
   
+ pthread_t threadReadSerial, threadSendCommands;
  fd=open_port();
 
+ if(pthread_create(&threadSendCommands, NULL, (void *)setCommands, NULL) == -1)
+  {
+    perror("pthread_create");
+    return 1;
+  }
+
  
+ if(pthread_create(&threadReadSerial, NULL, (void *)read_port, NULL) == -1)
+  {
+    perror("pthread_create");
+    return 1;
+  }
+
+  if (pthread_join(threadReadSerial, NULL))
+  {
+    perror("pthread_join");
+    return 1;
+  }
+
+  if (pthread_join(threadSendCommands, NULL))
+  {
+    perror("pthread_join");
+    return 1;
+  } 
+
   while(1)
     {
-      read_port();
       
     }
   terminate_at_com();

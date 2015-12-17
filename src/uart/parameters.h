@@ -12,6 +12,8 @@
 #define W               8        
 #define H               10
 
+#define MINIMAL_SERIAL_READ_LENGTH 14
+
 typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
 typedef Address_t address_t;
 

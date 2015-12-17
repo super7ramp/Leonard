@@ -7,7 +7,7 @@
 #include"parameters.h"
 
 #define TAB_ADDR_LEN ADDR_LEN*2+1
-
+#define TTL_MAX_MS 1500
 
 typedef struct
 {
@@ -18,14 +18,14 @@ t_data;
 
 
 // extract data from one message received
-t_data extract_data(char * data);
+void extract_data(char * data, uint8_t size);
 void convertToAddress(address_t res, char * address);
 int8_t findBeaconInTab(address_t addr);
 int compareAddresses(address_t addrA, address_t addrB);
 void updateBeaconTab(address_t addr, int8_t rssi);
 void refreshBeaconTTL(uint8_t index);
-void UpdateTTLBeacons();
-
+void increaseTTLBeacons();
+void printTab();
 // GETTER
 int8_t getBeaconRssi(uint8_t index);
 double getBeaconTTL(uint8_t index);
