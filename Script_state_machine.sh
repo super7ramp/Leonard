@@ -1,6 +1,6 @@
 echo Lancement de la complilation--------------------------------------------------
 
-arm-linux-gnueabi-gcc -march=armv7-a src/spoof_udp.c src/state_machine/KCG/system_state_machine.c src/state_machine/KCG/kcg_types.c src/state_machine/KCG/include/kcg_assign.h src/navdata_controller.c src/state_machine/KCG/libraries/libmathext/macro_libmathext.h src/state_machine/Main_thread_create.c  src/state_machine/controlTask.c src/state_machine/control_com.c src/state_machine/regulation.c src/state_machine/bluetooth_com.c src/state_machine/driver_uart.c src/message_drone.c src/at-commands.c   src/sender.c -lpcap -lpthread -lm -I lib/libpcap/include -L lib/libpcap/lib -o Control_law_test 
+arm-linux-gnueabi-gcc -march=armv7-a src/spoof_udp.c src/map/map_common.c src/map/map_reader.c src/state_machine/KCG/system_state_machine.c src/state_machine/KCG/kcg_types.c src/state_machine/KCG/include/kcg_assign.h src/navdata_controller.c src/state_machine/KCG/libraries/libmathext/macro_libmathext.h src/state_machine/Main_thread_create.c  src/state_machine/controlTask.c src/state_machine/control_com.c src/state_machine/regulation.c src/state_machine/bluetooth_com.c src/state_machine/driver_uart.c src/message_drone.c src/at-commands.c   src/sender.c src/shortest_path.c -lpcap -lpthread -lm -I lib/libpcap/include -L lib/libpcap/lib -o Control_law_test 
 
 echo Utilisation de src/state_machine/control_com.c
 echo ------------de src/state_machine/regulation.c
@@ -19,6 +19,9 @@ echo ------------de src/state_machine/controlTask.c
 echo ------------de src/state_machine/control_com.c 
 echo ------------de src/state_machine/bluetooth_com.c 
 echo ------------de src/state_machine/driver_uart.c 
+echo ------------de src/shortest_path.c
+echo ------------de src/map/map_reader.c
+echo ------------de src/map/map_common.c
 
 #src/navdata_controller.
 #src/spoof_udp.c

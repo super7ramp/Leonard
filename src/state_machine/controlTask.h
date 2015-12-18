@@ -16,12 +16,16 @@
 #include <stdio.h>
 #include <time.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 #include "../message_drone.h"
 #include "KCG/system_state_machine.h"
 #include "regulation.h"
 #include "var_coord.h"
 #include "../navdata_controller.h"
+#include "../shortest_path.h"
+#include "../map/map_reader.h"
+#include "../map/map_common.h"
 
 /**
  * \brief State of the control task : manual (drone controled by the user).
@@ -80,6 +84,11 @@
  * \brief Period of the control task (ms).
  */
 #define CONTROLTASK_PERIOD_CONTROLE_MS 30
+
+/**
+ * \definition of the name of the map
+ */
+#define NAME_MAP_DEMO "demo_map"
 
 /**
  * \brief Control task. This task manages le movement of the drone.
@@ -162,10 +171,10 @@ void anti_emergency_();
  * PRIVATE
  */
 
- void SWITCH_DRONE_COMMANDE(int order);
+void SWITCH_DRONE_COMMANDE(int order);
  
- //structure for coordinates
- struct coordinates_ map;
+//structure for coordinates
+struct coordinates_ map;
 
 //structure for different direction
 direction gofindygo;
@@ -176,6 +185,9 @@ outC_system_state_machine outC;
 
 //Données de navigation
 Navdata Main_Nav;
+
+//declaration of graph
+graph_t *graph;
 
 float nav_prec, nav_suiv;
 

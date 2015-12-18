@@ -23,6 +23,11 @@ void* controlTask(void* arg)
   Main_Nav = getNavdata();
   //initialisation_uart();  //initialisation de la commuication Uart.
 
+  //creation of graph
+  FILE* file = fopen(NAME_MAP_DEMO, "r");
+  graph = createGraph(file);
+  fclose(file);
+
   pthread_mutex_lock(&mutex_control);
   inC.flag_control_e = CONTROL_ENABLED_SCADE;
   inC.flag_control_s = STATE_MANUAL;
@@ -184,6 +189,7 @@ void calcul_mission()
   int indice = 0;
   float angle_actuel,calcul_x, calcul_y, angle_desire;
 
+/*
   map.tab_algo_x[0] = map.x - map.x; //Simulation
   map.tab_algo_y[0] = map.y;  //Simulation
   map.tab_algo_x[1] = map.x;  //Simulation
@@ -191,15 +197,21 @@ void calcul_mission()
 
   map.tab_algo_x[2] = 100.0; //Simulation
   map.tab_algo_y[2] = 100.0; //Simulation
+*/
 
   read_data_bluetooth(&C_blue.x,&C_blue.y);
+  node_t **path = dijkstra(C_blue.x, C_blue.y, map.x, map.y, graph);
   printf("                                                                           \n");
+
+  int i;
+  for(i = 0 ; path[i] != NULL ; i++)
+    indice = i;
   
-  while(map.tab_algo_x[indice] != 100.0)
+  while(indice >= 0) //!!!!! changer la condition
   {
     printf("Valeur de l'indice du pour le tab_algox/y[] = %d\n", indice);
     printf("Valeurs des coordonnees bluetooth   (x,y) = (%2.f,%2.f) \n" ,C_blue.x,C_blue.y);
-    printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,map.tab_algo_x[indice],map.tab_algo_y[indice]);
+    printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,path[indice]->x, path[indice]->y);
     int mission_finie = 0;
 
     while(isControllerReady()==0); //attente données navdata actualisées
@@ -207,16 +219,20 @@ void calcul_mission()
     Main_Nav = getNavdata();
     angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
 
+/*
     calcul_x = map.tab_algo_x[indice] - C_blue.x;
     calcul_y = map.tab_algo_y[indice] - C_blue.y;
+*/
+    calcul_x = path[indice]->x - C_blue.x;
+    calcul_x = path[indice]->y - C_blue.y;
 
     printf("Valeur de calcul_x (x : destination-bluetooth) = %2.f\n" ,calcul_x);
     printf("Valeur de calcul_y (y : destination-bluetooth) = %2.f\n" ,calcul_y);
 
-    if(map.tab_algo_x[indice]-C_blue.x == 0.0)
+    if(path[indice]->x-C_blue.x == 0.0)
       angle_desire = 0.0;
     else
-      angle_desire = atanf(abs(map.tab_algo_y[indice]-C_blue.y)/abs(map.tab_algo_x[indice]-C_blue.x)); //calcul de l'angle
+      angle_desire = atanf(abs(path[indice]->y-C_blue.y)/abs(path[indice]->x-C_blue.x)); //calcul de l'angle
     
     printf("Calcul angle desire (rad)   : %2.f\n", angle_desire);
     angle_desire = angle_desire / (PI/2) * 180.0 / 2.0; //radians en dergrées
@@ -295,13 +311,16 @@ void calcul_mission()
 
     int ploki=0; //Simulation
 
-    printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, map.tab_algo_x[indice], C_blue.x);
-    printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, map. tab_algo_y[indice], C_blue.y);
+    printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
+    printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
 
-    while((map.tab_algo_x[indice] != C_blue.x) || (map.tab_algo_y[indice] != C_blue.y))
+//envoie commande pitch tant qu'on est pas a la coordonnée bluetooth
+//modif à faire: vérifier l'avancé noeud apres noeud
+    while((path[indice]->x != C_blue.x) || (path[indice]->y != C_blue.y))
     {
       SWITCH_DRONE_COMMANDE(4);
-      //read_data_bluetooth(&C_blue.x,&C_blue.y);
+      read_data_bluetooth(&C_blue.x,&C_blue.y);
+/*
       ploki = ploki + 1; //Simulation      
       if(ploki > 4000) //Simulation
       {
@@ -309,10 +328,12 @@ void calcul_mission()
         C_blue.y = map.tab_algo_y[indice]; //Simulation
         C_blue.x = map.tab_algo_x[indice]; //Simulation
       } //Simulation
+*/
     }
-    indice = indice + 1;
+    indice = indice - 1;
   }
   stop_mission();
+  free(path);
 }
 
 void SWITCH_DRONE_COMMANDE(int _order)
