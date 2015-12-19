@@ -13,12 +13,12 @@ void* thread_com(void* arg)
 	while(1)
 	{
 		//récupération des donnée envoyé par le connectin Wifi
-		//printf("passage dans la boucle while(1) de thread_com\n");
+		//recept_orders_send_by_the_user
 		//envoie de l'ordre reçu;
 		if (ORDER == NOTDONE)
 		{
 			switch(order_recept){
-				case 0:
+				case 0: 
 					calibHor();
 					break;
 				
@@ -65,12 +65,14 @@ void* thread_com(void* arg)
 					break;
 
 				case 11 :
+					Main_Nav = return_navdata();
+					//send_navdata_to_the_user_via_socket
 					break;
 
 				default:
 					break;
 			}
-			
+/*		 Code pour la simulation de recepton de donnée Wifi	
 			if(i<1000){
 				order_recept = 3; //takeOff
 			}
@@ -90,7 +92,7 @@ void* thread_com(void* arg)
 			//printf("Debut de la pause de 20ms dans thread_com\n");
 			usleep(10000);
 			//printf("Fin de la pause de 20ms dans le thread_com\n");
-			
+*/			
 		}
 	}  
 }
