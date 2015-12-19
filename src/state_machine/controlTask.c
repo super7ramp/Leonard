@@ -183,6 +183,24 @@ void stop_mission()  //fonction appelée dans la boucle whil(1) déjà protégé
   ORDER = NOTDONE;
 }
 
+void break_drone()
+{
+/*
+  break the drone
+*/
+    int i;
+    pitch_move = BACK;
+    pitch_power = pitch_power + 0.2;
+    for(i = 0 ; i < 200 ; i++)
+      SWITCH_DRONE_COMMANDE(4);
+}
+
+Navdata return_navdata()
+{
+    while(isControllerReady()==0); //attente données navdata actualisées
+    return getNavdata();
+}
+
 void calcul_mission()
 {
   struct coordinates_ C_blue; //coordinates of drone
@@ -214,9 +232,7 @@ void calcul_mission()
     printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,path[indice]->x, path[indice]->y);
     int mission_finie = 0;
 
-    while(isControllerReady()==0); //attente données navdata actualisées
-
-    Main_Nav = getNavdata();
+    Main_Nav = return_navdata();
     angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
 
 /*
@@ -299,9 +315,8 @@ void calcul_mission()
     while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
     {
       SWITCH_DRONE_COMMANDE(5);
-
-      while(isControllerReady()==0);printf("Valeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  \r", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
-      Main_Nav = getNavdata();
+      Main_Nav = return_navdata();
+      printf("Valeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  \r", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
     }
 
     printf("\n");
@@ -330,6 +345,7 @@ void calcul_mission()
       } //Simulation
 */
     }
+    break_drone();
     indice = indice - 1;
   }
   stop_mission();

@@ -173,6 +173,8 @@ void anti_emergency_();
 
 void SWITCH_DRONE_COMMANDE(int order);
  
+
+Navdata return_navdata();
 //structure for coordinates
 struct coordinates_ map;
 
