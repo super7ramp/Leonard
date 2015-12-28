@@ -5,6 +5,7 @@
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
 #include "parser.h"
+#include "localisation.h"
 
 /*
  * Function done by Sheldon group
@@ -52,16 +53,17 @@ void serial_config(int fd)
 
 int open_port(void)
 {
-    fd = open("/dev/ttyO3", O_RDWR | O_NOCTTY | O_NDELAY);
+    fd = open("/dev/ttyO3", O_RDWR | O_NOCTTY);
     if (fd == -1)
     {
-         perror("open_port: Unable to open /dev/ttyO3. Is the cable plugged ?");
+         perror("open_port: Unable to open /dev/ttyO3.");
     }
     else
       printf("Port opened\n");
     
     //fcntl(fd, F_SETFL|O_NONBLOCK, 0);
-    fcntl(fd, F_SETFL, 0);
+    fcntl(fd, F_SETFL, 0); 
+    //fcntl(fd, F_SETFL|O_NDELAY, 0);
     serial_config(fd);
     
     printf("Port configured\n");
@@ -94,7 +96,6 @@ void read_port()
       extract_data(rawResponse, spot);
     }
   increaseTTLBeacons();
-  printTab();
 }
 
 void close_port(int fd) {
@@ -104,9 +105,12 @@ void close_port(int fd) {
 int main()
 {
  fd=open_port();
+ t_location currentPosition;
  while(1)
    {
      read_port();
+     UpdateCurrentLocation();
+     //printf("Still running !\r\n");
    }	        
  return 0;
 }
