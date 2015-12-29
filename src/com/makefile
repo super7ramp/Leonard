@@ -1,3 +1,6 @@
+pcCom : sender.o receiver.o pcCom.o 
+	gcc -o pcCom sender.o receiver.o pcCom.o -lpthread
+	
 com : sender.o receiver.o com.o
 	gcc -o com sender.o receiver.o com.o
 	
@@ -10,7 +13,9 @@ receiver.o : receiver.c
 com.o : receiver.h sender.h
 	gcc -o com.o -c com.c -Wall
 
+pcCom.o : receiver.h sender.h params.h
+	gcc -o pcCom.o -c pcCom.c -Wall
+
 clean:
 	rm -f *.o core
 	rm -f *~ core
-	rm parser

@@ -14,12 +14,6 @@ int id_socketS = -1;
 int portS = 1234;
 
 
-void construire_message(char *message, char motif, int lg) {
-	int i;
-	for (i=0;i<lg;i++)
-		message[i] = motif;
-}
-
 void afficher_messageS(char *message, int lg) {
 	int i;
 	for (i=0;i<lg;i++)
@@ -29,9 +23,8 @@ void afficher_messageS(char *message, int lg) {
 
 
 
-void afficher_envoi (int num_envoi, int lg_message, char * message) {
-	printf("SOURCE : Envoi n°%d (%d) [", num_envoi, lg_message);
-	printf("%5d", num_envoi); // On code le numéro sur 5 caractères ASCII
+void afficher_envoi (int lg_message, char * message) {
+	printf("SOURCE : Envoi (%d) [", lg_message);
 	afficher_messageS(message, lg_message);
 	printf("]\n");
 }
@@ -50,7 +43,7 @@ int initSender( char * nom_station) {
 	int retour;
 
 	if ((id_socketS = socket(AF_INET, type_sock,0)) == -1) {
-		fprintf(stderr, "tsock: Échec de création du socket\n");
+		fprintf(stderr, "com: Échec de création du socket\n");
 		exit(1);
 	}
 
@@ -60,7 +53,7 @@ int initSender( char * nom_station) {
 	adr_distant.sin_port = portS;
 
 	if ((hote = gethostbyname(nom_station)) == NULL) {
-		fprintf(stderr, "tsock: Erreur gethostbyname\n") ;
+		fprintf(stderr, "com: Erreur gethostbyname\n") ;
 		exit(1); 
 	}
 
@@ -69,7 +62,7 @@ int initSender( char * nom_station) {
 	/* connect() */
 	retour = connect(id_socketS, (struct sockaddr *) &adr_distant, (socklen_t) lg_adr_distant);
 	if (retour == -1) {
-		fprintf(stderr, "tsock: Erreur connect()\n");
+		fprintf(stderr, "com: Erreur connect()\n");
 		exit(1);
 	}
 	
@@ -77,24 +70,20 @@ int initSender( char * nom_station) {
 }
 
 
-int emettre(int lg_message, char * message, int nb_message) 
+int emettre(int lg_message, char * message, char * contenu) 
 {
-	int i;
 	int retour;
 
 	/* send() */
-	for (i = 1 ; i <= nb_message ; i++) {
-		construire_message(message, 'a'+(i-1)%26, lg_message); 
+	strcpy(message, contenu); 
 		
-		retour = write(id_socketS, message, lg_message) ;
-		if (retour == -1) {
-			fprintf(stderr, "tsock: Erreur envoi\n");
-			exit(1);
-		}
-		afficher_envoi(i, retour, message); // retour = longueur message envoyé
+	retour = write(id_socketS, message, lg_message) ;
+	if (retour == -1) {
+		fprintf(stderr, "send: Erreur envoi\n");
+		exit(1);
 	}
-
-
+	afficher_envoi(retour, message); // retour = longueur message envoyé
+  
 	return 0; // tout s'est bien passé
 
 }
@@ -106,14 +95,14 @@ int closeSender()
 	/* shutdown() */
 	
 		if (shutdown(id_socketS,1) == -1) {
-			fprintf(stderr, "tsock: Erreur shutdown\n");
+			fprintf(stderr, "send: Erreur shutdown\n");
 			exit(1);
 		}
 	
 
 	/* close() */
 	if (close(id_socketS) == -1) {
-		fprintf(stderr, "tsock: Échec de destruction du socket\n");
+		fprintf(stderr, "send: Échec de destruction du socket\n");
 		exit(1);
 	}
 

@@ -22,10 +22,9 @@ void afficher_messageR(char *message, int lg) {
 }
 
 
-void afficher_reception (int num_reception, int lg_message, char * message) 
+void afficher_reception (int lg_message, char * message) 
 {
-	printf("PUITS : Reception n°%d (%d) [", num_reception, lg_message);
-	printf("%5d", num_reception);
+	printf("PUITS : Reception (%d) [", lg_message);
 	afficher_messageR(message, lg_message);
 	printf("]\n");
 }
@@ -39,7 +38,7 @@ int initReceiver() {
 
 	/* Création socket */
 	if ((id_socketR = socket(AF_INET, type_sock,0)) == -1) {
-		fprintf(stderr, "tsock: Échec de création du socket\n");
+		fprintf(stderr, "com: Échec de création du socket\n");
 		exit(1);
 	}
 
@@ -51,20 +50,20 @@ int initReceiver() {
 
 	/* Bind() */
 	if(bind(id_socketR,(struct sockaddr *) &adr_local, lg_adr_local) == -1) {
-	 	fprintf(stderr, "tsock: Echec du bind\n");
+	 	fprintf(stderr, "com: Echec du bind\n");
 	 	exit(1);
 	}
 
 	/* Récuperer l'adresse du socket local */
 	if((getsockname(id_socketR, (struct sockaddr *) &adr_local, (socklen_t*) &lg_adr_local)) == -1) {
-	 	fprintf(stderr, "tsock: Echec du getsockname\n");
+	 	fprintf(stderr, "com: Echec du getsockname\n");
 	 	exit(1);
 	}
 
 	/* listen() et accept() */
 	
 		if (listen(id_socketR, 5) == -1) {
-			fprintf(stderr, "tsock: Erreur listen()\n");
+			fprintf(stderr, "com: Erreur listen()\n");
 			exit(1);
 		}
 	return 0;
@@ -72,13 +71,12 @@ int initReceiver() {
 
 
 /* fonction appelée dans reception() */
-int recevoir(int lg_message, char * message, int nb_message) {
+int recevoir(int lg_message, char * message) {
 	int retour;
-	int i;
 	int num_reception;
 
 	if ((id_sock_bis = accept(id_socketR,(struct sockaddr *) &adr_local, (socklen_t *) &lg_adr_local))== -1) {
-		fprintf(stderr, "tsock: Erreur accept()\n"); 
+		fprintf(stderr, "recv: Erreur accept()\n"); 
 		exit(1);
 	}
 
@@ -86,38 +84,21 @@ int recevoir(int lg_message, char * message, int nb_message) {
 	num_reception = 1;
 	retour = 1;
 
-	if (nb_message == -1) {
-		while(retour > 0) {
+	while(retour > 0) {
 
-			retour = recv(id_sock_bis, message, lg_message, 0);
-			
-			if (retour == -1) {
-				fprintf(stderr, "Echec de la réception\n");
-				exit(1);
-			}
-
-			if (retour > 0) 
-				afficher_reception(num_reception, retour, message);
-
-			num_reception++; 
+		retour = recv(id_sock_bis, message, lg_message, 0);
+		
+		if (retour == -1) {
+			fprintf(stderr, "Echec de la réception\n");
+			exit(1);
 		}
+
+		if (retour > 0) 
+			afficher_reception(retour, message);
+
+		num_reception++; 
 	}
-	else {
-		for (i=0 ; i < nb_message ; i++) {
-
-			retour = recv(id_sock_bis, message, lg_message, 0);
-			afficher_reception(num_reception,retour,message); // retour = longueur du message recu
-			
- 			if (retour == -1) {
-  			fprintf(stderr, "tsock: Echec de la réception\n");
-				exit(1);
-			}
-
-			num_reception++; 
-		}
-	}
-
-
+	
 	return 0;
 }
 
@@ -126,14 +107,14 @@ int closeReceiver() {
 
 	/* si tcp shutdown() */
 	if (shutdown(id_socketR,0) == -1) {
-		fprintf(stderr, "tsock: Erreur shutdown\n");
+		fprintf(stderr, "recv: Erreur shutdown\n");
 		exit(1);
 	}
 
 
 	/* close() */
 	if (close(id_socketR) == -1) {
-		fprintf(stderr, "tsock: Échec de destruction du socket\n");
+		fprintf(stderr, "recv: Échec de destruction du socket\n");
 		exit(1);
 	}
 	
