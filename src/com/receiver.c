@@ -24,9 +24,9 @@ void afficher_messageR(char *message, int lg) {
 
 void afficher_reception (int lg_message, char * message) 
 {
-	printf("PUITS : Reception (%d) [", lg_message);
+	printf("Position du drone : ");
 	afficher_messageR(message, lg_message);
-	printf("]\n");
+	printf("\n");
 }
 
 int initReceiver() {
@@ -109,15 +109,20 @@ int closeReceiver() {
 	if (shutdown(id_socketR,0) == -1) {
 		fprintf(stderr, "recv: Erreur shutdown\n");
 		exit(1);
-	}
-
+	} 
+	else 
+		printf("shutdown receiver\n");
 
 	/* close() */
 	if (close(id_socketR) == -1) {
 		fprintf(stderr, "recv: Échec de destruction du socket\n");
 		exit(1);
 	}
+	else 
+		printf("close receiver\n");
 	
+	
+	printf("Receiver : fin\n");
 	return 0;
 }
 

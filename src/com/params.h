@@ -4,13 +4,6 @@
 
 #define NUMBER_BEACONS  6
 #define LG_MESS_DEFAUT 30
-
-typedef struct
-{
-    float x;
-    float y;
-}
-t_location;
-
+#define ADR_DIST "127.0.0.1"
 
 #endif
