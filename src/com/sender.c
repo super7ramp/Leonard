@@ -94,10 +94,12 @@ int closeSender()
 {
 	/* shutdown() */
 	
-		if (shutdown(id_socketS,1) == -1) {
-			fprintf(stderr, "send: Erreur shutdown\n");
-			exit(1);
-		}
+	if (shutdown(id_socketS,1) == -1) {
+		fprintf(stderr, "send: Erreur shutdown\n");
+		exit(1);
+	}
+	else 
+		printf("shutdown sender\n");
 	
 
 	/* close() */
@@ -105,8 +107,10 @@ int closeSender()
 		fprintf(stderr, "send: Échec de destruction du socket\n");
 		exit(1);
 	}
-
-	printf("SOURCE : fin\n");
+	else 
+		printf("close sender\n");
+	
+	printf("Sender : fin\n");
 	return 0;
 
 }

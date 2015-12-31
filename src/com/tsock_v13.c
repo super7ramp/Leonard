@@ -328,7 +328,9 @@ int main (int argc, char **argv)
 			printf("Usage: tsock [options] [host] port\n");
 			exit(1);
 		}
-
+	
+		printf("optind : %d %d\n", optind, argc);
+		
 		/* Vérifie la taille des paquets en udp */
 		if (lg_message > 65507 && protocole == 0) {
 			printf("La taille max d'un paquet UDP est de 65507o\n");
@@ -357,6 +359,8 @@ int main (int argc, char **argv)
 			printf("Usage: tsock [options] [host] port\n");
 			exit(1);
 		}
+	
+		printf("optind : %d %d\n", optind, argc);
 
 		/* Vérifie que le numéro de port ne soit pas supérieur à 65535
 		   Attention, on ne teste pas s'il s'agit d'un port réservé
