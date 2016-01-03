@@ -7,9 +7,13 @@
 
 
 void UpdateCurrentLocation();
+void UpdateCurrentWeightedLocation();
+void ComputeWeightedPositionFrom2Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2);
+void ComputeWeightedPositionFrom3Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2, t_beacon_info beacon3);
+
 
 // return the closest beacon different from beacon in1 and beacon in2 if in1, in2!=-1
-uint8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2);
+int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2);
 // return the number of currently visible beacons
 uint8_t getVisibleBeaconsNumber(void);
 //Check that detected index is in range of beacon Tab

@@ -24,40 +24,91 @@ void UpdateCurrentLocation()
   switch(numberOfVisibleBeacons)
     {
     case 0:
-      //printf("No beacon visible\r\n");
       break;
     case 1:
       if(IsIndexValid(index1))
 	{
-	  //printf("Closest beacon : %c\r\n", index1+65);
-	  currentPos.x = beaconTab[index1].beaconInfo.detectedLocation.x;
-	  currentPos.y = beaconTab[index1].beaconInfo.detectedLocation.y;
+	  currentPos.x = beaconTab[index1].beaconInfo.beaconLocation.x;
+	  currentPos.y = beaconTab[index1].beaconInfo.beaconLocation.y;
 	}
       break;
     case 2: 
       if(IsIndexValid(index1) && IsIndexValid(index2))
 	{
-	  //printf("Closest beacons : %c %c\r\n", index1+65, index2+65);
-	  currentPos.x = (beaconTab[index1].beaconInfo.detectedLocation.x + beaconTab[index2].beaconInfo.detectedLocation.x)/2;
-	  currentPos.y = (beaconTab[index1].beaconInfo.detectedLocation.y + beaconTab[index2].beaconInfo.detectedLocation.y)/2;
+	  currentPos.x = (beaconTab[index1].beaconInfo.beaconLocation.x + beaconTab[index2].beaconInfo.beaconLocation.x)/2;
+	  currentPos.y = (beaconTab[index1].beaconInfo.beaconLocation.y + beaconTab[index2].beaconInfo.beaconLocation.y)/2;
 	}
       break;
     default:
       if(IsIndexValid(index1) && IsIndexValid(index2) && IsIndexValid(index3))
 	{
-	  //printf("Closest beacons : %c %c %c\r\n", index1+65, index2+65, index3+65);
-	  currentPos.x = (beaconTab[index1].beaconInfo.detectedLocation.x + beaconTab[index2].beaconInfo.detectedLocation.x + beaconTab[index3].beaconInfo.detectedLocation.x)/3;
-	  currentPos.y = (beaconTab[index1].beaconInfo.detectedLocation.y + beaconTab[index2].beaconInfo.detectedLocation.y + beaconTab[index3].beaconInfo.detectedLocation.y)/3;
+	  currentPos.x = (beaconTab[index1].beaconInfo.beaconLocation.x + beaconTab[index2].beaconInfo.beaconLocation.x + beaconTab[index3].beaconInfo.beaconLocation.x)/3;
+	  currentPos.y = (beaconTab[index1].beaconInfo.beaconLocation.y + beaconTab[index2].beaconInfo.beaconLocation.y + beaconTab[index3].beaconInfo.beaconLocation.y)/3;
 	}
       break;
     }
-  printf("X : %.2f - Y : %.2f\r\n", currentPos.x, currentPos.y);
+  printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
 }
 
-uint8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
+void ComputeWeightedPositionFrom2Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2)
+{
+  int8_t rssi1_norm=(BLE_NANO_SENSI-beacon1.rssi)/(BLE_NANO_SENSI);
+  int8_t rssi2_norm=(BLE_NANO_SENSI-beacon2.rssi)/(BLE_NANO_SENSI);
+
+  result->x=(beacon1.beaconInfo.beaconLocation.x*rssi1_norm+beacon2.beaconInfo.beaconLocation.x*rssi2_norm)/(rssi1_norm+rssi2_norm);
+  result->y=(beacon1.beaconInfo.beaconLocation.y*rssi1_norm+beacon2.beaconInfo.beaconLocation.y*rssi2_norm)/(rssi1_norm+rssi2_norm);
+}
+
+void ComputeWeightedPositionFrom3Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2, t_beacon_info beacon3)
+{
+  int8_t rssi1_norm=(BLE_NANO_SENSI-beacon1.rssi)/(BLE_NANO_SENSI);
+  int8_t rssi2_norm=(BLE_NANO_SENSI-beacon2.rssi)/(BLE_NANO_SENSI);
+  int8_t rssi3_norm=(BLE_NANO_SENSI-beacon3.rssi)/(BLE_NANO_SENSI);
+
+  result->x=(beacon1.beaconInfo.beaconLocation.x*rssi1_norm+beacon2.beaconInfo.beaconLocation.x*rssi2_norm+beacon3.beaconInfo.beaconLocation.x*rssi3_norm)/(rssi1_norm+rssi2_norm+rssi3_norm);
+  result->y=(beacon1.beaconInfo.beaconLocation.y*rssi1_norm+beacon2.beaconInfo.beaconLocation.y*rssi2_norm+beacon3.beaconInfo.beaconLocation.y*rssi3_norm)/(rssi1_norm+rssi2_norm+rssi3_norm);
+}
+
+
+void UpdateCurrentWeightedLocation()
+{
+  uint8_t numberOfVisibleBeacons=getVisibleBeaconsNumber();
+  uint8_t index1=getIndexOfCloserBeacon(-1, -1);
+  uint8_t index2=getIndexOfCloserBeacon(index1, -1);
+  uint8_t index3=getIndexOfCloserBeacon(index1, index2);
+  const t_beacon_info* beaconTab=getBeaconTab();
+
+  switch(numberOfVisibleBeacons)
+    {
+    case 0:
+      break;
+    case 1:
+      if(IsIndexValid(index1))
+	{
+	  currentPos.x = beaconTab[index1].beaconInfo.beaconLocation.x;
+	  currentPos.y = beaconTab[index1].beaconInfo.beaconLocation.y;
+	}
+      break;
+    case 2: 
+      if(IsIndexValid(index1) && IsIndexValid(index2))
+	{
+	  ComputeWeightedPositionFrom2Beacons(&currentPos, beaconTab[index1], beaconTab[index2]);
+	}
+      break;
+    default:
+      if(IsIndexValid(index1) && IsIndexValid(index2) && IsIndexValid(index3))
+	{
+	  ComputeWeightedPositionFrom3Beacons(&currentPos, beaconTab[index1], beaconTab[index2], beaconTab[index3]);
+	}
+      break;
+    }
+  printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
+}
+
+int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
 {
     const t_beacon_info* beaconTab=getBeaconTab();
-    uint8_t index = -1, i;
+    int8_t index = -1, i;
     int8_t highestRssi = -100;
     
     for (i=0; i<NUMBER_BEACONS; i++)   
