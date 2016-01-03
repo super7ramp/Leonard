@@ -109,8 +109,7 @@ int main()
  while(1)
    {
      read_port();
-     UpdateCurrentLocation();
-     //printf("Still running !\r\n");
+     UpdateCurrentWeightedLocation();
    }	        
  return 0;
 }
