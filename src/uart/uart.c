@@ -108,8 +108,8 @@ int main()
  while(1)
    {
      read_port();
-     UpdateCurrentLocation();
-	//UpdateCurrentWeightedLocation();
+     //UpdateCurrentLocation();
+     UpdateCurrentWeightedLocation();
      printPositionOnMap(getCurrentLocation());
    }	        
  return 0;
