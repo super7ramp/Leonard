@@ -1,5 +1,9 @@
 #include "controlTask.h"
 
+#define THRESHOLD 0.01
+
+//return the index of a point in the path
+int find_point_in_path (node_t ** path, float other_x, float other_y);
 
 void* controlTask(void* arg)
 { 
@@ -205,6 +209,8 @@ void calcul_mission()
 {
   struct coordinates_ C_blue; //coordinates of drone
   int indice = 0;
+  int check = 0;
+  int findy_lost = 0;
   float angle_actuel,calcul_x, calcul_y, angle_desire;
 
 /*
@@ -225,7 +231,7 @@ void calcul_mission()
   for(i = 0 ; path[i] != NULL ; i++)
     indice = i;
   
-  while(indice >= 0) //!!!!! changer la condition
+  while(indice >= 0) 
   {
     printf("Valeur de l'indice du pour le tab_algox/y[] = %d\n", indice);
     printf("Valeurs des coordonnees bluetooth   (x,y) = (%2.f,%2.f) \n" ,C_blue.x,C_blue.y);
@@ -240,7 +246,7 @@ void calcul_mission()
     calcul_y = map.tab_algo_y[indice] - C_blue.y;
 */
     calcul_x = path[indice]->x - C_blue.x;
-    calcul_x = path[indice]->y - C_blue.y;
+    calcul_y = path[indice]->y - C_blue.y;
 
     printf("Valeur de calcul_x (x : destination-bluetooth) = %2.f\n" ,calcul_x);
     printf("Valeur de calcul_y (y : destination-bluetooth) = %2.f\n" ,calcul_y);
@@ -324,17 +330,22 @@ void calcul_mission()
     pitch_move = FRONT;
     pitch_power = 0.2;
 
-    int ploki=0; //Simulation
+    //int ploki=0; //Simulation
 
     printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
     printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
 
 //envoie commande pitch tant qu'on est pas a la coordonnée bluetooth
-//modif à faire: vérifier l'avancé noeud apres noeud
-    while((path[indice]->x != C_blue.x) || (path[indice]->y != C_blue.y))
+    while((((path[indice]->x - C_blue.x) < THRESHOLD) || ((path[indice]->y - C_blue.y) < THRESHOLD)) && (findy_lost != 1))
     {
       SWITCH_DRONE_COMMANDE(4);
       read_data_bluetooth(&C_blue.x,&C_blue.y);
+
+      if((check = find_point(graph, C_blue.x, C_blue.y)) != -1)
+      {
+        if((check = find_point_in_path(path, C_blue.x, C_blue.y)) == -1)
+          findy_lost = 1;
+      }
 /*
       ploki = ploki + 1; //Simulation      
       if(ploki > 4000) //Simulation
@@ -345,8 +356,19 @@ void calcul_mission()
       } //Simulation
 */
     }
+
+    //if the drone is lost, we calculate a new path and we re-initialize the variable "indice"
+    //else decrementation of "indice"
+    if(findy_lost == 1)
+    {
+      path = dijkstra(C_blue.x, C_blue.y, map.x, map.y, graph);
+      for(i = 0 ; path[i] != NULL ; i++)
+        indice = i;
+    }
+    else
+      indice = indice - 1;
+
     break_drone();
-    indice = indice - 1;
   }
   stop_mission();
   free(path);
@@ -442,4 +464,18 @@ void SWITCH_DRONE_COMMANDE(int _order)
             printf("Scade ne marche pas si bien que ça finalement\n");
             break;
       }  
+}
+
+int find_point_in_path (node_t ** path, float other_x, float other_y)
+{
+  int i;
+  float x, y;
+  for(i = 0 ; path[i] != NULL ; i++)
+  {
+    x = path[i]->x;
+    y = path[i]->y;
+    if(sqrt(pow(x-other_x,2) + pow(y-other_y,2)) < ERROR_COORD)
+      return i;
+  }
+  return -1;
 }
