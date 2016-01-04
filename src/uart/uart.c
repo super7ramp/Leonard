@@ -6,7 +6,7 @@
 #include <termios.h> /* POSIX terminal control definitions */
 #include "parser.h"
 #include "localisation.h"
-
+#include "display.h"
 /*
  * Function done by Sheldon group
  */
@@ -105,11 +105,12 @@ void close_port(int fd) {
 int main()
 {
  fd=open_port();
- t_location currentPosition;
  while(1)
    {
      read_port();
-     UpdateCurrentWeightedLocation();
+     UpdateCurrentLocation();
+	//UpdateCurrentWeightedLocation();
+     printPositionOnMap(getCurrentLocation());
    }	        
  return 0;
 }

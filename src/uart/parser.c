@@ -144,6 +144,24 @@ void printTab(void)
   printf("\n\n");
 }
 
+void printVisibleBeacons(void)
+{
+  int i=0;
+  int count=0;
+  for(i=0; i<NUMBER_BEACONS; i++)
+  {
+    if(beaconTab[i].rssi)
+    {
+      printf("%c ", (char)i+65);
+      count++;
+    }
+  }	
+  for(i=0; i<NUMBER_BEACONS-count; i++)
+	printf("  ");
+
+  printf("\r\n");
+}
+
 /****************************************
 *               GETTER                  *
 *****************************************/
