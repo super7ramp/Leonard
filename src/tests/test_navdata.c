@@ -41,6 +41,24 @@ void *autopilot()
         reset_com(buff);
         t++;
     }
+    t = 0;
+
+    //test of at command pcmd_mag
+    while(t < 200)
+    {
+        usleep(50000);
+        set_yaw_mag(buff, LEFT, 0.4, 0);
+        t++;
+    }
+    t = 0;
+
+    while(t < 100)
+    {
+        usleep(50000);
+        reset_com(buff);
+        t++;
+    }
+    t = 0;
 
     landing(buff);
 
