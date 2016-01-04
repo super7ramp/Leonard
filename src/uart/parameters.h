@@ -9,8 +9,8 @@
 #define TTL_INIT        3
 
 //Room width
-#define W               8        
-#define H               10
+#define W               (7.80)        
+#define H               (12.0)
 
 #define MINIMAL_SERIAL_READ_LENGTH 14
 
