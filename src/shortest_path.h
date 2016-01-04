@@ -6,6 +6,14 @@
 
 #include "map/map_common.h"
 
+/** @brief Return the index of a point in the map, according to its coordinates
+    Note that there is a margin error here if the coordinates don't correspond exactly (see ERROR_COORD)
+    @float other_x Searched point x coordinate
+    @float other_y Searched point y coordinate
+    @return Index of the searched point
+    @return -1 if the point is not found in the map */
+int find_point (const graph_t *map, float other_x, float other_y);
+
 /** @brief Find the shortest path beteween two points, according to a map
     @param current_x Start point x coordinate
     @param current_y Start point y coordinate
