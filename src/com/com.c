@@ -86,6 +86,8 @@ int main(int argc, char ** argv)
 	}
 
 	free(message);
+	closeSender();
+	closeReceiver();
 
 	return 0;
 }
