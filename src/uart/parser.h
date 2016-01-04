@@ -30,6 +30,7 @@ void printTab();
 int8_t getBeaconRssi(uint8_t index);
 double getBeaconTTL(uint8_t index);
 const t_beacon_info* getBeaconTab(void);
+void printVisibleBeacons(void);
 
 
 #endif

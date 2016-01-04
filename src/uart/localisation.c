@@ -47,7 +47,7 @@ void UpdateCurrentLocation()
 	}
       break;
     }
-  printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
+  //printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
 }
 
 void ComputeWeightedPositionFrom2Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2)
@@ -102,7 +102,7 @@ void UpdateCurrentWeightedLocation()
 	}
       break;
     }
-  printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
+  //printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
 }
 
 int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
