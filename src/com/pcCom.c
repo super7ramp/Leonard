@@ -60,14 +60,13 @@ int main (int argc, char** argv)
 	int choix;
 	int lg_message = LG_MESS_DEFAUT;
 	int *n;
+	char * msg = malloc(sizeof(char)*lg_message);
+	
 	n = malloc(sizeof(int));
 	*n = 5;
 	
 	char * adr = malloc(12*sizeof(char));
 	adr = ADR_DIST;
-	
-	
-
 	
 	msgSend = malloc(sizeof(char)*lg_message);
 	msgRcv = malloc(sizeof(char)*lg_message);
@@ -85,15 +84,38 @@ int main (int argc, char** argv)
 	
 	while(1) {
 
-		printf("Veuillez choisir l'endroit où le drone doit aller (de 0 à 7)\n");
+		printf("Que souhaitez vous faire ?\n");
+		printf("0 -> Calibration (le drone doit être posé à plat)\n");
+		printf("1 -> Calibration magnétique\n");
+		printf("2 -> landing\n");
+		printf("3 -> take off\n");
+		printf("4 -> move roll \n");
+		printf("5 -> move pitch\n");
+		printf("6 -> move pitch roll\n");
+		printf("7 -> emergency\n");
+		printf("8 -> anti emergency\n");
+		printf("9 -> start mission\n");
+		printf("10 -> stop mission\n");
+		printf("11 -> get position\n");
 		printf("Pour fermer le programme tapez -1\n");
 		scanf("%d", &choix);
 		getchar();
 		printf("%d\n", choix);
 		
-		if (choix >= 0 && choix <= 7) {
+		sprintf(msg, "%d ", choix);
+			
+		if (choix == 9) {
+			printf("\n\nChoissisez où envoyer le drone (de 0 à 7)\n");
+			scanf("%d", &choix);
+			strcat(msg, beaconsLocation[choix]);
+			printf("######## msg : %s\n", msg);
 			pthread_mutex_lock(&messageMutex);
-			emettre(lg_message, msgSend, beaconsLocation[choix]);
+			emettre(lg_message, msgSend, msg);
+			pthread_mutex_unlock(&messageMutex);
+		}
+		else if (choix >= 0 && choix <= 11) {
+			pthread_mutex_lock(&messageMutex);
+			emettre(lg_message, msgSend, msg);
 			pthread_mutex_unlock(&messageMutex);
 		}
 		else if (choix == -1) {
