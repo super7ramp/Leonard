@@ -13,12 +13,15 @@ uint8_t IsIndexValid(uint8_t index)
   return (index>=0 && index<NUMBER_BEACONS);
 }
 
+uint8_t IsRssiValid(int8_t rssi)
+{
+  return(rssi<0);
+}	
+
 void UpdateCurrentLocation()
 {
-  uint8_t numberOfVisibleBeacons=getVisibleBeaconsNumber();
-  uint8_t index1=getIndexOfCloserBeacon(-1, -1);
-  uint8_t index2=getIndexOfCloserBeacon(index1, -1);
-  uint8_t index3=getIndexOfCloserBeacon(index1, index2);
+  int8_t index1, index2, index3;
+  uint8_t numberOfVisibleBeacons=getVisibleBeaconsNumber(&index1, &index2, &index3);
   const t_beacon_info* beaconTab=getBeaconTab();
 
   switch(numberOfVisibleBeacons)
@@ -26,26 +29,26 @@ void UpdateCurrentLocation()
     case 0:
       break;
     case 1:
-      if(IsIndexValid(index1))
-	{
+      //if(IsIndexValid(index1))
+	//{
 	  currentPos.x = beaconTab[index1].beaconInfo.beaconLocation.x;
 	  currentPos.y = beaconTab[index1].beaconInfo.beaconLocation.y;
-	}
+	//}
       break;
     case 2: 
-      if(IsIndexValid(index1) && IsIndexValid(index2))
-	{
+      //if(IsIndexValid(index1) && IsIndexValid(index2))
+	//{
 	  currentPos.x = (beaconTab[index1].beaconInfo.beaconLocation.x + beaconTab[index2].beaconInfo.beaconLocation.x)/2;
 	  currentPos.y = (beaconTab[index1].beaconInfo.beaconLocation.y + beaconTab[index2].beaconInfo.beaconLocation.y)/2;
-	}
+	//}
       break;
     default:
-      if(IsIndexValid(index1) && IsIndexValid(index2) && IsIndexValid(index3))
-	{
+      //if(IsIndexValid(index1) && IsIndexValid(index2) && IsIndexValid(index3))
+	//{
 	  currentPos.x = (beaconTab[index1].beaconInfo.beaconLocation.x + beaconTab[index2].beaconInfo.beaconLocation.x + beaconTab[index3].beaconInfo.beaconLocation.x)/3;
 	  currentPos.y = (beaconTab[index1].beaconInfo.beaconLocation.y + beaconTab[index2].beaconInfo.beaconLocation.y + beaconTab[index3].beaconInfo.beaconLocation.y)/3;
-	}
-      break;
+	//}
+      //break;
     }
   //printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
 }
@@ -69,48 +72,34 @@ void ComputeWeightedPositionFrom3Beacons(t_location* result, t_beacon_info beaco
   result->y=(beacon1.beaconInfo.beaconLocation.y*rssi1_norm+beacon2.beaconInfo.beaconLocation.y*rssi2_norm+beacon3.beaconInfo.beaconLocation.y*rssi3_norm)/(rssi1_norm+rssi2_norm+rssi3_norm);
 }
 
-void checkBeaconInfoConsistency(int8_t r, int8_t a, int8_t b, int8_t c)
-{
-  if((r==0 && (a!=-1||b!=-1||c!=-1))||
-     (r==1 && (a==-1 && b==-1 && c==-1))||
-     (r==1 && ((a!=-1 && b!=-1)||(a!=-1 && c!=-1)||(b!=-1 && c!=-1)))||
-     (r==2 && (a==-1 && b==-1 && c==-1))||
-     (r==2 && ((a==1 && b==1)||(a==1 && c==1)||(b==1 && c==1)))|| 
-     (r==3 && (a==-1||b==-1||c==-1)))
-    printf("Alert info beacon !!!");
-}
-
 void UpdateCurrentWeightedLocation()
 {
-  int8_t numberOfVisibleBeacons=getVisibleBeaconsNumber();
-  int8_t index1=getIndexOfCloserBeacon(-1, -1);
-  int8_t index2=getIndexOfCloserBeacon(index1, -1);
-  int8_t index3=getIndexOfCloserBeacon(index1, index2);
+  int8_t index1, index2, index3;
+  int8_t numberOfVisibleBeacons=getVisibleBeaconsNumber(&index1, &index2, &index3);
   const t_beacon_info* beaconTab=getBeaconTab();
   
-  checkBeaconInfoConsistency(numberOfVisibleBeacons, index1, index2, index3);
   switch(numberOfVisibleBeacons)
     {
     case 0:
       break;
     case 1:
-      if(IsIndexValid(index1))
-	{
+      //if(IsIndexValid(index1))
+	//{
 	  currentPos.x = beaconTab[index1].beaconInfo.beaconLocation.x;
 	  currentPos.y = beaconTab[index1].beaconInfo.beaconLocation.y;
-	}
+	//}
       break;
     case 2: 
-      if(IsIndexValid(index1) && IsIndexValid(index2))
-	{
+      //if(IsIndexValid(index1) && IsIndexValid(index2))
+	//{
 	  ComputeWeightedPositionFrom2Beacons(&currentPos, beaconTab[index1], beaconTab[index2]);
-	}
+	//}
       break;
     default:
-      if(IsIndexValid(index1) && IsIndexValid(index2) && IsIndexValid(index3))
-	{
+      //if(IsIndexValid(index1) && IsIndexValid(index2) && IsIndexValid(index3))
+	//{
 	  ComputeWeightedPositionFrom3Beacons(&currentPos, beaconTab[index1], beaconTab[index2], beaconTab[index3]);
-	}
+	//}
       break;
     }
   //printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
@@ -120,7 +109,7 @@ int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
 {
     const t_beacon_info* beaconTab=getBeaconTab();
     int8_t index = -1, i;
-    int8_t highestRssi = -100;
+    int8_t highestRssi = BLE_NANO_SENSI;
     
     for (i=0; i<NUMBER_BEACONS; i++)   
     {
@@ -143,16 +132,41 @@ int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
     return index;
 }
 
-int8_t getVisibleBeaconsNumber(void)
+int8_t getVisibleBeaconsNumber(int8_t *index1, int8_t* index2, int8_t* index3)
 {
   int8_t count=0;
-  uint8_t loopCount=0;
+  /*uint8_t loopCount=0;
   const t_beacon_info* beaconTab=getBeaconTab();
   for(loopCount=0; loopCount<NUMBER_BEACONS; loopCount++)
     {
       if (beaconTab[loopCount].rssi!=0)
 	count++;
+    }*/
+  *index1=getIndexOfCloserBeacon(-1,-1);
+  if(*index1!=-1)
+  {
+    *index2=getIndexOfCloserBeacon(*index1, -1);
+    if(*index2!=-1)
+    {
+      *index3=getIndexOfCloserBeacon(*index1, *index2);
+      if(*index3!=-1)
+      {
+        count=3;
+      }
+      else
+      {
+        count=2;
+      }
     }
+    else
+    {
+      count=1;
+    }
+  }
+  else
+  {
+    count=0;
+  }	
   return count;
 }
 
