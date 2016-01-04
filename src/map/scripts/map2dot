@@ -19,7 +19,9 @@ class Converter:
         else:
             name = line.split(',',1)[0]
             pos = line.split(',',1)[1]
-            print('  ' + name + ' [shape="circle" pos = "' + pos + '!"]')
+            xpretty = "%.2f" % float(pos.split(',',1)[0]);
+            ypretty = "%.2f" % float(pos.split(',',1)[1]);
+            print('  ' + name + ' [label="' + xpretty + ' ' + ypretty + '" pos = "' + pos + '!"]')
 
     def parseLineAdjacencies(self, line):
         adjacencyList = line.split(',')
@@ -29,6 +31,9 @@ class Converter:
 
     def convertMap(self, mapfile):
         print('digraph map {')
+        print('  graph [bgcolor="white"]')
+        print('  node [shape="circle" width=.3 fontsize=5 fixedsize="true"]')
+        print('  edge [arrowsize=.3]')
         for line in mapfile:
             if self.currentState == 'INIT':
                 self.parseLineInit(line.rstrip('\n'))
