@@ -1,0 +1,341 @@
+digraph map {
+  graph [bgcolor="white"]
+  node [shape="circle" width=.3 fontsize=5 fixedsize="true"]
+  edge [arrowsize=.3]
+  node1 [label="1.08 1.10" pos = "1.08333333333,1.1!"]
+  node2 [label="1.08 2.20" pos = "1.08333333333,2.2!"]
+  node3 [label="1.08 3.30" pos = "1.08333333333,3.3!"]
+  node4 [label="1.08 4.40" pos = "1.08333333333,4.4!"]
+  node5 [label="1.08 5.50" pos = "1.08333333333,5.5!"]
+  node6 [label="1.08 6.60" pos = "1.08333333333,6.6!"]
+  node7 [label="1.08 7.70" pos = "1.08333333333,7.7!"]
+  node8 [label="1.08 8.80" pos = "1.08333333333,8.8!"]
+  node9 [label="1.08 9.90" pos = "1.08333333333,9.9!"]
+  node10 [label="1.08 11.00" pos = "1.08333333333,11.0!"]
+  node11 [label="2.17 1.10" pos = "2.16666666667,1.1!"]
+  node12 [label="2.17 2.20" pos = "2.16666666667,2.2!"]
+  node13 [label="2.17 3.30" pos = "2.16666666667,3.3!"]
+  node14 [label="2.17 4.40" pos = "2.16666666667,4.4!"]
+  node15 [label="2.17 5.50" pos = "2.16666666667,5.5!"]
+  node16 [label="2.17 6.60" pos = "2.16666666667,6.6!"]
+  node17 [label="2.17 7.70" pos = "2.16666666667,7.7!"]
+  node18 [label="2.17 8.80" pos = "2.16666666667,8.8!"]
+  node19 [label="2.17 9.90" pos = "2.16666666667,9.9!"]
+  node20 [label="2.17 11.00" pos = "2.16666666667,11.0!"]
+  node21 [label="3.25 1.10" pos = "3.25,1.1!"]
+  node24 [label="3.25 4.40" pos = "3.25,4.4!"]
+  node25 [label="3.25 5.50" pos = "3.25,5.5!"]
+  node26 [label="3.25 6.60" pos = "3.25,6.6!"]
+  node27 [label="3.25 7.70" pos = "3.25,7.7!"]
+  node30 [label="3.25 11.00" pos = "3.25,11.0!"]
+  node31 [label="4.33 1.10" pos = "4.33333333333,1.1!"]
+  node34 [label="4.33 4.40" pos = "4.33333333333,4.4!"]
+  node35 [label="4.33 5.50" pos = "4.33333333333,5.5!"]
+  node36 [label="4.33 6.60" pos = "4.33333333333,6.6!"]
+  node37 [label="4.33 7.70" pos = "4.33333333333,7.7!"]
+  node40 [label="4.33 11.00" pos = "4.33333333333,11.0!"]
+  node41 [label="5.42 1.10" pos = "5.41666666667,1.1!"]
+  node42 [label="5.42 2.20" pos = "5.41666666667,2.2!"]
+  node43 [label="5.42 3.30" pos = "5.41666666667,3.3!"]
+  node44 [label="5.42 4.40" pos = "5.41666666667,4.4!"]
+  node45 [label="5.42 5.50" pos = "5.41666666667,5.5!"]
+  node46 [label="5.42 6.60" pos = "5.41666666667,6.6!"]
+  node47 [label="5.42 7.70" pos = "5.41666666667,7.7!"]
+  node48 [label="5.42 8.80" pos = "5.41666666667,8.8!"]
+  node49 [label="5.42 9.90" pos = "5.41666666667,9.9!"]
+  node50 [label="5.42 11.00" pos = "5.41666666667,11.0!"]
+  node51 [label="6.50 1.10" pos = "6.5,1.1!"]
+  node52 [label="6.50 2.20" pos = "6.5,2.2!"]
+  node53 [label="6.50 3.30" pos = "6.5,3.3!"]
+  node54 [label="6.50 4.40" pos = "6.5,4.4!"]
+  node55 [label="6.50 5.50" pos = "6.5,5.5!"]
+  node56 [label="6.50 6.60" pos = "6.5,6.6!"]
+  node57 [label="6.50 7.70" pos = "6.5,7.7!"]
+  node58 [label="6.50 8.80" pos = "6.5,8.8!"]
+  node59 [label="6.50 9.90" pos = "6.5,9.9!"]
+  node60 [label="6.50 11.00" pos = "6.5,11.0!"]
+  node1 -> node2
+  node1 -> node11
+  node1 -> node12
+  node2 -> node1
+  node2 -> node3
+  node2 -> node11
+  node2 -> node12
+  node2 -> node13
+  node3 -> node2
+  node3 -> node4
+  node3 -> node12
+  node3 -> node13
+  node3 -> node14
+  node4 -> node3
+  node4 -> node5
+  node4 -> node13
+  node4 -> node14
+  node4 -> node15
+  node5 -> node4
+  node5 -> node6
+  node5 -> node14
+  node5 -> node15
+  node5 -> node16
+  node6 -> node5
+  node6 -> node7
+  node6 -> node15
+  node6 -> node16
+  node6 -> node17
+  node7 -> node6
+  node7 -> node8
+  node7 -> node16
+  node7 -> node17
+  node7 -> node18
+  node8 -> node7
+  node8 -> node9
+  node8 -> node17
+  node8 -> node18
+  node8 -> node19
+  node9 -> node8
+  node9 -> node10
+  node9 -> node18
+  node9 -> node19
+  node9 -> node20
+  node10 -> node9
+  node10 -> node19
+  node10 -> node20
+  node11 -> node1
+  node11 -> node2
+  node11 -> node12
+  node11 -> node21
+  node12 -> node1
+  node12 -> node2
+  node12 -> node3
+  node12 -> node11
+  node12 -> node13
+  node12 -> node21
+  node13 -> node2
+  node13 -> node3
+  node13 -> node4
+  node13 -> node12
+  node13 -> node14
+  node13 -> node24
+  node14 -> node3
+  node14 -> node4
+  node14 -> node5
+  node14 -> node13
+  node14 -> node15
+  node14 -> node24
+  node14 -> node25
+  node15 -> node4
+  node15 -> node5
+  node15 -> node6
+  node15 -> node14
+  node15 -> node16
+  node15 -> node24
+  node15 -> node25
+  node15 -> node26
+  node16 -> node5
+  node16 -> node6
+  node16 -> node7
+  node16 -> node15
+  node16 -> node17
+  node16 -> node25
+  node16 -> node26
+  node16 -> node27
+  node17 -> node6
+  node17 -> node7
+  node17 -> node8
+  node17 -> node16
+  node17 -> node18
+  node17 -> node26
+  node17 -> node27
+  node18 -> node7
+  node18 -> node8
+  node18 -> node9
+  node18 -> node17
+  node18 -> node19
+  node18 -> node27
+  node19 -> node8
+  node19 -> node9
+  node19 -> node10
+  node19 -> node18
+  node19 -> node20
+  node19 -> node30
+  node20 -> node9
+  node20 -> node10
+  node20 -> node19
+  node20 -> node30
+  node21 -> node11
+  node21 -> node12
+  node21 -> node31
+  node24 -> node13
+  node24 -> node14
+  node24 -> node15
+  node24 -> node25
+  node24 -> node34
+  node24 -> node35
+  node25 -> node14
+  node25 -> node15
+  node25 -> node16
+  node25 -> node24
+  node25 -> node26
+  node25 -> node34
+  node25 -> node35
+  node25 -> node36
+  node26 -> node15
+  node26 -> node16
+  node26 -> node17
+  node26 -> node25
+  node26 -> node27
+  node26 -> node35
+  node26 -> node36
+  node26 -> node37
+  node27 -> node16
+  node27 -> node17
+  node27 -> node18
+  node27 -> node26
+  node27 -> node36
+  node27 -> node37
+  node30 -> node19
+  node30 -> node20
+  node30 -> node40
+  node31 -> node21
+  node31 -> node41
+  node31 -> node42
+  node34 -> node24
+  node34 -> node25
+  node34 -> node35
+  node34 -> node43
+  node34 -> node44
+  node34 -> node45
+  node35 -> node24
+  node35 -> node25
+  node35 -> node26
+  node35 -> node34
+  node35 -> node36
+  node35 -> node44
+  node35 -> node45
+  node35 -> node46
+  node36 -> node25
+  node36 -> node26
+  node36 -> node27
+  node36 -> node35
+  node36 -> node37
+  node36 -> node45
+  node36 -> node46
+  node36 -> node47
+  node37 -> node26
+  node37 -> node27
+  node37 -> node36
+  node37 -> node46
+  node37 -> node47
+  node37 -> node48
+  node40 -> node30
+  node40 -> node49
+  node40 -> node50
+  node41 -> node31
+  node41 -> node42
+  node41 -> node51
+  node41 -> node52
+  node42 -> node31
+  node42 -> node41
+  node42 -> node43
+  node42 -> node51
+  node42 -> node52
+  node42 -> node53
+  node43 -> node34
+  node43 -> node42
+  node43 -> node44
+  node43 -> node52
+  node43 -> node53
+  node43 -> node54
+  node44 -> node34
+  node44 -> node35
+  node44 -> node43
+  node44 -> node45
+  node44 -> node53
+  node44 -> node54
+  node44 -> node55
+  node45 -> node34
+  node45 -> node35
+  node45 -> node36
+  node45 -> node44
+  node45 -> node46
+  node45 -> node54
+  node45 -> node55
+  node45 -> node56
+  node46 -> node35
+  node46 -> node36
+  node46 -> node37
+  node46 -> node45
+  node46 -> node47
+  node46 -> node55
+  node46 -> node56
+  node46 -> node57
+  node47 -> node36
+  node47 -> node37
+  node47 -> node46
+  node47 -> node48
+  node47 -> node56
+  node47 -> node57
+  node47 -> node58
+  node48 -> node37
+  node48 -> node47
+  node48 -> node49
+  node48 -> node57
+  node48 -> node58
+  node48 -> node59
+  node49 -> node40
+  node49 -> node48
+  node49 -> node50
+  node49 -> node58
+  node49 -> node59
+  node49 -> node60
+  node50 -> node40
+  node50 -> node49
+  node50 -> node59
+  node50 -> node60
+  node51 -> node41
+  node51 -> node42
+  node51 -> node52
+  node52 -> node41
+  node52 -> node42
+  node52 -> node43
+  node52 -> node51
+  node52 -> node53
+  node53 -> node42
+  node53 -> node43
+  node53 -> node44
+  node53 -> node52
+  node53 -> node54
+  node54 -> node43
+  node54 -> node44
+  node54 -> node45
+  node54 -> node53
+  node54 -> node55
+  node55 -> node44
+  node55 -> node45
+  node55 -> node46
+  node55 -> node54
+  node55 -> node56
+  node56 -> node45
+  node56 -> node46
+  node56 -> node47
+  node56 -> node55
+  node56 -> node57
+  node57 -> node46
+  node57 -> node47
+  node57 -> node48
+  node57 -> node56
+  node57 -> node58
+  node58 -> node47
+  node58 -> node48
+  node58 -> node49
+  node58 -> node57
+  node58 -> node59
+  node59 -> node48
+  node59 -> node49
+  node59 -> node50
+  node59 -> node58
+  node59 -> node60
+  node60 -> node49
+  node60 -> node50
+  node60 -> node59
+}
