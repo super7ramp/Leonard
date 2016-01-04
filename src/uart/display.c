@@ -8,7 +8,7 @@ void printPositionOnMap(t_location pos)
     {
       for(i=0; i<W; i++)
 	{
-	  if((int)(pos.x)==i && (int)(pos.y)==(int)(H)-1-j)
+	  if((int)(pos.x)==i && (int)(pos.y)==(int)(H)-j)
 	    printf(" x ");
 	  else if(j==0||j==(int)(H)-1)
 	    printf("==");
