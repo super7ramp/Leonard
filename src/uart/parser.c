@@ -132,16 +132,15 @@ void refreshBeaconTTL(uint8_t index) {
 void printTab(void)
 {
   int i=0;
-  printf("==============================================================================================\n");
   for(i=0; i<NUMBER_BEACONS; i++)
       printf("%c\t\t\t", i+65);
-  printf("\n");
+  printf("\r\n");
   for(i=0; i<NUMBER_BEACONS; i++)
     printf("%d\t\t\t", beaconTab[i].rssi);
-  printf("\n");
-  for(i=0; i<NUMBER_BEACONS; i++)
+  printf("\r\n");
+  /*for(i=0; i<NUMBER_BEACONS; i++)
     printf("%.2f\t\t", beaconTab[i].TTL);  
-  printf("\n\n");
+  printf("\r\n");*/
 }
 
 void printVisibleBeacons(void)
