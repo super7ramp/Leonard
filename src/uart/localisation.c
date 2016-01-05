@@ -6,7 +6,7 @@
 #include "parameters.h"
 #include "localisation.h"
 
-t_location currentPos={0,0};
+t_location posTab[NB_POS_HISTORY];
 
 uint8_t IsIndexValid(uint8_t index)
 {
@@ -23,7 +23,7 @@ void UpdateCurrentLocation()
   int8_t index1, index2, index3;
   uint8_t numberOfVisibleBeacons=getVisibleBeaconsNumber(&index1, &index2, &index3);
   const t_beacon_info* beaconTab=getBeaconTab();
-
+  t_location currentPos={0,0};
   switch(numberOfVisibleBeacons)
     {
     case 0:
@@ -51,6 +51,7 @@ void UpdateCurrentLocation()
       //break;
     }
   //printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
+  updatePosTab(currentPos);
 }
 
 void ComputeWeightedPositionFrom2Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2)
@@ -77,7 +78,8 @@ void UpdateCurrentWeightedLocation()
   int8_t index1, index2, index3;
   int8_t numberOfVisibleBeacons=getVisibleBeaconsNumber(&index1, &index2, &index3);
   const t_beacon_info* beaconTab=getBeaconTab();
-  
+  t_location currentPos={0, 0};
+
   switch(numberOfVisibleBeacons)
     {
     case 0:
@@ -103,6 +105,8 @@ void UpdateCurrentWeightedLocation()
       break;
     }
   //printf("X : %.2f - Y : %.2f\r", currentPos.x, currentPos.y);
+ if(currentPos.x>0 && currentPos.y > 0 && currentPos.x<=W && currentPos.y<=H)
+  updatePosTab(currentPos);
 }
 
 int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2)
@@ -170,7 +174,35 @@ int8_t getVisibleBeaconsNumber(int8_t *index1, int8_t* index2, int8_t* index3)
   return count;
 }
 
+void initPosTab(void)
+{
+  int i=0;
+  for(i=0; i<NB_POS_HISTORY; i++)
+  {
+    posTab[i].x=0.0;
+    posTab[i].y=0.0;
+  }
+}
+
+void updatePosTab(t_location current)
+{
+  int i=0;
+  for (i=0; i<NB_POS_HISTORY; i++)
+  {
+    posTab[NB_POS_HISTORY-i-1]=posTab[NB_POS_HISTORY-i-2];
+  }
+  posTab[0].x=current.x;
+  posTab[0].y=current.y;
+}
+
 t_location getCurrentLocation(void)
 {
-    return currentPos;
+  int i=0;
+  t_location sum={0.0, 0.0};
+  for (i=0; i<NB_POS_HISTORY; i++)
+  {
+    sum.x+=posTab[i].x;
+    sum.y+=posTab[i].y;
+  }
+    return (t_location){sum.x/NB_POS_HISTORY, sum.y/NB_POS_HISTORY};
 }

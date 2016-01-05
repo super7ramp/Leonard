@@ -105,6 +105,7 @@ void close_port(int fd) {
 int main()
 {
  fd=open_port();
+ initPosTab();
  while(1)
    {
      read_port();
