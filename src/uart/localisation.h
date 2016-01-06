@@ -3,7 +3,12 @@
 
 #include <stdio.h>   
 #include <stdlib.h>
+#include "uart.h"
+#include <string.h>  /* String function definitions */
+#include <stdint.h>
+#include "parser.h"
 #include "parameters.h"
+#include "uart.h"
 
 #define NB_POS_HISTORY	10
 
@@ -21,12 +26,15 @@ uint8_t IsIndexValid(uint8_t index);
 // GETTER
 void initPosTab();
 
-
 t_location getCurrentLocation(void);
 
 void updatePosTab(t_location current);
 
 t_location getCurrentLocation(void);
+
+void initLocationComputation();
+
+void computeLocation();
 
 
 #endif
