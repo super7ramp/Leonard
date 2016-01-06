@@ -7,7 +7,7 @@
 #include <stdlib.h> //nécessaire pour le structure time
 #include <time.h>
 #include <pthread.h>
-
+#include "../uart/localisation.h"
 #include "driver_uart.h"
 #include "var_coord.h"
 

@@ -12,8 +12,6 @@
  */
 
 FILE *result;
-void parseSerialRead(char *buffer);
-int checkAnswer(char *response);
 char rawResponse[512];
 int n=0;
 int TTL=20;
@@ -22,7 +20,7 @@ int fd;
 int sizeRawResponse;
 char message [512];
 
-int open_port(void);
+
 
 void serial_config(int fd)
 {
@@ -102,17 +100,16 @@ void close_port(int fd) {
 	close(fd);
 }
 
-int main()
+void initBluetoothCom()
 {
- fd=open_port();
- initPosTab();
- while(1)
-   {
-     read_port();
-     //UpdateCurrentLocation();
-     UpdateCurrentWeightedLocation();
-     printPositionOnMap(getCurrentLocation());
-   }	        
- return 0;
+  fd=open_port();
+  initPosTab();
+}
+
+void readBluetoothData()
+{
+  read_port();
+  UpdateCurrentWeightedLocation();
+  printPositionOnMap(getCurrentLocation());
 }
 

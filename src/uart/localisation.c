@@ -1,9 +1,3 @@
-#include <stdio.h>   /* Standard input/output definitions */
-#include <stdlib.h> 
-#include <string.h>  /* String function definitions */
-#include <stdint.h>
-#include "parser.h"
-#include "parameters.h"
 #include "localisation.h"
 
 t_location posTab[NB_POS_HISTORY];
@@ -205,4 +199,14 @@ t_location getCurrentLocation(void)
     sum.y+=posTab[i].y;
   }
     return (t_location){sum.x/NB_POS_HISTORY, sum.y/NB_POS_HISTORY};
+}
+
+void initLocationComputation()
+{
+  initBluetoothCom();
+}
+
+void computeLocation()
+{
+  readBluetoothData();
 }
