@@ -28,11 +28,11 @@ int main(int argc, char *argv[])
     perror("pthread_create");
     return 1;
   }
-  if(pthread_create(&threadBluetooth, NULL, thread_Bluetooth, NULL) == -1)
+/*  if(pthread_create(&threadBluetooth, NULL, thread_Bluetooth, NULL) == -1)
   {
     perror("pthread_create");
     return 1;
-  }
+  }*/
   if (pthread_join(threadCom, NULL))
   {
     perror("pthread_join");
@@ -43,11 +43,11 @@ int main(int argc, char *argv[])
     perror("pthread_join");
     return 1;
   }
-  if (pthread_join(threadBluetooth, NULL)) 
+/*  if (pthread_join(threadBluetooth, NULL)) 
   {
     perror("pthread_join");
     return 1;
-  }
+  }*/
 
   printf("\nEnd\n\n");
 

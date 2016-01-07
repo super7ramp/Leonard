@@ -8,8 +8,8 @@ void* thread_com(void* arg)
 	ORDER = NOTDONE;
 	int i = 0;
 	order_recept = 0;
-	destination.x = 40.0;
-	destination.y = 40.0;
+	destination.x = 1.08333333333;
+	destination.y = 1.1;
 	while(1)
 	{
 		//récupération des donnée envoyé par le connectin Wifi
@@ -65,14 +65,14 @@ void* thread_com(void* arg)
 					break;
 
 				case 11 :
-					Main_Nav = return_navdata();
+					//Main_Nav = return_navdata();
 					//send_navdata_to_the_user_via_socket
 					break;
 
 				default:
 					break;
 			}
-/*		 Code pour la simulation de recepton de donnée Wifi	
+//		 Code pour la simulation de recepton de donnée Wifi	
 			if(i<1000){
 				order_recept = 3; //takeOff
 			}
@@ -82,17 +82,20 @@ void* thread_com(void* arg)
 					order_recept = 1;
 			}
 			else if(i==1801){
+				order_recept = 2; //land
+			}
+			else if(i==1802){
 				order_recept = 9; //start_mission
 			}
-			else if(i>1801){
-				order_recept = 2; //attérisage
+			else if(i>1802){
+				order_recept = 11; //attérisage
 			}
 			//printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
 			i++;
 			//printf("Debut de la pause de 20ms dans thread_com\n");
 			usleep(10000);
 			//printf("Fin de la pause de 20ms dans le thread_com\n");
-*/			
+			
 		}
 	}  
 }
