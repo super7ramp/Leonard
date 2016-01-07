@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+import math
+import sys
+
+#
+# Apply a rotation to nodes coordinates. Rotation is made around the origin.
+# Syntax: rotate_map rotation_angle_in_degrees
+#
+
+class Rotater:
+
+    def __init__(self, angle):
+        self.currentState = 'INIT'
+        self.angle = math.radians(float(angle))
+
+    def getRotatedCoordinates(self, point):
+        x = point[0]*math.cos(self.angle) + point[1]*math.sin(self.angle)
+        y = -point[0]*math.sin(self.angle) + point[1]*math.cos(self.angle)
+        return (x,y)
+
+    def parseLineInit(self, line):
+        if line == 'nodes:':
+            print(line)
+            self.currentState = 'NODES'
+
+    def parseLineNodes(self, line):
+        if line == 'edges:':
+            print(line)
+            self.currentState = 'ADJACENCIES'
+        else:
+            fields = line.split(',')
+            name = fields[0]
+            [x, y] = self.getRotatedCoordinates((float(fields[1]), float(fields[2])))
+            print(','.join((name, str(x), str(y))))
+
+    def parseLineAdjacencies(self, line):
+        print(line)
+
+    def rotate(self, mapfile):
+        for line in mapfile:
+            if self.currentState == 'INIT':
+                self.parseLineInit(line.rstrip('\n'))
+            elif self.currentState == 'NODES':
+                self.parseLineNodes(line.rstrip('\n'))
+            elif self.currentState == 'ADJACENCIES':
+                self.parseLineAdjacencies(line.rstrip('\n'))
+        self.currentState = 'DONE'
+
+
+if __name__ == '__main__':
+    if (len(sys.argv) < 3):
+        sys.exit("Syntax: " + sys.argv[0] + " file.map rotation_angle_in_degrees")
+
+    with open(sys.argv[1], 'r') as mapfile:
+        rotater = Rotater(sys.argv[2])
+        rotater.rotate(mapfile)
+    mapfile.closed
