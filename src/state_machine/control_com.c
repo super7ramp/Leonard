@@ -60,7 +60,6 @@ void* thread_com(void* arg)
 			switch(order_recept){
 				case 0: 
 					calibHor();
-					printf("passage en calibre 0");
 					break;
 				
 				case 1:
@@ -115,6 +114,7 @@ void* thread_com(void* arg)
 			}
 //		 Code pour la simulation de recepton de donnée Wifi	
 			if(i<1000){
+				//printf("decolle\n");
 				order_recept = 3; //takeOff
 			}
 			else if(i>1000 && i<1800){
