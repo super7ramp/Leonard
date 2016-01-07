@@ -1,11 +1,4 @@
-#include <stdio.h>   /* Standard input/output definitions */
-#include <stdlib.h> 
-#include <string.h>  /* String function definitions */
-#include <stdint.h>
-#include <inttypes.h>
-#include <sys/time.h>
 #include "parser.h"
-#include "parameters.h"
 
 /* Map :
  * 
@@ -178,5 +171,12 @@ double getBeaconTTL(uint8_t index)
 const t_beacon_info* getBeaconTab(void)
 {
     return (const t_beacon_info*) beaconTab;
+}
+
+void readBluetoothData()
+{
+  read_port();
+  UpdateCurrentWeightedLocation();
+  //printPositionOnMap(getCurrentLocation());
 }
 

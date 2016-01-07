@@ -7,6 +7,7 @@
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
 #include "display.h"
+#include "parser.h"
 
 void parseSerialRead(char *buffer);
 int checkAnswer(char *response);
@@ -16,6 +17,5 @@ void openSerialCom();
 void read_port();
 void close_port(int fd);
 void initBluetoothCom();
-void readBluetoothData();
 
 #endif

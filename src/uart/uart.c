@@ -1,15 +1,5 @@
-#include <stdio.h>   /* Standard input/output definitions */
-#include <string.h>  /* String function definitions */
-#include <unistd.h>  /* UNIX standard function definitions */
-#include <fcntl.h>   /* File control definitions */
-#include <errno.h>   /* Error number definitions */
-#include <termios.h> /* POSIX terminal control definitions */
-#include "parser.h"
-#include "localisation.h"
-#include "display.h"
-/*
- * Function done by Sheldon group
- */
+#include "uart.h"
+
 
 FILE *result;
 char rawResponse[512];
@@ -103,13 +93,5 @@ void close_port(int fd) {
 void initBluetoothCom()
 {
   fd=open_port();
-  initPosTab();
-}
-
-void readBluetoothData()
-{
-  read_port();
-  UpdateCurrentWeightedLocation();
-  printPositionOnMap(getCurrentLocation());
 }
 

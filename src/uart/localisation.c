@@ -203,10 +203,12 @@ t_location getCurrentLocation(void)
 
 void initLocationComputation()
 {
+  initPosTab();
   initBluetoothCom();
 }
 
 void computeLocation()
 {
   readBluetoothData();
+  printf("Beacon detected !\r\n");
 }
