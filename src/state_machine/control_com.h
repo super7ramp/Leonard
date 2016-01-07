@@ -10,6 +10,9 @@
 
 #include "controlTask.h"
 #include "var_coord.h"
+#include "../com/params.h"
+#include "../com/sender.h"
+#include "../com/receiver.h"
 
 
 

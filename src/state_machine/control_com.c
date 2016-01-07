@@ -1,25 +1,66 @@
 #include "control_com.h"
 
+char *str_sub (const char *s, unsigned int start, unsigned int end)
+{
+   char *new_s = NULL;
+
+   if (s != NULL && start < end)
+   {
+/* (1)*/
+      new_s = malloc (sizeof (*new_s) * (end - start + 2));
+      if (new_s != NULL)
+      {
+         int i;
+
+/* (2) */
+         for (i = start; i <= end; i++)
+         {
+/* (3) */
+            new_s[i-start] = s[i];
+         }
+         new_s[i-start] = '\0';
+      }
+      else
+      {
+         fprintf (stderr, "Memoire insuffisante\n");
+         exit (EXIT_FAILURE);
+      }
+   }
+   return new_s;
+}
+
+
+
 void* thread_com(void* arg)
 {
 	//initialisation de la connection UDP entre le logiciel embarqué et l'IHM
+	//initReceiver();
 	
 	int order_recept;
 	ORDER = NOTDONE;
 	int i = 0;
+	int lg_message =  LG_MESS_DEFAUT;
 	order_recept = 0;
 	destination.x = 1.08333333333;
 	destination.y = 1.1;
+	//char * msg = malloc(sizeof(char)*lg_message);
+	
 	while(1)
 	{
+	
+		//recevoir(lg_message, msg);
 		//récupération des donnée envoyé par le connectin Wifi
 		//recept_orders_send_by_the_user
 		//envoie de l'ordre reçu;
+
+		//order_recept = atoi(str_sub(msg,0,0));
+		
 		if (ORDER == NOTDONE)
 		{
 			switch(order_recept){
 				case 0: 
 					calibHor();
+					printf("passage en calibre 0");
 					break;
 				
 				case 1:
