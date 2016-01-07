@@ -16,30 +16,23 @@
 pthread_mutex_t messageMutex = PTHREAD_MUTEX_INITIALIZER;
 char * msgSend, * msgRcv;
 
-char beaconsLocation[NUMBER_BEACONS][10] = {
-	"0 0",
-	"0 0",
-	"0 10",
-	"8 10",
-	"8 5",
-	"8 0"
-	};
+char beaconsLocation[NUMBER_BEACONS][20];
 
 
-/*void initBeaconsLocation(char beacon[NUMBER_BEACONS][10], int size) {
-	sprintf(beacon[0], "0 0");
-	sprintf(beacon[1], "0 %f", (float) H/2);
-	sprintf(beacon[2], "0 %f", (float) H);
-	sprintf(beacon[3], "%f %f", (float) W, (float) H);
-	sprintf(beacon[4], "%f %f", (float) W, (float) H/2);
-	sprintf(beacon[5], "%f 0", (float) W);
-	sprintf(beacon[6], "%f %f", (float) W/2, (float) H/4);
-	sprintf(beacon[6], "%f %f", (float) W/2, (float) 3*H/4);
+void initBeaconsLocation(char beacon[NUMBER_BEACONS][20], int size) {
+	sprintf(beacon[0], "0.0 0.0 ");
+	sprintf(beacon[1], "0.0 %.2f ", (float) H/2);
+	sprintf(beacon[2], "0.0 %.2f ", (float) H);
+	sprintf(beacon[3], "%.2f %.2f ", (float) W, (float) H);
+	sprintf(beacon[4], "%.2f %.2f ", (float) W, (float) H/2);
+	sprintf(beacon[5], "%.2f 0.0 ", (float) W);
+	sprintf(beacon[6], "%.2f %.2f ", (float) W/2, (float) H/4);
+	sprintf(beacon[7], "%.2f %.2f ", (float) W/2, (float) 3*H/4);
 	
 	int i;
 	for (i=0; i<8; i ++)
 		printf(" %d : %s\n", i, beacon[i]);
-}*/
+}
 
 
 void * receiverThread(void* arg)
