@@ -210,5 +210,5 @@ void initLocationComputation()
 void computeLocation()
 {
   readBluetoothData();
-  printf("Beacon detected !\r\n");
+  printBasicInformation(getCurrentLocation());
 }
