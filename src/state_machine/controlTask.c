@@ -1,6 +1,6 @@
 #include "controlTask.h"
 
-#define THRESHOLD 0.01
+#define THRESHOLD 0.001
 
 //return the index of a point in the path
 int find_point_in_path (node_t ** path, float other_x, float other_y);
@@ -224,6 +224,7 @@ void calcul_mission()
 */
 
   read_data_bluetooth(&C_blue.x,&C_blue.y);
+printf("BT x = %f \nBT y = %f\n", C_blue.x, C_blue.y);
   node_t **path = dijkstra(C_blue.x, C_blue.y, map.x, map.y, graph);
   printf("                                                                           \n");
 
@@ -320,7 +321,7 @@ void calcul_mission()
     //Début de la rotation
     while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
     {
-      SWITCH_DRONE_COMMANDE(5);
+      //SWITCH_DRONE_COMMANDE(5);
       Main_Nav = return_navdata();
       printf("Valeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  \r", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
     }
@@ -338,7 +339,7 @@ void calcul_mission()
 //envoie commande pitch tant qu'on est pas a la coordonnée bluetooth
     while((((path[indice]->x - C_blue.x) < THRESHOLD) || ((path[indice]->y - C_blue.y) < THRESHOLD)) && (findy_lost != 1))
     {
-      SWITCH_DRONE_COMMANDE(4);
+      //SWITCH_DRONE_COMMANDE(4);
       read_data_bluetooth(&C_blue.x,&C_blue.y);
 
       if((check = find_point(graph, C_blue.x, C_blue.y)) != -1)
@@ -371,6 +372,7 @@ void calcul_mission()
     break_drone();
   }
   stop_mission();
+  printf("fin mission\n");
   free(path);
 }
 
