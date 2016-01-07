@@ -4,8 +4,9 @@
 #include <stdio.h>   /* Standard input/output definitions */
 #include <string.h>  /* String function definitions */
 #include <stdint.h>
-#include"parameters.h"
-
+#include "parameters.h"
+#include <sys/time.h>
+#include "uart.h"
 #define TAB_ADDR_LEN ADDR_LEN*2+1
 #define TTL_MAX_MS 1500
 
@@ -31,6 +32,7 @@ int8_t getBeaconRssi(uint8_t index);
 double getBeaconTTL(uint8_t index);
 const t_beacon_info* getBeaconTab(void);
 void printVisibleBeacons(void);
+void readBluetoothData();
 
 
 #endif

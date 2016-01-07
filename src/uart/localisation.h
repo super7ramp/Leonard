@@ -3,12 +3,10 @@
 
 #include <stdio.h>   
 #include <stdlib.h>
-#include "uart.h"
 #include <string.h>  /* String function definitions */
 #include <stdint.h>
 #include "parser.h"
 #include "parameters.h"
-#include "uart.h"
 
 #define NB_POS_HISTORY	10
 
@@ -23,7 +21,7 @@ int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2);
 int8_t getVisibleBeaconsNumber(int8_t* index1, int8_t* index2, int8_t* index3);
 //Check that detected index is in range of beacon Tab
 uint8_t IsIndexValid(uint8_t index);
-// GETTER
+
 void initPosTab();
 
 t_location getCurrentLocation(void);

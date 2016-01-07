@@ -1,0 +1,14 @@
+#include "localisation.h"
+#include "stdio.h"
+#include "stdlib.h"
+
+int main(int argc, char *argv[])
+{
+	initLocationComputation();
+	while(1)
+	{
+		computeLocation();
+		printf("Beacon detected\r\n");
+	}
+	return 0;
+}
