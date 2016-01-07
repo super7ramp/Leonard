@@ -18,12 +18,28 @@ char * msgSend, * msgRcv;
 
 char beaconsLocation[NUMBER_BEACONS][10] = {
 	"0 0",
-	"0 5",
+	"0 0",
 	"0 10",
 	"8 10",
 	"8 5",
 	"8 0"
 	};
+
+
+/*void initBeaconsLocation(char beacon[NUMBER_BEACONS][10], int size) {
+	sprintf(beacon[0], "0 0");
+	sprintf(beacon[1], "0 %f", (float) H/2);
+	sprintf(beacon[2], "0 %f", (float) H);
+	sprintf(beacon[3], "%f %f", (float) W, (float) H);
+	sprintf(beacon[4], "%f %f", (float) W, (float) H/2);
+	sprintf(beacon[5], "%f 0", (float) W);
+	sprintf(beacon[6], "%f %f", (float) W/2, (float) H/4);
+	sprintf(beacon[6], "%f %f", (float) W/2, (float) 3*H/4);
+	
+	int i;
+	for (i=0; i<8; i ++)
+		printf(" %d : %s\n", i, beacon[i]);
+}*/
 
 
 void * receiverThread(void* arg)
@@ -61,6 +77,8 @@ int main (int argc, char** argv)
 	int lg_message = LG_MESS_DEFAUT;
 	int *n;
 	char * msg = malloc(sizeof(char)*lg_message);
+	
+	initBeaconsLocation(beaconsLocation, (int) NUMBER_BEACONS);
 	
 	n = malloc(sizeof(int));
 	*n = 5;
