@@ -1,5 +1,7 @@
 #include "localisation.h"
 
+pthread_mutex_t m_current_location;
+
 t_location posTab[NB_POS_HISTORY];
 
 uint8_t IsIndexValid(uint8_t index)
@@ -170,35 +172,42 @@ int8_t getVisibleBeaconsNumber(int8_t *index1, int8_t* index2, int8_t* index3)
 
 void initPosTab(void)
 {
+  pthread_mutex_init(&m_current_location, NULL);
   int i=0;
+  pthread_mutex_lock(&m_current_location);
   for(i=0; i<NB_POS_HISTORY; i++)
   {
     posTab[i].x=0.0;
     posTab[i].y=0.0;
   }
+  pthread_mutex_unlock(&m_current_location);
 }
 
 void updatePosTab(t_location current)
 {
   int i=0;
+  pthread_mutex_lock(&m_current_location);
   for (i=0; i<NB_POS_HISTORY; i++)
   {
     posTab[NB_POS_HISTORY-i-1]=posTab[NB_POS_HISTORY-i-2];
   }
   posTab[0].x=current.x;
   posTab[0].y=current.y;
+  pthread_mutex_unlock(&m_current_location);
 }
 
 t_location getCurrentLocation(void)
 {
   int i=0;
   t_location sum={0.0, 0.0};
+  pthread_mutex_lock(&m_current_location);
   for (i=0; i<NB_POS_HISTORY; i++)
   {
     sum.x+=posTab[i].x;
     sum.y+=posTab[i].y;
   }
-    return (t_location){sum.x/NB_POS_HISTORY, sum.y/NB_POS_HISTORY};
+  pthread_mutex_unlock(&m_current_location);
+  return (t_location){sum.x/NB_POS_HISTORY, sum.y/NB_POS_HISTORY};
 }
 
 void initLocationComputation()

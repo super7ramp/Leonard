@@ -13,12 +13,6 @@
 
 #define CONTROLTASK_PERIOD_BLUETOOTH_MS 1000 //wait one second (period)
 
-static pthread_mutex_t mutex_bluetooth = PTHREAD_MUTEX_INITIALIZER;
-
-struct coordinates_ position;
-
-int *data_point;
-
 void *thread_Bluetooth(void *arg);
 void read_data_bluetooth(float *x, float *y);
 void data_to_coordinates();

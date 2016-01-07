@@ -223,14 +223,20 @@ void calcul_mission()
   map.tab_algo_y[2] = 100.0; //Simulation
 */
 
-  read_data_bluetooth(&C_blue.x,&C_blue.y);
+  //read_data_bluetooth(&C_blue.x,&C_blue.y);
+  C_blue.x = 3.25;
+  C_blue.y = 1.1;
+
 printf("BT x = %f \nBT y = %f\n", C_blue.x, C_blue.y);
+printf("Destination point: %f - %f", map.x, map.y);
   node_t **path = dijkstra(C_blue.x, C_blue.y, map.x, map.y, graph);
   printf("                                                                           \n");
 
   int i;
-  for(i = 0 ; path[i] != NULL ; i++)
+  for(i = 0 ; path[i] != NULL ; i++) {
     indice = i;
+    printf("%s (%f,%f)", path[i]->name, path[i]->x, path[i]->y);
+  }
   
   while(indice >= 0) 
   {
@@ -340,7 +346,7 @@ printf("BT x = %f \nBT y = %f\n", C_blue.x, C_blue.y);
     while((((path[indice]->x - C_blue.x) < THRESHOLD) || ((path[indice]->y - C_blue.y) < THRESHOLD)) && (findy_lost != 1))
     {
       //SWITCH_DRONE_COMMANDE(4);
-      read_data_bluetooth(&C_blue.x,&C_blue.y);
+      //read_data_bluetooth(&C_blue.x,&C_blue.y);
 
       if((check = find_point(graph, C_blue.x, C_blue.y)) != -1)
       {
@@ -392,6 +398,7 @@ void SWITCH_DRONE_COMMANDE(int _order)
             break;
 
         case 2 :
+            //printf("SWITCH COMMANDE take off\n");
             take_off(message);
             inC.flag_takeoff = 0;
             break;
