@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include "parser.h"
 #include "parameters.h"
+#include "pthread.h"
 
 #define NB_POS_HISTORY	10
 
