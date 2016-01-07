@@ -1,8 +1,8 @@
 pcCom : sender.o receiver.o pcCom.o 
 	gcc -o pcCom sender.o receiver.o pcCom.o -lpthread
 	
-com : sender.o receiver.o com.o
-	gcc -o com sender.o receiver.o com.o
+test : sender.o receiver.o test.o
+	gcc -o test sender.o receiver.o test.o
 	
 sender.o : sender.c 
 	gcc -o sender.o -c sender.c -Wall
@@ -10,8 +10,8 @@ sender.o : sender.c
 receiver.o : receiver.c 
 	gcc -o receiver.o -c receiver.c -Wall
 	
-com.o : receiver.h sender.h
-	gcc -o com.o -c com.c -Wall
+test.o : receiver.h sender.h
+	gcc -o test.o -c test.c -Wall
 
 pcCom.o : receiver.h sender.h params.h
 	gcc -o pcCom.o -c pcCom.c -Wall

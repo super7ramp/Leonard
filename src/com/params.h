@@ -1,12 +1,9 @@
 #ifndef params_H
 #define params_H
 
+#include "../uart/parameters.h"
 
-#define NUMBER_BEACONS  6
 #define LG_MESS_DEFAUT 	30
-#define ADR_DIST		"127.0.0.1"
-#define W               (7.80)        
-#define H               (12.0)
-
+#define ADR_DIST		"192.168.1.1"
 
 #endif
