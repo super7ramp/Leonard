@@ -41,8 +41,8 @@ void* thread_com(void* arg)
 	int i = 0;
 	int lg_message =  LG_MESS_DEFAUT;
 	order_recept = 0;
-	destination.x = 1.08333333333;
-	destination.y = 1.1;
+	dest.x = 1.083333333;
+	dest.y = 1.1;
 	//char * msg = malloc(sizeof(char)*lg_message);
 	
 	while(1)
@@ -96,7 +96,7 @@ void* thread_com(void* arg)
 
 				case 9: 
 					printf("start_mission => communication\n");
-					start_mission(destination.x, destination.y);
+					start_mission(dest.x, dest.y);
 					ORDER = DONE;
 					break;
 

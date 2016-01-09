@@ -16,7 +16,7 @@
 
 
 
-struct coordinates_ destination;
+struct coordinates_ dest;
 
 void* thread_com(void* arg); 
 

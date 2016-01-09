@@ -170,12 +170,12 @@ void anti_emergency_() //OK
 }
 //END FONCTIONS : EMERGENCY
 
-void start_mission(float x_map, float y_map)
+void start_mission(float x_destination, float y_destination)
 {
   printf("controlTask : start_mission called\n");
   pthread_mutex_lock(&mutex_control);
-  map.x = x_map;
-  map.y = y_map;
+  destination.x = x_destination;
+  destination.y = y_destination;
   inC.flag_control_s = STATE_MISSION;
   pthread_mutex_unlock(&mutex_control);
 }
@@ -208,19 +208,20 @@ Navdata return_navdata()
 void calcul_mission()
 {
   struct coordinates_ C_blue; //coordinates of drone
+  struct coordinates_ nextPoint;
   int indice = 0;
   int check = 0;
   int findy_lost = 0;
   float angle_actuel,calcul_x, calcul_y, angle_desire;
 
 /*
-  map.tab_algo_x[0] = map.x - map.x; //Simulation
-  map.tab_algo_y[0] = map.y;  //Simulation
-  map.tab_algo_x[1] = map.x;  //Simulation
-  map.tab_algo_y[1] = map.y;  //Simulation
+  destination.tab_algo_x[0] = destination.x - destination.x; //Simulation
+  destination.tab_algo_y[0] = destination.y;  //Simulation
+  destination.tab_algo_x[1] = destination.x;  //Simulation
+  destination.tab_algo_y[1] = destination.y;  //Simulation
 
-  map.tab_algo_x[2] = 100.0; //Simulation
-  map.tab_algo_y[2] = 100.0; //Simulation
+  destination.tab_algo_x[2] = 100.0; //Simulation
+  destination.tab_algo_y[2] = 100.0; //Simulation
 */
 
   //read_data_bluetooth(&C_blue.x,&C_blue.y);
@@ -228,15 +229,26 @@ void calcul_mission()
   C_blue.y = 1.1;
 
 printf("BT x = %f \nBT y = %f\n", C_blue.x, C_blue.y);
-printf("Destination point: %f - %f", map.x, map.y);
-  node_t **path = dijkstra(C_blue.x, C_blue.y, map.x, map.y, graph);
+printf("Destination point: %f - %f", destination.x, destination.y);
+  node_t **path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+
+  if (path == NULL)
+  {
+    // Destination point not found, cannot do the mission
+    fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
+    stop_mission();
+    return;
+  }
   printf("                                                                           \n");
 
   int i;
   for(i = 0 ; path[i] != NULL ; i++) {
     indice = i;
-    printf("%s (%f,%f)", path[i]->name, path[i]->x, path[i]->y);
+    printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
   }
+
+  // Let's start
+  indice--;
   
   while(indice >= 0) 
   {
@@ -245,45 +257,14 @@ printf("Destination point: %f - %f", map.x, map.y);
     printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,path[indice]->x, path[indice]->y);
     int mission_finie = 0;
 
+    // FIXME: Cast path[indice] from node_t to coordinates_ since we don't use the samee structure...
+    nextPoint.x = path[indice]->x;
+    nextPoint.y = path[indice]->y;
+
     Main_Nav = return_navdata();
     angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
+    angle_desire = computeDesiredAngle(C_blue, nextPoint);
 
-/*
-    calcul_x = map.tab_algo_x[indice] - C_blue.x;
-    calcul_y = map.tab_algo_y[indice] - C_blue.y;
-*/
-    calcul_x = path[indice]->x - C_blue.x;
-    calcul_y = path[indice]->y - C_blue.y;
-
-    printf("Valeur de calcul_x (x : destination-bluetooth) = %2.f\n" ,calcul_x);
-    printf("Valeur de calcul_y (y : destination-bluetooth) = %2.f\n" ,calcul_y);
-
-    if(path[indice]->x-C_blue.x == 0.0)
-      angle_desire = 0.0;
-    else
-      angle_desire = atanf(abs(path[indice]->y-C_blue.y)/abs(path[indice]->x-C_blue.x)); //calcul de l'angle
-    
-    printf("Calcul angle desire (rad)   : %2.f\n", angle_desire);
-    angle_desire = angle_desire / (PI/2) * 180.0 / 2.0; //radians en dergrées
-    printf("Calcul angle desire (degree): %2.f\n", angle_desire);
-    if(calcul_x == 0.0 && calcul_y > 0.0)
-      angle_desire = 0.0;
-    else if(calcul_x == 0.0 && calcul_y < 0.0)
-      angle_desire = 180.0;
-    else if(calcul_y == 0.0 && calcul_x > 0.0)
-      angle_desire = 90.0;
-    else if(calcul_y == 0.0 && calcul_x < 0.0)
-      angle_desire = -90.0;
-    else if(calcul_x>0.0 && calcul_y>0.0) //si quadrant haut droite
-      angle_desire = angle_desire;
-    else if (calcul_x<0.0 && calcul_y>0.0) //si quadrant bas droite
-      angle_desire = - angle_desire;
-    else if (calcul_x>0.0 && calcul_y<0.0) //Si quadrant haut gauche
-      angle_desire = 180.0 - angle_desire;
-    else if (calcul_x<0.0 && calcul_y<0.0) //Si quadrant bas gauche
-      angle_desire = -180.0 + angle_desire;
-
-    printf("Calcul angle desire final v0.1 : %2.f\n", angle_desire);
     /*
     angle désiré
     */
@@ -291,6 +272,7 @@ printf("Destination point: %f - %f", map.x, map.y);
     printf("Valeur de heading_unwrapped = %.2f                        | Valeur de angle desire = %.2f\n", Main_Nav.magneto.heading_unwrapped, angle_desire);   
     printf("Valeut de 180 + Main_Nav.magneto.heading_unwrapped = %.2f | Valeur de -180 + Main_Nav.magneto.heading_unwrapped = %.2f \n", (180.0+Main_Nav.magneto.heading_unwrapped), (-180.0+Main_Nav.magneto.heading_unwrapped));
     printf("                                                                                                                           \n");
+    
     if(angle_desire > nav_prec)// (180.0 + Main_Nav.magneto.heading_unwrapped)) 
     {
       angle_desire = angle_desire - 360.0;
@@ -299,7 +281,6 @@ printf("Destination point: %f - %f", map.x, map.y);
     {
       angle_desire = angle_desire + 360.0;
     }
-
     printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
     
     //Calcul du sens de rotation de l'axe Z pour un positionnement le plus rapide.
@@ -358,8 +339,8 @@ printf("Destination point: %f - %f", map.x, map.y);
       if(ploki > 4000) //Simulation
       {
         printf("ploki vaut = %d\n", ploki);
-        C_blue.y = map.tab_algo_y[indice]; //Simulation
-        C_blue.x = map.tab_algo_x[indice]; //Simulation
+        C_blue.y = destination.tab_algo_y[indice]; //Simulation
+        C_blue.x = destination.tab_algo_x[indice]; //Simulation
       } //Simulation
 */
     }
@@ -368,7 +349,7 @@ printf("Destination point: %f - %f", map.x, map.y);
     //else decrementation of "indice"
     if(findy_lost == 1)
     {
-      path = dijkstra(C_blue.x, C_blue.y, map.x, map.y, graph);
+      path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
       for(i = 0 ; path[i] != NULL ; i++)
         indice = i;
     }
