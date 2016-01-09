@@ -58,7 +58,6 @@ struct coordinates_ computeRotation(struct coordinates_ point, float angle) {
 	return rotatedCoordinates;
 }
 
-//calculating the direction of rotation of the Z-axis for optimum positioning.
 float computeDirection(float angle_actuel, float angle_desire, float power, direction* move)
 {
 	if(angle_actuel < 0 && angle_desire > 0){
@@ -79,4 +78,16 @@ float computeDirection(float angle_actuel, float angle_desire, float power, dire
       *move = LEFT;
     
     return power;
+}
+
+void computeOffsetMag(float* angle_desire, float nav_prec, float nav_suiv)
+{
+  if(*angle_desire > nav_prec)// (180.0 + Main_Nav.magneto.heading_unwrapped)) 
+  {
+    *angle_desire = *angle_desire - 360.0;
+  }
+    else if(*angle_desire < nav_suiv) 
+  {
+    *angle_desire = *angle_desire + 360.0;
+  }
 }

@@ -30,4 +30,6 @@ struct coordinates_ computeRotation(struct coordinates_ point, float angle);
   */
 float computeDirection(float angle_actuel, float angle_desire, float power, direction* move);
 
+void computeOffsetMag(float* angle_desire, float nav_prec, float nav_suiv);
+
 #endif // MOVEMENT_H
