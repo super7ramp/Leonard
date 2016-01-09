@@ -2,7 +2,7 @@
 #define __SHORTEST_PATH_H
 
 #define INFINITE	999
-#define ERROR_COORD	1
+#define ERROR_COORD	0.5
 
 #include "map/map_common.h"
 
