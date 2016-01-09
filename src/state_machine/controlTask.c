@@ -5,6 +5,9 @@
 //return the index of a point in the path
 int find_point_in_path (node_t ** path, float other_x, float other_y);
 
+//return the index of the closest node to the current position of the drone in the graph
+int find_closest_node(graph_t *graph, current_x, current_y);
+
 void* controlTask(void* arg)
 { 
   pthread_mutex_t verrou_control; 
@@ -210,6 +213,7 @@ void calcul_mission()
   struct coordinates_ C_blue; //coordinates of drone
   struct coordinates_ nextPoint;
   int indice = 0;
+  int index = 0;
   int check = 0;
   int findy_lost = 0;
   float angle_actuel,calcul_x, calcul_y, angle_desire;
@@ -234,10 +238,14 @@ printf("Destination point: %f - %f", destination.x, destination.y);
 
   if (path == NULL)
   {
+/*
     // Destination point not found, cannot do the mission
     fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
     stop_mission();
     return;
+*/
+    index = find_closest_node(graph, C_blue.x, C_blue.y);
+    
   }
   printf("                                                                           \n");
 
@@ -286,28 +294,6 @@ printf("Destination point: %f - %f", destination.x, destination.y);
     //Calcul du sens de rotation de l'axe Z pour un positionnement le plus rapide.
     
     yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
-
-    /*if(angle_actuel < 0 && angle_desire > 0){
-      if((angle_desire - angle_actuel)>180)
-        yaw_move = LEFT;
-      else
-        yaw_move = RIGHT;
-    }
-    else if(angle_actuel > 0 && angle_desire < 0){
-      if((angle_actuel - angle_desire) > 180)
-        yaw_move = RIGHT;
-      else
-        yaw_move = LEFT;
-    }
-    else if(angle_actuel > 0 && angle_desire > 0)
-      yaw_move = RIGHT;
-    else if(angle_actuel < 0 && angle_desire < 0)
-      yaw_move = LEFT;
-    //fin du calcul
-
-    yaw_power = 0.2;
-    */
-
 
     printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
     //Début de la rotation
@@ -473,4 +459,28 @@ int find_point_in_path (node_t ** path, float other_x, float other_y)
       return i;
   }
   return -1;
+}
+
+int find_closest_node(graph_t *graph, current_x, current_y)
+{
+  float tamp_X = 999;
+  float tamp_Y = 999;
+  float diff_X = 0;
+  float diff_Y = 0;
+  int i;
+  int indice;
+
+  for(i = 0 ; graph->nodes[i] != NULL ; i++)
+  {
+    diff_X = fabs(graph->nodes[i].x - current_x);
+    diff_Y = fabs(graph->nodes[i].y - current_y);
+
+    if((tamp_X > diff_X) || (tamp_Y > diff_Y))
+    {
+      indice = i;
+      tamp_X = diff_X;
+      tamp_Y = diff_Y;
+    }
+  }
+  return indice;
 }
