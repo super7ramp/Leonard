@@ -210,168 +210,184 @@ Navdata return_navdata()
 
 void calcul_mission()
 {
-  struct coordinates_ C_blue; //coordinates of drone
-  struct coordinates_ nextPoint;
-  struct coordinates_ startPoint;
-  int indice = 0;
-  int index = 0;
-  int check = 0;
-  int findy_lost = 0;
-  float angle_actuel,calcul_x, calcul_y, angle_desire;
+    struct coordinates_ C_blue; //coordinates of drone
+    struct coordinates_ nextPoint;
+    struct coordinates_ startPoint;
+    int indice = 0;
+    int index = 0;
+    int check = 0;
+    int findy_lost = 0;
+    float angle_actuel, calcul_x, calcul_y, angle_desire;
 
-/*
-  destination.tab_algo_x[0] = destination.x - destination.x; //Simulation
-  destination.tab_algo_y[0] = destination.y;  //Simulation
-  destination.tab_algo_x[1] = destination.x;  //Simulation
-  destination.tab_algo_y[1] = destination.y;  //Simulation
+    C_blue.x = 0.0;
+    C_blue.y = 0.0;
 
-  destination.tab_algo_x[2] = 100.0; //Simulation
-  destination.tab_algo_y[2] = 100.0; //Simulation
-*/
+    read_data_bluetooth(&C_blue.x,&C_blue.y);
 
-  read_data_bluetooth(&C_blue.x,&C_blue.y);
-  //C_blue.x = 3.25;
-  //C_blue.y = 1.1;
+    printf("Enter first x and first y\n");
+    scanf("%f", &(C_blue.x));
+    scanf("%f", &(C_blue.y));
 
-printf("BT x = %f \nBT y = %f\n", C_blue.x, C_blue.y);
-printf("Destination point: %f - %f", destination.x, destination.y);
-  node_t **path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+    //printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
+    //printf("Destination point: (%f, %f)\n", destination.x, destination.y);
 
-  if (path == NULL)
-  {
-/*
-    // Destination point not found, cannot do the mission
-    fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
-    stop_mission();
-    return;
-*/
-    index = find_closest_node(graph, C_blue.x, C_blue.y);
-    startPoint.x = graph->nodes[index].x;
-    startPoint.y = graph->nodes[index].y;
-   
-    Main_Nav = return_navdata();
-    angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
-    angle_desire = computeDesiredAngle(C_blue, startPoint); 
-    
-    computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
-    yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
-   
-    while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
+    node_t **path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+
+    if (path == NULL)
     {
-      //SWITCH_DRONE_COMMANDE(5);
-      Main_Nav = return_navdata();
-      printf("Valeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  \r", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
-    }
-    pitch_move = FRONT;
-    pitch_power = 0.2;
-    while((((startPoint.x - C_blue.x) < THRESHOLD) || ((startPoint.y - C_blue.y) < THRESHOLD)))
-    {
-      //SWITCH_DRONE_COMMANDE(4);
-      read_data_bluetooth(&C_blue.x,&C_blue.y);
-    }
-    printf("                                                                           \n");
-    
-    path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
-  }
+        /*
+        // Destination point not found, cannot do the mission
+        fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
+        stop_mission();
+        return;
+        */
 
-  int i;
-  for(i = 0 ; path[i] != NULL ; i++) 
-  {
-    indice = i;
-    printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
-  }
+        index = find_closest_node(graph, C_blue.x, C_blue.y);
+        startPoint.x = graph->nodes[index].x;
+        startPoint.y = graph->nodes[index].y;
 
-  // Let's start
-  indice = indice - 1;
-  
-  while(indice >= 0) 
-  {
-    printf("Valeur de l'indice du pour le tab_algox/y[] = %d\n", indice);
-    printf("Valeurs des coordonnees bluetooth   (x,y) = (%2.f,%2.f) \n" ,C_blue.x,C_blue.y);
-    printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,path[indice]->x, path[indice]->y);
-    int mission_finie = 0;
+        Main_Nav = return_navdata();
 
-    // FIXME: Cast path[indice] from node_t to coordinates_ since we don't use the samee structure...
-    nextPoint.x = path[indice]->x;
-    nextPoint.y = path[indice]->y;
+        angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped;
+        angle_desire = computeDesiredAngle(C_blue, startPoint);
 
-    Main_Nav = return_navdata();
-    angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
-    angle_desire = computeDesiredAngle(C_blue, nextPoint);
+        computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
+        yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
 
-    /*
-    angle désiré
-    */
-    //On doit récuperer la valeur de heading_unwrapped pour trouver le min et max de la plage de variation des valeurs MAG pfff (thank parrot)
-    printf("Valeur de heading_unwrapped = %.2f                        | Valeur de angle desire = %.2f\n", Main_Nav.magneto.heading_unwrapped, angle_desire);   
-    printf("Valeut de 180 + Main_Nav.magneto.heading_unwrapped = %.2f | Valeur de -180 + Main_Nav.magneto.heading_unwrapped = %.2f \n", (180.0+Main_Nav.magneto.heading_unwrapped), (-180.0+Main_Nav.magneto.heading_unwrapped));
-    printf("                                                                                                                           \n");
-    
-    //calcul the new angle_desire
-    computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
-    
-    printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
-    
-    //calculating the direction of rotation of the Z-axis for optimum positioning.
-    yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+        while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
+        {
+            //SWITCH_DRONE_COMMANDE(5);
+            Main_Nav = return_navdata();
+            printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d",
+                    Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
+        }
 
-    printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
-    //Début de la rotation
-    while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
-    {
-      //SWITCH_DRONE_COMMANDE(5);
-      Main_Nav = return_navdata();
-      printf("Valeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  \r", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
+        pitch_move = FRONT;
+        pitch_power = 0.2;
+
+        int j = 0;
+        while(sqrt(pow(startPoint.x-C_blue.x,2) + pow(startPoint.y-C_blue.y,2)) > ERROR_COORD)
+        {
+            //SWITCH_DRONE_COMMANDE(4); 
+            //read_data_bluetooth(&C_blue.x,&C_blue.y);
+            printf("(Start point not found) Enter x and y\n");
+            scanf("%f", &(C_blue.x));
+            scanf("%f", &(C_blue.y));
+
+            printf("\rBT location: X = %f, Y = %f (want to go to (%f, %f)", C_blue.x, C_blue.y, startPoint.x, startPoint.y);
+        }
+
+        path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
     }
 
-    printf("\n");
-    //Début du déplacement FRONT
-    pitch_move = FRONT;
-    pitch_power = 0.2;
-
-    //int ploki=0; //Simulation
-
-    printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
-    printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
-
-//envoie commande pitch tant qu'on est pas a la coordonnée bluetooth
-    while((((path[indice]->x - C_blue.x) < THRESHOLD) || ((path[indice]->y - C_blue.y) < THRESHOLD)) && (findy_lost != 1))
+    printf("Path to follow\n");
+    int i;
+    for(i = 0 ; path[i] != NULL ; i++)
     {
-      //SWITCH_DRONE_COMMANDE(4);
-      read_data_bluetooth(&C_blue.x,&C_blue.y);
-
-      if((check = find_point(graph, C_blue.x, C_blue.y)) != -1)
-      {
-        if((check = find_point_in_path(path, C_blue.x, C_blue.y)) == -1)
-          findy_lost = 1;
-      }
-/*
-      ploki = ploki + 1; //Simulation      
-      if(ploki > 4000) //Simulation
-      {
-        printf("ploki vaut = %d\n", ploki);
-        C_blue.y = destination.tab_algo_y[indice]; //Simulation
-        C_blue.x = destination.tab_algo_x[indice]; //Simulation
-      } //Simulation
-*/
-    }
-
-    //if the drone is lost, we calculate a new path and we re-initialize the variable "indice"
-    //else decrementation of "indice"
-    if(findy_lost == 1)
-    {
-      path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
-      for(i = 0 ; path[i] != NULL ; i++)
         indice = i;
+        printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
     }
-    else
-      indice = indice - 1;
 
-    break_drone();
-  }
-  stop_mission();
-  printf("fin mission\n");
-  free(path);
+    // Let's start
+    indice = indice - 1;
+  
+    while(indice >= 0) 
+    {
+        //printf("Valeurs des coordonnees bluetooth   (x,y) = (%2.f,%2.f) \n" ,C_blue.x,C_blue.y);
+        //printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,path[indice]->x, path[indice]->y);
+        int mission_finie = 0;
+
+        // FIXME: Cast path[indice] from node_t to coordinates_ since we don't use the samee structure...
+        nextPoint.x = path[indice]->x;
+        nextPoint.y = path[indice]->y;
+
+        Main_Nav = return_navdata();
+        angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
+        angle_desire = computeDesiredAngle(C_blue, nextPoint);
+
+        /* 
+         * angle désiré
+         */
+
+        //calcul the new angle_desire
+        computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
+
+        //printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
+
+        //calculating the direction of rotation of the Z-axis for optimum positioning.
+        yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+        //printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
+
+        //Début de la rotation
+        while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
+        {
+            //SWITCH_DRONE_COMMANDE(5);
+            Main_Nav = return_navdata();
+            printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  ", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
+        }
+
+        printf("\n");
+
+        //Début du déplacement FRONT
+        pitch_move = FRONT;
+        pitch_power = 0.2;
+
+        //printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
+        //printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
+
+        //envoie commande pitch tant qu'on est pas a la coordonnée bluetooth
+        float dist = sqrt(pow(path[indice]->x-C_blue.x,2) + pow(path[indice]->y-C_blue.y,2));
+        printf("distance = %.2f\n", dist);
+        printf("\rGoal (%f, %f), currently at (%f, %f)", path[indice]->x, path[indice]->y, C_blue.x, C_blue.y);
+        printf("findy lost? %d\n", findy_lost);
+
+        while((sqrt(pow(path[indice]->x-C_blue.x,2) + pow(path[indice]->y-C_blue.y,2)) > ERROR_COORD) && (findy_lost != 1))
+        {
+            //SWITCH_DRONE_COMMANDE(4);
+            //read_data_bluetooth(&C_blue.x,&C_blue.y);
+
+            printf("main move, enter x and y\n");
+            scanf("%f", &(C_blue.x));
+            scanf("%f", &(C_blue.y));
+
+            printf("\rGoing to (%f, %f), currently at (%f, %f)", path[indice]->x, path[indice]->y, C_blue.x, C_blue.y);
+
+            if((check = find_point(graph, C_blue.x, C_blue.y)) != -1)
+            {
+                if((check = find_point_in_path(path, C_blue.x, C_blue.y)) == -1)
+                findy_lost = 1;
+            }
+        }
+ 
+        // Stop the drone movement
+        break_drone();
+
+        //if the drone is lost, we calculate a new path and we re-initialize the variable "indice"
+        //else decrementation of "indice"
+        if(findy_lost == 1)
+        {
+            printf("Findy deviated, recalculating path...\n");
+            path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+            printf("New path to follow:\n");
+            for(i = 0 ; path[i] != NULL ; i++)
+            {
+                indice = i;
+                printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
+            }
+            indice--;
+            findy_lost = 0;
+        }
+        else
+        {
+            // Reached first step successfully
+            printf("One step made\n");
+            indice = indice - 1;
+        }
+
+    }
+    stop_mission();
+    printf("fin mission\n");
+    free(path);
 }
 
 void SWITCH_DRONE_COMMANDE(int _order)
@@ -483,23 +499,19 @@ int find_point_in_path (node_t ** path, float other_x, float other_y)
 
 int find_closest_node(graph_t *graph, float current_x, float current_y)
 {
-  float tamp_X = 999;
-  float tamp_Y = 999;
-  float diff_X = 0;
-  float diff_Y = 0;
+  float distance = 9999;
+  float tmp;
   int i;
-  int indice;
+  int indice = -1;
 
   for(i = 0 ; i < graph->numberOfNodes ; i++)
   {
-    diff_X = fabs(graph->nodes[i].x - current_x);
-    diff_Y = fabs(graph->nodes[i].y - current_y);
+    tmp = sqrt(pow(graph->nodes[i].x - current_x,2) + pow(graph->nodes[i].y - current_y, 2));
 
-    if((tamp_X > diff_X) || (tamp_Y > diff_Y))
+    if(tmp < distance)
     {
       indice = i;
-      tamp_X = diff_X;
-      tamp_Y = diff_Y;
+      distance = tmp;
     }
   }
   return indice;
