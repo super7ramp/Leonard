@@ -30,6 +30,7 @@ void printBasicInformation(t_location pos)
 {
   printf("Visible beacons : ");
   printVisibleBeacons();
-  printf("X : %.2f - Y : %.2f\r\n", pos.x, pos.y);
+  printf("X : %.2f - Y : %.2f\n", pos.x, pos.y);
+  printf("\e[A\e[A");
 }
 	    
