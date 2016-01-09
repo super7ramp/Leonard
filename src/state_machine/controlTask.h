@@ -26,6 +26,7 @@
 #include "../shortest_path.h"
 #include "../map/map_reader.h"
 #include "../map/map_common.h"
+#include "../movement/movement.h"
 
 /**
  * \brief State of the control task : manual (drone controled by the user).
@@ -176,7 +177,7 @@ void SWITCH_DRONE_COMMANDE(int order);
 
 Navdata return_navdata();
 //structure for coordinates
-struct coordinates_ map;
+struct coordinates_ destination;
 
 //structure for different direction
 direction gofindygo;
