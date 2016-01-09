@@ -284,7 +284,10 @@ printf("Destination point: %f - %f", destination.x, destination.y);
     printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
     
     //Calcul du sens de rotation de l'axe Z pour un positionnement le plus rapide.
-    if(angle_actuel < 0 && angle_desire > 0){
+    
+    yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+
+    /*if(angle_actuel < 0 && angle_desire > 0){
       if((angle_desire - angle_actuel)>180)
         yaw_move = LEFT;
       else
@@ -303,7 +306,9 @@ printf("Destination point: %f - %f", destination.x, destination.y);
     //fin du calcul
 
     yaw_power = 0.2;
-    
+    */
+
+
     printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
     //Début de la rotation
     while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))

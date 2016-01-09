@@ -57,3 +57,26 @@ struct coordinates_ computeRotation(struct coordinates_ point, float angle) {
 
 	return rotatedCoordinates;
 }
+
+//calculating the direction of rotation of the Z-axis for optimum positioning.
+float computeDirection(float angle_actuel, float angle_desire, float power, direction* move)
+{
+	if(angle_actuel < 0 && angle_desire > 0){
+      if((angle_desire - angle_actuel)>180)
+        *move = LEFT;
+      else
+        *move = RIGHT;
+    }
+    else if(angle_actuel > 0 && angle_desire < 0){
+      if((angle_actuel - angle_desire) > 180)
+        *move = RIGHT;
+      else
+        *move = LEFT;
+    }
+    else if(angle_actuel > 0 && angle_desire > 0)
+      *move = RIGHT;
+    else if(angle_actuel < 0 && angle_desire < 0)
+      *move = LEFT;
+    
+    return power;
+}

@@ -2,6 +2,7 @@
 #define MOVEMENT_H
 
 #include "../state_machine/var_coord.h"
+#include "../message_drone.h"
 
 #define PI (float)3.141592653589793
 
@@ -22,5 +23,11 @@ float computeDesiredAngle(struct coordinates_ point1, struct coordinates_ point2
   */
 struct coordinates_ computeRotation(struct coordinates_ point, float angle);
 
+/**
+  * \briel compute the sens of rotation for found desired cap
+  * \param angle now
+  * \param angle new
+  */
+float computeDirection(float angle_actuel, float angle_desire, float power, direction* move);
 
 #endif // MOVEMENT_H
