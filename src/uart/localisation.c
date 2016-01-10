@@ -10,7 +10,7 @@ t_location posTab[NB_POS_HISTORY];
 /*
  *Current position
  */
-t_location currentPos;
+t_location currentPos={0.0,0.0};
 
 void initLocationComputation()
 {
@@ -27,17 +27,23 @@ void computeLocation()
   detectBeacons();
 
   //Compute position from stored data
-  updateCurrentWeightedLocation();
+  uint8_t numberOfBeacons=updateCurrentWeightedLocation();
   
+  if(numberOfBeacons>3)
+    numberOfBeacons=3;
+
+  if (numberOfBeacons<=0)
+    numberOfBeacons=1;
+
   pthread_mutex_lock(&m_current_location);
-  for (i=0; i<NB_POS_HISTORY; i++)
+  for (i=0; i<numberOfBeacons*MEAN_FACTOR; i++)
   {
     sum.x+=posTab[i].x;
     sum.y+=posTab[i].y;
   }
   pthread_mutex_unlock(&m_current_location);
-  currentPos.x=sum.x/NB_POS_HISTORY;
-  currentPos.y=sum.y/NB_POS_HISTORY;
+  currentPos.x=sum.x/numberOfBeacons/MEAN_FACTOR;
+  currentPos.y=sum.y/numberOfBeacons/MEAN_FACTOR;
 }
 
 void detectBeacons()
@@ -69,6 +75,11 @@ uint8_t IsRssiValid(int8_t rssi)
 {
   return(rssi<0 && rssi >= BLE_NANO_SENSI);
 }	
+
+uint8_t IsPositionInTheRoom(t_location computedPos)
+{
+  return (computedPos.x >= 0.0 && computedPos.y >= 0.0 && computedPos.x <= W && computedPos.y <= H);
+}
 
 void ComputeWeightedPositionFrom2Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2)
 {
@@ -120,7 +131,7 @@ int8_t getVisibleBeaconsNumber(int8_t *index1, int8_t* index2, int8_t* index3)
   return count;
 }
 
-void updateCurrentLocation()
+uint8_t updateCurrentLocation()
 {
   int8_t index1, index2, index3;
   uint8_t numberOfVisibleBeacons=getVisibleBeaconsNumber(&index1, &index2, &index3);
@@ -146,11 +157,13 @@ void updateCurrentLocation()
   /*
    * We have to make sure that the computed position is not out of the considered room
    */
-  if(currentPos.x>0 && currentPos.y > 0 && currentPos.x<=W && currentPos.y<=H)
+  if(IsPositionInTheRoom(currentPos))
     updatePosTab(currentPos);
+
+  return numberOfVisibleBeacons;
 }
 
-void updateCurrentWeightedLocation()
+uint8_t updateCurrentWeightedLocation()
 {
   int8_t index1, index2, index3;
 
@@ -174,11 +187,16 @@ void updateCurrentWeightedLocation()
       break;
   }
 
-  /*
-   * We have to make sure that the computed position is not out of the considered room
-   */
-  if(currentPos.x>0 && currentPos.y > 0 && currentPos.x<=W && currentPos.y<=H)
-    updatePosTab(currentPos);
+
+  updatePosTab(currentPos);
+  if(IsPositionInTheRoom(currentPos))
+  {
+    printf("Position OK :                 %f-%f in     [0.00;%f]-[0.00;%f]\r\n", currentPos.x, currentPos.y, W, H);
+  }
+  else
+    printf("Error : pos out of the room : %f-%f out of [0.00;%f]-[0.00;%f]\r\n", currentPos.x, currentPos.y, W, H);
+
+  return numberOfVisibleBeacons;
 }
 
 int8_t getIndexOfClosestBeacon(int8_t ind1, int8_t ind2)
@@ -189,7 +207,8 @@ int8_t getIndexOfClosestBeacon(int8_t ind1, int8_t ind2)
     
     for (i=0; i<NUMBER_BEACONS; i++)   
     {
-    	if (beaconTab[i].TTL != 0) {
+    	if (beaconTab[i].TTL != 0) 
+      {
 		    if (ind1==-1 && ind2==-1 && beaconTab[i].rssi!=0 && (highestRssi==0||beaconTab[i].rssi>highestRssi))
 		    {
 				index=i;
@@ -203,7 +222,7 @@ int8_t getIndexOfClosestBeacon(int8_t ind1, int8_t ind2)
 		     	index=i;
 		        highestRssi=beaconTab[i].rssi;
 		    }
-		}
+		  }
     }
     return index;
 }
@@ -213,7 +232,7 @@ void updatePosTab(t_location current)
 {
   int i=0;
   pthread_mutex_lock(&m_current_location);
-  for (i=0; i<NB_POS_HISTORY; i++)
+  for (i=0; i<NB_POS_HISTORY-1; i++)
   {
     posTab[NB_POS_HISTORY-i-1]=posTab[NB_POS_HISTORY-i-2];
   }

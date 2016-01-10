@@ -1,5 +1,6 @@
 #include "localisation.h"
 #include "display.h"
+#include "stdio.h"
 int main()
 {
 	initLocationComputation();

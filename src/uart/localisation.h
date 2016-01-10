@@ -9,7 +9,12 @@
 #include "parameters.h"
 #include "pthread.h"
 
-#define NB_POS_HISTORY	20
+#define NB_POS_HISTORY	50
+
+/*
+ * MEAN_FACTOR*3 cannot exceed NB_POS_HISTORY
+ */
+#define MEAN_FACTOR		15 
 
 /*
  * High level initialization, have to be called in the application
@@ -33,15 +38,19 @@ void initPosTab();
 
 
 /*
- * Check if provided index is within tab range (if not, it may correspond to an error code)
+ * Checks if provided index is within tab range (if not, it may correspond to an error code)
  */
 uint8_t IsIndexValid(uint8_t index);
 
 /*
- * Check if RSSI is negative and in range concording with BT receptor sensibility
+ * Checks if RSSI is negative and in range concording with BT receptor sensibility
  */
 uint8_t IsRssiValid(int8_t rssi);
 
+/*
+ * Checks that computed position is in range of fixed W and H
+ */
+uint8_t IsPositionInTheRoom(t_location currentPos);
 /*
  * Compute a position from to closest beacon, with their respective positions and RSSI
  */
@@ -60,12 +69,12 @@ int8_t getVisibleBeaconsNumber(int8_t* index1, int8_t* index2, int8_t* index3);
 /* 
  * Function which check for detected beacon on serial line and compute current position from datas
  */
-void updateCurrentLocation();
+uint8_t updateCurrentLocation();
 
 /* 
  * Function which check for detected beacon on serial line and compute current position from datas (this version use RSSIs)
  */
-void updateCurrentWeightedLocation();
+uint8_t updateCurrentWeightedLocation();
 
 /*
  * Get the index of the beacon with highest RSSI, allowing to exclude some already-considered beacons

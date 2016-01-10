@@ -10,7 +10,7 @@
 
 #define MINIMAL_SERIAL_READ_LENGTH 	(14)
 #define TTL_MAX_MS 					(3000)
-#define BLE_NANO_SENSI				(-105)
+#define BLE_NANO_SENSI				(-105.0)
 
 
 /*
