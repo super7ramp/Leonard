@@ -9,12 +9,12 @@
 #include "parameters.h"
 #include "pthread.h"
 
-#define NB_POS_HISTORY	50
+#define NB_POS_HISTORY	120
 
 /*
  * MEAN_FACTOR*3 cannot exceed NB_POS_HISTORY
  */
-#define MEAN_FACTOR		15 
+#define MEAN_FACTOR		30 
 
 /*
  * High level initialization, have to be called in the application
