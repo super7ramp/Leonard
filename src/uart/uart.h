@@ -6,16 +6,34 @@
 #include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
-#include "display.h"
-#include "parser.h"
 
-void parseSerialRead(char *buffer);
-int checkAnswer(char *response);
-void serial_config(int fd);
-int open_port(void);
-void openSerialCom();
-void read_port();
-void close_port(int fd);
+
+/*
+ * Function which prepare Bluetooth opening serial port
+ */
 void initBluetoothCom();
+
+/*
+ * Function to call on a proper program end
+ */
+void close_port(int fd);
+
+/*
+ * Function which open the TTY03 serial port
+ */
+int open_port(void);
+
+
+/*
+ * Function which configure the already opened serial port
+ */
+void serial_config(int fd);
+
+
+/* 
+ * blocking function which read every character from serial until "\r\n"
+ */
+void read_port();
+
 
 #endif

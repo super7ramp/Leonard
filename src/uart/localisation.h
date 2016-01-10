@@ -9,32 +9,78 @@
 #include "parameters.h"
 #include "pthread.h"
 
-#define NB_POS_HISTORY	10
+#define NB_POS_HISTORY	20
 
-void UpdateCurrentLocation();
-void UpdateCurrentWeightedLocation();
-void ComputeWeightedPositionFrom2Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2);
-void ComputeWeightedPositionFrom3Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2, t_beacon_info beacon3);
-
-// return the closest beacon different from beacon in1 and beacon in2 if in1, in2!=-1
-int8_t getIndexOfCloserBeacon(int8_t ind1, int8_t ind2);
-// return the number of currently visible beacons
-int8_t getVisibleBeaconsNumber(int8_t* index1, int8_t* index2, int8_t* index3);
-//Check that detected index is in range of beacon Tab
-uint8_t IsIndexValid(uint8_t index);
-
-void initPosTab();
-
-t_location getCurrentLocation(void);
-
-void updatePosTab(t_location current);
-
-t_location getCurrentLocation(void);
-
+/*
+ * High level initialization, have to be called in the application
+ */
 void initLocationComputation();
 
+/*
+ * High level application, has to be put in infinite loop
+ */
 void computeLocation();
 
+/*
+ * Wait and read incoming bluetooth data
+ */
+void detectBeacons();
+
+/*
+ * Set history of computed positions to 0;0 for each record
+ */
+void initPosTab();
+
+
+/*
+ * Check if provided index is within tab range (if not, it may correspond to an error code)
+ */
+uint8_t IsIndexValid(uint8_t index);
+
+/*
+ * Check if RSSI is negative and in range concording with BT receptor sensibility
+ */
+uint8_t IsRssiValid(int8_t rssi);
+
+/*
+ * Compute a position from to closest beacon, with their respective positions and RSSI
+ */
+void ComputeWeightedPositionFrom2Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2);
+
+/*
+ * Compute a position from to closest beacon, with their respective positions and RSSI
+ */
+void ComputeWeightedPositionFrom3Beacons(t_location* result, t_beacon_info beacon1, t_beacon_info beacon2, t_beacon_info beacon3);
+
+/*
+ * Get number of visible number, checking each beacon, depending wther his RSSI his null or not
+ */
+int8_t getVisibleBeaconsNumber(int8_t* index1, int8_t* index2, int8_t* index3);
+
+/* 
+ * Function which check for detected beacon on serial line and compute current position from datas
+ */
+void updateCurrentLocation();
+
+/* 
+ * Function which check for detected beacon on serial line and compute current position from datas (this version use RSSIs)
+ */
+void updateCurrentWeightedLocation();
+
+/*
+ * Get the index of the beacon with highest RSSI, allowing to exclude some already-considered beacons
+ */
+int8_t getIndexOfClosestBeacon(int8_t ind1, int8_t ind2);
+
+/*
+ * Update position history, shifting all the tab and putting the last position at first index
+ */
+void updatePosTab(t_location current);
+
+/*
+ * Returns the current filtered position
+ */
+t_location getCurrentLocation(void);
 
 #endif
 
