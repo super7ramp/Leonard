@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include "uart.h"
 #define TAB_ADDR_LEN ADDR_LEN*2+1
-#define TTL_MAX_MS 1500
+#define TTL_MAX_MS 3000
 
 typedef struct
 {

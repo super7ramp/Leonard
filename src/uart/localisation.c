@@ -3,6 +3,7 @@
 pthread_mutex_t m_current_location;
 
 t_location posTab[NB_POS_HISTORY];
+t_location currentPos;
 
 uint8_t IsIndexValid(uint8_t index)
 {
@@ -180,6 +181,8 @@ void initPosTab(void)
     posTab[i].x=0.0;
     posTab[i].y=0.0;
   }
+  currentPos.x=0.0;
+  currentPos.y=0.0;
   pthread_mutex_unlock(&m_current_location);
 }
 
@@ -198,16 +201,7 @@ void updatePosTab(t_location current)
 
 t_location getCurrentLocation(void)
 {
-  int i=0;
-  t_location sum={0.0, 0.0};
-  pthread_mutex_lock(&m_current_location);
-  for (i=0; i<NB_POS_HISTORY; i++)
-  {
-    sum.x+=posTab[i].x;
-    sum.y+=posTab[i].y;
-  }
-  pthread_mutex_unlock(&m_current_location);
-  return (t_location){sum.x/NB_POS_HISTORY, sum.y/NB_POS_HISTORY};
+  return currentPos;
 }
 
 void initLocationComputation()
@@ -218,6 +212,16 @@ void initLocationComputation()
 
 void computeLocation()
 {
+  int i=0;
+  t_location sum={0.0, 0.0};
   readBluetoothData();
-  printBasicInformation(getCurrentLocation());
+  pthread_mutex_lock(&m_current_location);
+  for (i=0; i<NB_POS_HISTORY; i++)
+  {
+    sum.x+=posTab[i].x;
+    sum.y+=posTab[i].y;
+  }
+  pthread_mutex_unlock(&m_current_location);
+  currentPos.x=sum.x/NB_POS_HISTORY;
+  currentPos.y=sum.y/NB_POS_HISTORY;
 }
