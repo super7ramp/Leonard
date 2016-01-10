@@ -60,17 +60,16 @@ void read_port(char *rawResponse, int *size)
   
   /* Whole response*/
 
-  memset(rawResponse, '\0', sizeof rawResponse);
-  buf = '\0';
+  buf = 0;
   spot = 0;
   do {
     n = read(fd, &buf, 1 );
     if (n>0 && buf!='\n' && buf!='\r' && buf!=0)
-      {
-	strncpy(rawResponse+spot, &buf, n);
-	spot += n;
-      }
-  } while(buf!='\0' && buf != '\r' && buf != '\n' && n > 0);
+    {
+      strncpy(rawResponse+spot, &buf, n);
+      spot += n;
+    }
+  } while(buf!='\0' && buf !='\r' && buf != '\n');
   
   //Si information reçue, alors traitement (mise à jour tab)
   if(spot>0)

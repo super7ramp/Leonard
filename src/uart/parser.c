@@ -21,13 +21,13 @@
 */
 t_beacon_info beaconTab[NUMBER_BEACONS]={ 
   {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x46}, {0, 0}},0,0}, //A
-  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x4b}, {0, H/2}},0,0}, //B
+  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x4b}, {0, H/2.0}},0,0}, //B
   {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x4f}, {0, H}},0,0}, //C
   {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x4e}, {W, H}},0,0}, //D
-  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x4a}, {W, H/2}},0,0}, //E
+  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x4a}, {W, H/2.0}},0,0}, //E
   {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x55}, {W, 0}},0,0},  //F
-  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x92}, {W/2, H/4}}, 0, 0}, //G
-  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x33}, {W/2, 3*H/4}}, 0, 0}
+  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x92}, {W/2.0, H/4.0}}, 0, 0}, //G
+  {{{0x00, 0x07, 0x80, 0xad, 0x09, 0x33}, {W/2.0, 3.0*H/4.0}}, 0, 0}
   };
   
 
@@ -39,16 +39,21 @@ void extract_data()
   char buffer[256];
   int size=0;
 
+
+  memset(buffer, 0, sizeof(buffer)/sizeof(char));
   read_port(buffer, &size);
 
   //strncpy(buffer, data, size);
   if(size>=MINIMAL_SERIAL_READ_LENGTH)
   {
+    //printf("_%s_\t%d\r\n", buffer, size);
     result=sscanf(buffer, "%x %x %x %x %x %x %d\r\n", (unsigned int *)addr, (unsigned int *)(addr+1),  (unsigned int *)(addr+2),(unsigned int *)(addr+3), (unsigned int *)(addr+4), (unsigned int *)(addr+5), &rssi);
+    //printf("%x %x %x %x %x %x %d\r\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], rssi);
     if (result !=EOF && rssi<0) //Si lecture OK
     {
       updateDetectedBeaconRssi(addr, rssi);
       checkBeaconsTTL();
+
     }
   }
 }
@@ -131,11 +136,15 @@ void refreshBeaconTTL(uint8_t index) {
 void printBeaconsTab(void)
 {
   int i=0;
+
   for(i=0; i<NUMBER_BEACONS; i++)
-      printf("%c\t\t\t", i+65);
+      printf("%c\t", i+65);
+
   printf("\r\n");
+
   for(i=0; i<NUMBER_BEACONS; i++)
-    printf("%d\t\t\t", beaconTab[i].rssi);
+    printf("%d\t", beaconTab[i].rssi);
+
   printf("\r\n");
 }
 

@@ -19,6 +19,3 @@ $(EXEC):$(OBJ) main.o
 
 clean:
 	rm -rf *.o *~ *.elf
-
-upload:
-	./upload.sh
