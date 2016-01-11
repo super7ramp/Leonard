@@ -1,4 +1,4 @@
-#include "simulated_bluetooth_com.h"
+#include "bluetooth_com.h"
 
 void *thread_Bluetooth(void *arg)
 {
