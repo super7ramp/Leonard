@@ -7,8 +7,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
-
-
+#include <pthread.h>
+#include "params.h"
 
 int id_socketS = -1;
 int portS = 1234;
@@ -24,9 +24,14 @@ void afficher_messageS(char *message, int lg) {
 
 
 void afficher_envoi (int lg_message, char * message) {
-	printf("SOURCE : Envoi (%d) [", lg_message);
+
+	pthread_mutex_lock(&displayMutex);
+	printf("\033[%dA", 15);
+	printf("  SOURCE : Envoi (%d) [", lg_message);
 	afficher_messageS(message, lg_message);
-	printf("]\n");
+	printf("]");
+	printf("\033[%dB\n", 14);
+	pthread_mutex_unlock(&displayMutex);
 }
 
 
