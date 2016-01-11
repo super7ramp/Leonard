@@ -54,7 +54,7 @@ void* thread_com(void* arg)
 		//envoie de l'ordre reçu;
 
 		order_recept = atoi(str_sub(msg,0,1));
-		
+		printf("\n\n\n\nValeur de order_recept%d\n\n\n", order_recept);
 		if (ORDER == NOTDONE)
 		{
 			switch(order_recept){
@@ -75,17 +75,23 @@ void* thread_com(void* arg)
 					break;
 
 				case 4:
+					printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
 					move_Roll(atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)));
+					
 					//move_Roll(0, 0.0);
 					break;
 
 				case 5:
+					printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
 					move_Pitch(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,6)));
+					
 					//move_Pitch(1, 0.0);
 					break;
 
 				case 6:
+					printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)) );
 					move_PitchRoll(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)));
+					
 					//move_PitchRoll(1, 0, 0.0, 0.0);
 					break;
 
@@ -98,8 +104,8 @@ void* thread_com(void* arg)
 					break; 
 
 				case 9:
-					dest.x = atof(str_sub(msg,2,4));
-					dest.y = atof(str_sub(msg,6,8));
+					dest.x = atof(str_sub(msg,3,7));
+					dest.y = atof(str_sub(msg,9,13));
 					printf("start_mission => communication\n");
 					start_mission(dest.x, dest.y);
 					ORDER = DONE;
@@ -122,7 +128,7 @@ void* thread_com(void* arg)
 		{
 			stop_mission();
 		}
-//		 Code pour la simulation de recepton de donnée Wifi	
+/*		 Code pour la simulation de recepton de donnée Wifi	
 		if(i<1000){
 			//printf("decolle\n");
 			order_recept = 3; //takeOff
@@ -145,6 +151,6 @@ void* thread_com(void* arg)
 		i++;
 		//printf("Debut de la pause de 20ms dans thread_com\n");
 		usleep(10000);
-		//printf("Fin de la pause de 20ms dans le thread_com\n");
+		//printf("Fin de la pause de 20ms dans le thread_com\n");*/
 	}  
 }
