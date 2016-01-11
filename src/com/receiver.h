@@ -6,6 +6,7 @@ void afficher_reception (int lg_message, char * message);
 int initReceiver();
 int recevoir(int lg_message, char * message);
 int closeReceiver();
+void  setUser(int u);
 
 #endif
 
