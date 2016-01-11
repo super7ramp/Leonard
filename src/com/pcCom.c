@@ -55,7 +55,7 @@ void * coordinatesThread(void* arg)
 		sleep(n);
 		
 		pthread_mutex_lock(&messageMutex);
-		emettre(lg_message, msgSend, "-1 -1");
+		emettre(lg_message, msgSend, "11 ");
 		pthread_mutex_unlock(&messageMutex);
 	}
 	
@@ -107,7 +107,6 @@ int main (int argc, char** argv)
 		printf("8 -> anti emergency\n");
 		printf("9 -> start mission\n");
 		printf("10 -> stop mission\n");
-		printf("11 -> get position\n");
 		printf("Pour fermer le programme tapez -1\n");
 		scanf("%d", &choix);
 		getchar();
@@ -117,6 +116,14 @@ int main (int argc, char** argv)
 			
 		if (choix == 9) {
 			printf("\n\nChoissisez où envoyer le drone (de 0 à 7)\n");
+			printf("0 -> %s\n", beaconsLocation[0]);
+			printf("1 -> %s\n", beaconsLocation[1]);
+			printf("2 -> %s\n", beaconsLocation[2]);
+			printf("3 -> %s\n", beaconsLocation[3]);
+			printf("4 -> %s\n", beaconsLocation[4]);
+			printf("5 -> %s\n", beaconsLocation[5]);
+			printf("6 -> %s\n", beaconsLocation[6]);
+			printf("7 -> %s\n", beaconsLocation[7]);
 			scanf("%d", &choix);
 			strcat(msg, beaconsLocation[choix]);
 			printf("######## msg : %s\n", msg);
@@ -124,7 +131,7 @@ int main (int argc, char** argv)
 			emettre(lg_message, msgSend, msg);
 			pthread_mutex_unlock(&messageMutex);
 		}
-		else if (choix >= 0 && choix <= 11) {
+		else if (choix >= 0 && choix <= 10) {
 			pthread_mutex_lock(&messageMutex);
 			emettre(lg_message, msgSend, msg);
 			pthread_mutex_unlock(&messageMutex);
