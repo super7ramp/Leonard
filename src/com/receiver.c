@@ -29,7 +29,7 @@ void afficher_reception (int lg_message, char * message)
 {
 	pthread_mutex_lock(&displayMutex);
 	printf("\033[%dA", 16);
-	printf("  Position Drone : ");
+	printf("  Drone position : ");
 	afficher_messageR(message, lg_message);
 	printf("\033[%dB\n", 15);
 	pthread_mutex_unlock(&displayMutex);
