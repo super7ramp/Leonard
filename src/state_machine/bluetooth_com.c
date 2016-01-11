@@ -1,5 +1,11 @@
 #include "bluetooth_com.h"
 
+typedef struct
+{
+    float x;
+    float y;
+} coord_t;
+
 void *thread_Bluetooth(void *arg)
 {
     int i;
