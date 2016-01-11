@@ -344,7 +344,7 @@ void calcul_mission()
         while((sqrt(pow(path[indice]->x-C_blue.x,2) + pow(path[indice]->y-C_blue.y,2)) > ERROR_COORD) && (findy_lost != 1))
         {
             //SWITCH_DRONE_COMMANDE(4);
-            //read_data_bluetooth(&C_blue.x,&C_blue.y);
+            read_data_bluetooth(&C_blue.x,&C_blue.y);
 
             printf("main move, enter x and y\n");
             scanf("%f", &(C_blue.x));
