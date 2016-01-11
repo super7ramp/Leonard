@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <pthread.h>
+#include "params.h"
 
 
 	int id_socketR = -1;
@@ -25,9 +27,12 @@ void afficher_messageR(char *message, int lg) {
 
 void afficher_reception (int lg_message, char * message) 
 {
-	printf("Position Drone : ");
+	pthread_mutex_lock(&displayMutex);
+	printf("\033[%dA", 16);
+	printf("  Position Drone : ");
 	afficher_messageR(message, lg_message);
-	printf("\n");
+	printf("\033[%dB\n", 15);
+	pthread_mutex_unlock(&displayMutex);
 }
 
 int initReceiver() {
@@ -75,7 +80,7 @@ int initReceiver() {
 int recevoir(int lg_message, char * message) {
 	int retour;
 	int num_reception;
-
+	
 	if ((id_sock_bis = accept(id_socketR,(struct sockaddr *) &adr_local, (socklen_t *) &lg_adr_local))== -1) {
 		fprintf(stderr, "recv: Erreur accept()\n"); 
 		exit(1);
