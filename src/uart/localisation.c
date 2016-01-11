@@ -189,13 +189,13 @@ uint8_t updateCurrentWeightedLocation()
 
 
   updatePosTab(currentPos);
-  if(IsPositionInTheRoom(currentPos))
+  /*if(IsPositionInTheRoom(currentPos))
   {
     printf("Position OK :                 %f-%f in     [0.00;%f]-[0.00;%f]\r\n", currentPos.x, currentPos.y, W, H);
   }
   else
     printf("Error : pos out of the room : %f-%f out of [0.00;%f]-[0.00;%f]\r\n", currentPos.x, currentPos.y, W, H);
-
+*/
   return numberOfVisibleBeacons;
 }
 

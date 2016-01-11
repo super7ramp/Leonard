@@ -7,8 +7,8 @@ void printLocationFullDebug(t_location pos)
   printf("Visible beacons : ");
   printVisibleBeacons();
   printf("X : %.2f - Y : %.2f\r\n", pos.x, pos.y);
-  printBeaconsTab();
-  printf("\033[%dA", (int)(H*ZOOM_Y)+5);
+  //printBeaconsTab();
+  printf("\033[%dA", (int)(H*ZOOM_Y)+2);
 }
 
 void printPositionOnMap(t_location pos)
