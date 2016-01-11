@@ -33,8 +33,8 @@ char *str_sub (const char *s, unsigned int start, unsigned int end)
 
 void* thread_com(void* arg)
 {
-	//initialisation de la connection UDP entre le logiciel embarqué et l'IHM
-	//initReceiver();
+	//init socket
+	initReceiver();
 	
 	int order_recept;
 	ORDER = NOTDONE;
@@ -43,17 +43,17 @@ void* thread_com(void* arg)
 	order_recept = 0;
 	dest.x = 1.083333333;
 	dest.y = 1.1;
-	//char * msg = malloc(sizeof(char)*lg_message);
+	char * msg = malloc(sizeof(char)*lg_message);
 	
 	while(1)
 	{
 	
-		//recevoir(lg_message, msg);
+		recevoir(lg_message, msg);
 		//récupération des donnée envoyé par le connectin Wifi
 		//recept_orders_send_by_the_user
 		//envoie de l'ordre reçu;
 
-		//order_recept = atoi(str_sub(msg,0,0));
+		order_recept = atoi(str_sub(msg,0,1));
 		
 		if (ORDER == NOTDONE)
 		{
@@ -75,18 +75,18 @@ void* thread_com(void* arg)
 					break;
 
 				case 4:
-					//move_Roll(atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)));
-					move_Roll(0, 0.0);
+					move_Roll(atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)));
+					//move_Roll(0, 0.0);
 					break;
 
 				case 5:
-					//move_Pitch(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,6)));
-					move_Pitch(1, 0.0);
+					move_Pitch(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,6)));
+					//move_Pitch(1, 0.0);
 					break;
 
 				case 6:
-					//move_PitchRoll(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)));
-					move_PitchRoll(1, 0, 0.0, 0.0);
+					move_PitchRoll(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)));
+					//move_PitchRoll(1, 0, 0.0, 0.0);
 					break;
 
 				case 7:
@@ -98,8 +98,8 @@ void* thread_com(void* arg)
 					break; 
 
 				case 9:
-					//dest.x = atof(str_sub(msg,2,4));
-					//dest.y = atof(str_sub(msg,6,8));
+					dest.x = atof(str_sub(msg,2,4));
+					dest.y = atof(str_sub(msg,6,8));
 					printf("start_mission => communication\n");
 					start_mission(dest.x, dest.y);
 					ORDER = DONE;
@@ -117,31 +117,34 @@ void* thread_com(void* arg)
 				default:
 					break;
 			}
-//		 Code pour la simulation de recepton de donnée Wifi	
-			if(i<1000){
-				//printf("decolle\n");
-				order_recept = 3; //takeOff
-			}
-			else if(i>1000 && i<1800){
-				order_recept = 11; //reset_com
-				if(i==1010)
-					order_recept = 1;
-			}
-			else if(i==1801){
-				order_recept = 2; //land
-			}
-			else if(i==1802){
-				order_recept = 9; //start_mission
-			}
-			else if(i>1802){
-				order_recept = 11; //attérisage
-			}
-			//printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
-			i++;
-			//printf("Debut de la pause de 20ms dans thread_com\n");
-			usleep(10000);
-			//printf("Fin de la pause de 20ms dans le thread_com\n");
-			
 		}
+		else if(order_recept==10)
+		{
+			stop_mission();
+		}
+//		 Code pour la simulation de recepton de donnée Wifi	
+		if(i<1000){
+			//printf("decolle\n");
+			order_recept = 3; //takeOff
+		}
+		else if(i>1000 && i<1800){
+			order_recept = 11; //reset_com
+			if(i==1010)
+				order_recept = 1;
+		}
+		else if(i==1801){
+			order_recept = 2; //land
+		}
+		else if(i==1802){
+			order_recept = 9; //start_mission
+		}
+		else if(i>1802){
+			order_recept = 11; //attérisage
+		}
+		//printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
+		i++;
+		//printf("Debut de la pause de 20ms dans thread_com\n");
+		usleep(10000);
+		//printf("Fin de la pause de 20ms dans le thread_com\n");
 	}  
 }
