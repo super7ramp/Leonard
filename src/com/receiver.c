@@ -14,6 +14,7 @@
 	int portR = 1234;
 	struct sockaddr_in adr_local; // adresse du socket distant
 	int lg_adr_local;
+	int user = 0;
 
 void afficher_messageR(char *message, int lg) {
 	int i;
@@ -24,7 +25,7 @@ void afficher_messageR(char *message, int lg) {
 
 void afficher_reception (int lg_message, char * message) 
 {
-	printf("Position du drone : ");
+	printf("Position Drone : ");
 	afficher_messageR(message, lg_message);
 	printf("\n");
 }
@@ -93,7 +94,7 @@ int recevoir(int lg_message, char * message) {
 			exit(1);
 		}
 
-		if (retour > 0) 
+		if (retour > 0 && user) 
 			afficher_reception(retour, message);
 
 		num_reception++; 
@@ -125,4 +126,10 @@ int closeReceiver() {
 	printf("Receiver : fin\n");
 	return 0;
 }
+
+
+void setUser(int u) {
+	user = u;
+}
+
 

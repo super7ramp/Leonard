@@ -40,6 +40,7 @@ void * receiverThread(void* arg)
 	int lg_message = LG_MESS_DEFAUT;
 	
 	initReceiver();
+	setUser(1);
 	recevoir(lg_message, msgRcv);
 	return NULL;
 }
