@@ -27,7 +27,7 @@ void afficher_envoi (int lg_message, char * message) {
 
 	pthread_mutex_lock(&displayMutex);
 	printf("\033[%dA", 15);
-	printf("  SOURCE : Envoi (%d) [", lg_message);
+	printf("  Send : [");
 	afficher_messageS(message, lg_message);
 	printf("]");
 	printf("\033[%dB\n", 14);

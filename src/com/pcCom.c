@@ -99,14 +99,14 @@ int main (int argc, char** argv)
 	pthread_create(&tid[1], NULL, coordinatesThread, n);
 	
 	pthread_mutex_lock(&displayMutex);
-	printf("\n  Position Drone : \n");
-	printf("  SOURCE : \n\n");
+	printf("\n  Drone position : \n");
+	printf("  Send : \n\n");
 	pthread_mutex_unlock(&displayMutex);
 	
 	while(1) {
 
 		pthread_mutex_lock(&displayMutex);
-		printf("Que souhaitez vous faire ?\n");
+		printf("What do you want to do ?\n");
 		printf("0 -> Calibration (le drone doit être posé à plat)\n");
 		printf("1 -> Calibration magnétique\n");
 		printf("2 -> landing\n");
@@ -145,7 +145,7 @@ int main (int argc, char** argv)
 			printf("\033[%dA", 12);
 			printf("\033[%dM", 12);
 		
-			printf("Choissisez où envoyer le drone (de 0 à 7)\n");
+			printf("Choose your beacon (from 0 to 7)\n");
 			printf("0 -> %s\n", beaconsLocation[0]);
 			printf("1 -> %s\n", beaconsLocation[1]);
 			printf("2 -> %s\n", beaconsLocation[2]);
@@ -154,21 +154,29 @@ int main (int argc, char** argv)
 			printf("5 -> %s\n", beaconsLocation[5]);
 			printf("6 -> %s\n", beaconsLocation[6]);
 			printf("7 -> %s\n", beaconsLocation[7]);
-			printf("\n\nChoix : ");
+			printf("\n\n");
 			pthread_mutex_unlock(&displayMutex);
 			
 			scanf("%d", &choix);
 			strcat(msg, beaconsLocation[choix]);
 			//printf("######## msg : %s\n", msg);
 			
-			pthread_mutex_lock(&messageMutex);
-			emettre(lg_message, msgSend, msg);
-			pthread_mutex_unlock(&messageMutex);
+			if (choix >= 0 && choix <=7) {
+				pthread_mutex_lock(&messageMutex);
+				emettre(lg_message, msgSend, msg);
+				pthread_mutex_unlock(&messageMutex);
 			
-			pthread_mutex_lock(&displayMutex);
-			printf("\033[%dA", 12);
-			printf("\033[%dM", 12);
-			pthread_mutex_unlock(&displayMutex);
+			}
+			else {
+				pthread_mutex_lock(&displayMutex);
+				printf("incorrect choice\n");	
+				pthread_mutex_unlock(&displayMutex);
+			}
+				pthread_mutex_lock(&displayMutex);
+				printf("\033[%dA", 12);
+				printf("\033[%dM", 12);
+				printf("\033[%dJ", 2);
+				pthread_mutex_unlock(&displayMutex);
 		
 		}
 		else if (choix >= 0 && choix <= 10) {
@@ -185,7 +193,7 @@ int main (int argc, char** argv)
 		}
 		else {
 			pthread_mutex_lock(&displayMutex);
-			printf("Le choix est incorrect\n");	
+			printf("incorrect choice\n");	
 			pthread_mutex_unlock(&displayMutex);
 		}
 	}
