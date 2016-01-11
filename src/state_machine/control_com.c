@@ -75,14 +75,17 @@ void* thread_com(void* arg)
 					break;
 
 				case 4:
+					//move_Roll(atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)));
 					move_Roll(0, 0.0);
 					break;
 
 				case 5:
+					//move_Pitch(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,6)));
 					move_Pitch(1, 0.0);
 					break;
 
 				case 6:
+					//move_PitchRoll(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)));
 					move_PitchRoll(1, 0, 0.0, 0.0);
 					break;
 
@@ -94,7 +97,9 @@ void* thread_com(void* arg)
 					anti_emergency_();
 					break; 
 
-				case 9: 
+				case 9:
+					//dest.x = atof(str_sub(msg,2,4));
+					//dest.y = atof(str_sub(msg,6,8));
 					printf("start_mission => communication\n");
 					start_mission(dest.x, dest.y);
 					ORDER = DONE;
