@@ -20,14 +20,14 @@ char beaconsLocation[NUMBER_BEACONS][20];
 
 
 void initBeaconsLocation(char beacon[NUMBER_BEACONS][20], int size) {
-	sprintf(beacon[0], "0.0 0.0 ");
-	sprintf(beacon[1], "0.0 %.2f ", (float) H/2);
-	sprintf(beacon[2], "0.0 %.2f ", (float) H);
-	sprintf(beacon[3], "%.2f %.2f ", (float) W, (float) H);
-	sprintf(beacon[4], "%.2f %.2f ", (float) W, (float) H/2);
-	sprintf(beacon[5], "%.2f 0.0 ", (float) W);
-	sprintf(beacon[6], "%.2f %.2f ", (float) W/2, (float) H/4);
-	sprintf(beacon[7], "%.2f %.2f ", (float) W/2, (float) 3*H/4);
+	sprintf(beacon[0], "0.00  0.00 ");
+	sprintf(beacon[1], "0.00  %2.2f ", (float) H/2);
+	sprintf(beacon[2], "0.00  %2.2f ", (float) H);
+	sprintf(beacon[3], "%2.2f  %2.2f ", (float) W, (float) H);
+	sprintf(beacon[4], "%2.2f  %2.2f ", (float) W, (float) H/2);
+	sprintf(beacon[5], "%2.2f  0.00 ", (float) W);
+	sprintf(beacon[6], "%2.2f  %2.2f ", (float) W/2, (float) H/4);
+	sprintf(beacon[7], "%2.2f  %2.2f ", (float) W/2, (float) 3*H/4);
 	
 	int i;
 	for (i=0; i<8; i ++)
