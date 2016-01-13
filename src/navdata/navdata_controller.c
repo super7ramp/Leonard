@@ -11,7 +11,7 @@
 #include <netinet/ip.h>
 #include <netinet/in.h>
 #include <stdlib.h>
-#include "spoof_udp.h"
+#include "../spoof_udp.h"
 
 /*----------------------------------------------------------------------------*/
 

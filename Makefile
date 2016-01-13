@@ -1,6 +1,9 @@
 # Edit CC with your cross-compiler before compiling for the drone
 CC=arm-linux-gnueabi-gcc 
 CFLAGS=-Wall -march=armv7-a
+LIB =-lpcap -L lib/libpcap/lib
+INCLUDE = -I lib/libpcap/include 
+
 BASEDIR=$(shell pwd)
 SRCDIR=$(BASEDIR)/src
 TESTDIR=$(BASEDIR)/src/tests
@@ -12,6 +15,8 @@ all: directories tests
 directories:
 	cd $(BASEDIR)
 	mkdir -p $(BUILDDIR)
+
+main: bluetooth movement param map state_machine
 
 .PHONY: doc
 doc:
