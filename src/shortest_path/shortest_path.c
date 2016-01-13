@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 #include "shortest_path.h"
 
 #define FLOAT_COMPARISON_THRESHOLD 0.001

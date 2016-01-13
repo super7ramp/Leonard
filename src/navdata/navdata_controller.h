@@ -5,6 +5,22 @@
 #include "../com/message_drone.h"
 #include "../com/at-commands.h"
 #include "pcap/pcap.h"
+#include <stdio.h>
+#include <pthread.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <net/ethernet.h>
+#include <netinet/ip_icmp.h>
+#include <netinet/udp.h>
+#include <netinet/tcp.h>
+#include <netinet/ip.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include "spoof_udp.h"
+
+
+
+
 
 #define DEST_IP_NAV		"127.0.0.1"
 #define DEST_PORT_NAV	5554

@@ -5,10 +5,13 @@ rm -rf *.elf
 arm-linux-gnueabi-gcc -march=armv7-a \
 \
  src/sender.c \
- src/shortest_path.c \
- src/spoof_udp.c \
+\
+ src/shortest_path/shortest_path.c \
+ src/shortest_path/map_common.c \
+ src/shortest_path/map_reader.c \
 \
  src/navdata/navdata_controller.c\
+ src/navdata/spoof_udp.c \
 \
  src/com/sender.c \
  src/com/receiver.c \
@@ -16,9 +19,6 @@ arm-linux-gnueabi-gcc -march=armv7-a \
  src/com/at-commands.c \
 \
  src/movement/movement.c \
-\
- src/map/map_common.c \
- src/map/map_reader.c \
 \
  src/state_machine/KCG/system_state_machine.c\
  src/state_machine/KCG/kcg_types.c\
