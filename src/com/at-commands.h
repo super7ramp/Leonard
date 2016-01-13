@@ -7,7 +7,7 @@
 #ifndef AT_COMMANDS_H
 #define AT_COMMANDS_H
 
-#include "common.h"
+#include "../common.h"
 
 #define MAX_LENGTH 1024
 

@@ -18,11 +18,11 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-#include "../message_drone.h"
+#include "../com/message_drone.h"
 #include "KCG/system_state_machine.h"
 #include "regulation.h"
 #include "var_coord.h"
-#include "../navdata_controller.h"
+#include "../navdata/navdata_controller.h"
 #include "../shortest_path.h"
 #include "../map/map_reader.h"
 #include "../map/map_common.h"
