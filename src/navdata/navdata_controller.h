@@ -1,7 +1,7 @@
 #ifndef __NAVDATA_CONTROLLER_H
 #define __NAVDATA_CONTROLLER_H
 
-#include "../sender.h"
+#include "../com/sender.h"
 #include "../com/message_drone.h"
 #include "../com/at-commands.h"
 #include "pcap/pcap.h"
