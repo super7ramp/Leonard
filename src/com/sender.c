@@ -1,122 +1,76 @@
-#include <stdlib.h>
-#include <string.h>
+/* sender.c -- UDP Client
+ * Copyright (C) 2015 Adrien Barre, Antoine Belvire, Valentin Douais, Alexis Lothoré, Lucille Saade
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <pthread.h>
-#include "params.h"
+#include <stdlib.h>
+#include "sender.h"
 
-int id_socketS = -1;
-int portS = 1234;
+#define MIN(a,b) (((a)<(b))?(a):(b))
 
+/** @brief Send a message through the specified socket
+ *  @param message The buffer where is stored the message to send
+ *  @param socket_id Socket identifier
+ *  @return int 0 if the sendto() succeeds, -1 otherwise
+ */
+int send_message(char *message, socket_info_t socket)
+{   
+    if (sendto(socket.socket_id, message, MIN(strlen(message), MAX_BUF_LEN), 0, (struct sockaddr *) socket.serv_addr, (socklen_t) sizeof(struct sockaddr_in)) == -1)
+    {
+        fprintf(stderr, "[%s:%d] Error: sendto() failed\n", __FILE__, __LINE__);
+        return -1;
+    }
 
-void afficher_messageS(char *message, int lg) {
-	int i;
-	for (i=0;i<lg;i++)
-		printf("%c", message[i]);
+    return 0;
 }
 
-
-
-
-void afficher_envoi (int lg_message, char * message) {
-
-	pthread_mutex_lock(&displayMutex);
-	printf("\033[%dA", 15);
-	printf("  Send : [");
-	afficher_messageS(message, lg_message);
-	printf("]");
-	printf("\033[%dB\n", 14);
-	pthread_mutex_unlock(&displayMutex);
-}
-
-
-int initSender( char * nom_station) {
-
-	int type_sock ;
-	
- 	type_sock = SOCK_STREAM;
-	 
-	struct sockaddr_in adr_distant; // adresse du socket distant
-	int lg_adr_distant = sizeof(adr_distant);
-	struct hostent * hote;
-
-	int retour;
-
-	if ((id_socketS = socket(AF_INET, type_sock,0)) == -1) {
-		fprintf(stderr, "com: Échec de création du socket\n");
-		exit(1);
-	}
-
-	/* adressage */
-	memset((char *)&adr_distant, 0, lg_adr_distant); //reset
-	adr_distant.sin_family = AF_INET;
-	adr_distant.sin_port = portS;
-
-	if ((hote = gethostbyname(nom_station)) == NULL) {
-		fprintf(stderr, "com: Erreur gethostbyname\n") ;
-		exit(1); 
-	}
-
-	memcpy((char *)&(adr_distant.sin_addr.s_addr),hote->h_addr,hote->h_length); 
-
-	/* connect() */
-	retour = connect(id_socketS, (struct sockaddr *) &adr_distant, (socklen_t) lg_adr_distant);
-	if (retour == -1) {
-		fprintf(stderr, "com: Erreur connect()\n");
-		exit(1);
-	}
-	
-	return 0;
-}
-
-
-int emettre(int lg_message, char * message, char * contenu) 
+/** @brief Initialize an UDP socket (for clients)
+ *  @param dest_ip The destination ip
+ *  @param dest_port The destination port
+ *  @return socket_info_t structure
+ */
+socket_info_t initialize_socket(const char *dest_ip, int dest_port)
 {
-	int retour;
+    socket_info_t info;
+    
+    if ((info.socket_id = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    {
+        fprintf(stderr, "[%s:%d] Error: Socket creation failed\n", __FILE__, __LINE__);
+    }
 
-	/* send() */
-	strcpy(message, contenu); 
-		
-	retour = write(id_socketS, message, lg_message) ;
-	if (retour == -1) {
-		fprintf(stderr, "send: Erreur envoi\n");
-		exit(1);
-	}
-	afficher_envoi(retour, message); // retour = longueur message envoyé
-  
-	return 0; // tout s'est bien passé
+    // Addresses
+    //info.serv_addr = calloc(1, sizeof(struct sockaddr_in));
+    info.serv_addr = calloc(1, sizeof(struct sockaddr_in));
+    info.serv_addr->sin_family = AF_INET;
+    info.serv_addr->sin_port = htons(dest_port);  //num port dest
 
+    if (inet_aton(dest_ip, &(info.serv_addr->sin_addr)) == 0)   //addr ip dest
+    {
+        fprintf(stderr, "[%s:%d] Error: inet_aton() failed\n", __FILE__, __LINE__);
+    }
+    
+//    socklen_t addrlen = sizeof(info.serv_addr);
+//    printf("Port sent: %d\n", ntohs(info.serv_addr->sin_port));
+
+    return info;
 }
 
-
-
-int closeSender()
+/** @brief Close the specified socket
+ *  @param socket_id The socket to close
+ *  @return 0 on success
+ */
+int close_socket(socket_info_t socket)
 {
-	/* shutdown() */
-	
-	if (shutdown(id_socketS,1) == -1) {
-		fprintf(stderr, "send: Erreur shutdown\n");
-		exit(1);
-	}
-	else 
-		printf("shutdown sender\n");
-	
+    if (close(socket.socket_id) == -1)
+    {
+        fprintf(stderr, "[%s:%d] Error: close_socket() failed\n", __FILE__, __LINE__);
+        return 1;
+    }
+    
+    if(socket.serv_addr)
+        free(socket.serv_addr);
 
-	/* close() */
-	if (close(id_socketS) == -1) {
-		fprintf(stderr, "send: Échec de destruction du socket\n");
-		exit(1);
-	}
-	else 
-		printf("close sender\n");
-	
-	printf("Sender : fin\n");
-	return 0;
-
+    return 0;
 }
-

@@ -3,9 +3,6 @@ echo Suppression du resultat \(.elf\) de la dernière compilation...
 rm -rf *.elf
 
 arm-linux-gnueabi-gcc -march=armv7-a \
-\
- src/sender.c \
-\
  src/shortest_path/shortest_path.c \
  src/shortest_path/map_common.c \
  src/shortest_path/map_reader.c \
