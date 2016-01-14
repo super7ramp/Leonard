@@ -7,6 +7,15 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#define NUMBER_BEACONS 	8 
+
+//Room width
+#define W               (7.80)        
+#define H               (12.0)
+
+
+
+
 typedef enum
 {
     ARDRONE_CALIBRATION_DEVICE_MAGNETOMETER = 0,

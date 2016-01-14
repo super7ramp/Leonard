@@ -3,7 +3,7 @@ arm-linux-gnueabi-gcc-4.6 -march=armv7-a -I lib/libpcap/include/ src/navdata_con
 */
 
 #include <stdio.h>
-#include "../navdata_controller.h"
+#include "navdata_controller.h"
 
 void *autopilot()
 {

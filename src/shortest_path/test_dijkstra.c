@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../map/map_reader.h"
-#include "../shortest_path.h"
+#include "map_reader.h"
+#include "shortest_path.h"
 
 // gcc -Wall -lm test_dijkstra.c ../map/map_common.c ../map/map_reader.c ../shortest_path.c -o test-dijsktra
 // ./test-dijkstra map_adrien.csv

@@ -1,6 +1,12 @@
 #ifndef MAP_COMMON_H
 #define MAP_COMMON_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+
 /** Common structures and functions shared by map_reader and shortest_path
     A lot of functions could be added, it's kind of minimal for now */
 

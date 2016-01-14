@@ -7,11 +7,9 @@ arm-linux-gnueabi-gcc -march=armv7-a \
  src/shortest_path/map_common.c \
  src/shortest_path/map_reader.c \
 \
- src/navdata/navdata_controller.c\
- src/navdata/spoof_udp.c \
-\
- src/com/sender.c \
- src/com/receiver.c \
+ src/com/navdata_controller.c\
+ src/com/spoof_udp.c \
+ src/com/at-sender.c \
  src/com/message_drone.c\
  src/com/at-commands.c \
 \

@@ -22,7 +22,7 @@
 #include "KCG/system_state_machine.h"
 #include "regulation.h"
 #include "var_coord.h"
-#include "../navdata/navdata_controller.h"
+#include "../com/navdata_controller.h"
 #include "../shortest_path/shortest_path.h"
 #include "../shortest_path/map_reader.h"
 #include "../shortest_path/map_common.h"
