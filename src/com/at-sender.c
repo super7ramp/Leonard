@@ -6,7 +6,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "sender.h"
+#include "at-sender.h"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 

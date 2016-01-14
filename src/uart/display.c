@@ -7,26 +7,28 @@ void printLocationFullDebug(t_location pos)
   printf("Visible beacons : ");
   printVisibleBeacons();
   printf("X : %.2f - Y : %.2f\r\n", pos.x, pos.y);
-  printTab();
-  printf("\033[%dA", (int)(H*ZOOM)+6);
+  //printBeaconsTab();
+  printf("\033[%dA", (int)(H*ZOOM_Y)+2);
 }
 
 void printPositionOnMap(t_location pos)
 {
   int i,j;
-  for (j=0; j<H*ZOOM; j++)
+  int h=(int)H, w=(int)W;
+
+  for (j=0; j<h*ZOOM_Y; j++)
     {
-      for(i=0; i<W*ZOOM; i++)
-	{
-	  if((int)(pos.x*ZOOM)==i && (int)(pos.y*ZOOM)==(int)(H*ZOOM)-j)
-	    printf(" x ");
-	  else if(j==0||j==(int)(H*ZOOM)-1)
-	    printf("==");
-	  else if(i==0||i==(int)(W*ZOOM)-1)
-	    printf("|");
-	  else
-	    printf("   ");
-	}
+      for(i=0; i<w*ZOOM_X; i++)
+      {
+        if((int)(pos.x*ZOOM_X)==i && (int)(pos.y*ZOOM_Y)==(int)(h*ZOOM_Y)-j)
+          printf("x");
+        else if(j==0||j==(int)(h*ZOOM_Y)-1)
+          printf("=");
+        else if(i==0||i==(int)(w*ZOOM_X)-1)
+          printf("|");
+        else
+          printf(" ");
+      }
       printf("\r\n");
     }
 }

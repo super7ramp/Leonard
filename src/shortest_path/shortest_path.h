@@ -4,7 +4,10 @@
 #define INFINITE	999
 #define ERROR_COORD	0.5
 
-#include "map/map_common.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include "map_common.h"
 
 /** @brief Return the index of a point in the map, according to its coordinates
     Note that there is a margin error here if the coordinates don't correspond exactly (see ERROR_COORD)

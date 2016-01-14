@@ -1,12 +1,4 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <unistd.h>
+#include "receiver.h"
 
 
 	int id_socketR = -1;
@@ -14,6 +6,7 @@
 	int portR = 1234;
 	struct sockaddr_in adr_local; // adresse du socket distant
 	int lg_adr_local;
+	int user = 0;
 
 void afficher_messageR(char *message, int lg) {
 	int i;
@@ -24,9 +17,12 @@ void afficher_messageR(char *message, int lg) {
 
 void afficher_reception (int lg_message, char * message) 
 {
-	printf("Position du drone : ");
+	pthread_mutex_lock(&displayMutex);
+	printf("\033[%dA", 16);
+	printf("  Drone position : ");
 	afficher_messageR(message, lg_message);
-	printf("\n");
+	printf("\033[%dB\n", 15);
+	pthread_mutex_unlock(&displayMutex);
 }
 
 int initReceiver() {
@@ -74,7 +70,7 @@ int initReceiver() {
 int recevoir(int lg_message, char * message) {
 	int retour;
 	int num_reception;
-
+	
 	if ((id_sock_bis = accept(id_socketR,(struct sockaddr *) &adr_local, (socklen_t *) &lg_adr_local))== -1) {
 		fprintf(stderr, "recv: Erreur accept()\n"); 
 		exit(1);
@@ -93,7 +89,7 @@ int recevoir(int lg_message, char * message) {
 			exit(1);
 		}
 
-		if (retour > 0) 
+		if (retour > 0 && user) 
 			afficher_reception(retour, message);
 
 		num_reception++; 
@@ -125,4 +121,10 @@ int closeReceiver() {
 	printf("Receiver : fin\n");
 	return 0;
 }
+
+
+void setUser(int u) {
+	user = u;
+}
+
 

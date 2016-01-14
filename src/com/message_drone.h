@@ -8,7 +8,7 @@
 #define __MESSAGE_DRONE_H
 
 #include "at-commands.h"
-#include "sender.h"
+#include "at-sender.h"
 #include <pthread.h>
 
 #define DEST_IP_AT     "127.0.0.1" //< localhost

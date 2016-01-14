@@ -1,17 +1,4 @@
-#include <stdio.h>
 #include "navdata_controller.h"
-#include <pthread.h>
-#include "pcap/pcap.h"
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <net/ethernet.h>
-#include <netinet/ip_icmp.h>
-#include <netinet/udp.h>
-#include <netinet/tcp.h>
-#include <netinet/ip.h>
-#include <netinet/in.h>
-#include <stdlib.h>
-#include "spoof_udp.h"
 
 /*----------------------------------------------------------------------------*/
 

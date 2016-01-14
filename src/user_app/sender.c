@@ -1,14 +1,4 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <unistd.h>
-
-
+#include "sender.h"
 
 int id_socketS = -1;
 int portS = 1234;
@@ -24,9 +14,14 @@ void afficher_messageS(char *message, int lg) {
 
 
 void afficher_envoi (int lg_message, char * message) {
-	printf("SOURCE : Envoi (%d) [", lg_message);
+
+	pthread_mutex_lock(&displayMutex);
+	printf("\033[%dA", 15);
+	printf("  Send : [");
 	afficher_messageS(message, lg_message);
-	printf("]\n");
+	printf("]");
+	printf("\033[%dB\n", 14);
+	pthread_mutex_unlock(&displayMutex);
 }
 
 

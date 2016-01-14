@@ -1,17 +1,51 @@
 # Edit CC with your cross-compiler before compiling for the drone
 CC=arm-linux-gnueabi-gcc 
-CFLAGS=-Wall -march=armv7-a
+CFLAGS=-Wall
+ARCH=armv7-a
+LIB = -lpthread -lpcap -L lib/libpcap/lib -lm
+INCLUDE = -I lib/libpcap/include 
+
 BASEDIR=$(shell pwd)
-SRCDIR=$(BASEDIR)/src
-TESTDIR=$(BASEDIR)/src/tests
 BUILDDIR=$(BASEDIR)/build
+SRCDIR=$(BASEDIR)/src
+
+TESTDIR=$(SRCDIR)/tests
+BLUETOOTHDIR=$(SRCDIR)/uart
+COMDIR=$(SRCDIR)/com
+MOVEMENTDIR=$(SRCDIR)/movement
+STATEMACHINEDIR=$(SRCDIR)/state_machine
+SHORTESTPATHDIR=$(SRCDIR)/shortest_path
+KCGDIR=$(STATEMACHINEDIR)/KCG
+EXEC=Control_Law.elf
+
+OBJS =$(wildcard $(BLUETOOTHDIR)/*.o) $(wildcard $(COMDIR)/*.o) $(wildcard $(MOVEMENTDIR)/*.o) $(wildcard $(STATEMACHINEDIR)/*.o) $(wildcard $(SHORTESTPATHDIR)/*.o) $(wildcard $(KCGDIR)/*.o)
+
+
 DOCDIR=$(BASEDIR)/doc
 
-all: directories tests
+all: $(EXEC)
 
 directories:
 	cd $(BASEDIR)
 	mkdir -p $(BUILDDIR)
+
+$(EXEC): bluetooth_lib movement_lib com_lib shortest_path_lib state_machine_lib
+	$(CC) $(CFLAGS) -march=$(ARCH) $(OBJS) $(LIB) -o $@
+
+bluetooth_lib:
+	cd $(BLUETOOTHDIR) && $(MAKE) bluetooth_lib
+
+movement_lib:
+	cd $(MOVEMENTDIR) && $(MAKE) 
+
+com_lib:
+	cd $(COMDIR) && $(MAKE) com_lib
+
+state_machine_lib:
+	cd $(STATEMACHINEDIR) && $(MAKE)
+
+shortest_path_lib:
+	cd $(SHORTESTPATHDIR) && $(MAKE) shortest_path_lib
 
 .PHONY: doc
 doc:
@@ -38,5 +72,12 @@ test-message_drone.o: $(SRCDIR)/message_drone.c $(SRCDIR)/at-commands.c $(SRCDIR
 clean:
 	rm -f $(BUILDDIR)/*
 	rm -f $(SRCDIR)/*.o
+	rm -f $(BLUETOOTHDIR)/*.o
+	rm -f $(COMDIR)/*.o
+	rm -f $(MOVEMENTDIR)/*.o
+	rm -f $(SHORTESTPATHDIR)/*.o
+	rm -f $(STATEMACHINEDIR)/*.o
+	rm -f $(KCGDIR)
 	rm -f $(TESTDIR)/*.o
-	rm -rf $(DOCDIR)/html
+	rm -f $(DOCDIR)/html
+	rm -rf Control_Law.elf
