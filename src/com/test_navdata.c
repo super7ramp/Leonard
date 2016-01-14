@@ -47,7 +47,8 @@ void *autopilot()
     while(t < 200)
     {
         usleep(50000);
-        set_yaw_mag(buff, LEFT, 0.4, 0);
+        //set_yaw_mag(buff, LEFT, 0.4, 0);// not implemented
+        reset_com(buff);
         t++;
     }
     t = 0;
