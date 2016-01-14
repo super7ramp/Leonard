@@ -5,7 +5,7 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 #include <stdio.h>
-#include "../message_drone.h"
+#include "message_drone.h"
 
 // Sniff the traffic to verify
 int main()

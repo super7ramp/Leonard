@@ -1,16 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <pthread.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <unistd.h>
-#include "sender.h"
-#include "receiver.h"
-#include "params.h"
+#include "pcCom.h"
 
 
 pthread_mutex_t messageMutex = PTHREAD_MUTEX_INITIALIZER;

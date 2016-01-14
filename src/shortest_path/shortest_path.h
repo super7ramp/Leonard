@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../shortest_path/map_common.h"
+#include "map_common.h"
 
 /** @brief Return the index of a point in the map, according to its coordinates
     Note that there is a margin error here if the coordinates don't correspond exactly (see ERROR_COORD)

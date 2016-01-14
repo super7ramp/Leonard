@@ -1,10 +1,10 @@
 #ifndef __NAVDATA_CONTROLLER_H
 #define __NAVDATA_CONTROLLER_H
 
-#include "../com/sender.h"
-#include "../com/message_drone.h"
-#include "../com/at-commands.h"
 #include "pcap/pcap.h"
+#include "at-sender.h"
+#include "message_drone.h"
+#include "at-commands.h"
 #include <stdio.h>
 #include <pthread.h>
 #include <sys/socket.h>

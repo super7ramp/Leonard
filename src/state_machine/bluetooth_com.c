@@ -1,5 +1,4 @@
 #include "bluetooth_com.h"
-
 void *thread_Bluetooth(void *arg)
 {
     initLocationComputation();
