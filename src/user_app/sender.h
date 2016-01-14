@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#include "../parameters.h"
+#include "../com/parameters.h"
 
 void construire_message(char *message, char *contenu);
 void afficher_messageS(char *message, int lg);
