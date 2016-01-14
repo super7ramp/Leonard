@@ -172,7 +172,7 @@ void initNavdata ()
         ;
         Navdata nav = set_p_available_false();
 
-        printf("waiting for bootstrap %d\n",i);
+        //printf("waiting for bootstrap %d\n",i);
 
         if(nav.header.ardrone_state & navdata_bootstrap)
             break;
@@ -191,9 +191,9 @@ void initNavdata ()
 
     // If we are here, we have reached the bootstrap mode and we need to send
     // the config message
-    printf("Now in bootstrap mode\n");
+    //printf("Now in bootstrap mode\n");
     printf("set_config message: %s\n", set_config(message, "general:navdata_demo", "TRUE"));
-    printf("Navdata demo set\n");
+    //printf("Navdata demo set\n");
 
     // Now waiting for the ack of the config message
     for( i = 0 ;;)
@@ -202,10 +202,10 @@ void initNavdata ()
         ;
         Navdata nav = set_p_available_false();
 
-        printf("waiting for ack %d\n",i);
-        printf("nav.header.ardrone_state & command_ack = %d\n", nav.header.ardrone_state & command_ack);
-        printf("nav.header.ardrone_state = %x\n", nav.header.ardrone_state);
-        printf("navdata_m.header.ardrone_state = %x\n", m_navdata.header.ardrone_state);
+        //printf("waiting for ack %d\n",i);
+        //printf("nav.header.ardrone_state & command_ack = %d\n", nav.header.ardrone_state & command_ack);
+        //printf("nav.header.ardrone_state = %x\n", nav.header.ardrone_state);
+        //printf("navdata_m.header.ardrone_state = %x\n", m_navdata.header.ardrone_state);
 
         if(nav.header.ardrone_state & command_ack)
             break;
@@ -224,9 +224,9 @@ void initNavdata ()
     
     // If we are here, we are almost done
     // We need to send a ack (of the ack that the drone has just sent to us)
-    printf("Ack received, sending ack\n");
+    //printf("Ack received, sending ack\n");
     printf("ackcontrol message = %s\n", set_ackcontrol(message));
-    printf("Ack sent\n");
+    //printf("Ack sent\n");
     
     for( i = 0 ;;)
     {
@@ -234,10 +234,10 @@ void initNavdata ()
         ;
         Navdata nav = set_p_available_false();
 
-        printf("waiting for cleared ack %d\n",i);
-        printf("nav.header.ardrone_state & command_ack = %d\n", nav.header.ardrone_state & command_ack);
-        printf("nav.header.ardrone_state = %x\n", nav.header.ardrone_state);
-        printf("navdata_m.header.ardrone_state = %x\n", m_navdata.header.ardrone_state);
+        //printf("waiting for cleared ack %d\n",i);
+        //printf("nav.header.ardrone_state & command_ack = %d\n", nav.header.ardrone_state & command_ack);
+        //printf("nav.header.ardrone_state = %x\n", nav.header.ardrone_state);
+        //printf("navdata_m.header.ardrone_state = %x\n", m_navdata.header.ardrone_state);
 
         if(!(nav.header.ardrone_state & command_ack))
         break;
@@ -253,13 +253,13 @@ void initNavdata ()
     // Just configuring options now, especially for magneto data
     // Note: not sure if it is necessary, option_demo should be the default and
     // include the option_magneto
-    printf("Cleared ack received\n");
+    //printf("Cleared ack received\n");
     int options = (0x01 << option_demo) | (0x01 << option_magneto);
     char optionsString[32];
     sprintf(optionsString, "%d", options);
     printf("set_config message: %s\n", set_config(message, "general:navdata_options", optionsString));
 
-    printf("Navdata initted!\n");
+    //printf("Navdata initted!\n");
     
     // Controller state: WAITING_ACK_CLEARED -> READY
     pthread_mutex_lock(&state_mtx);
