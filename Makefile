@@ -1,6 +1,7 @@
 # Edit CC with your cross-compiler before compiling for the drone
 CC=arm-linux-gnueabi-gcc 
-CFLAGS=-Wall -march=armv7-a
+CFLAGS=-Wall
+ARCH=armv7-a
 LIB = -lpthread -lpcap -L lib/libpcap/lib
 INCLUDE = -I lib/libpcap/include 
 
