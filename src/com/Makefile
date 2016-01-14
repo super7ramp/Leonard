@@ -15,13 +15,13 @@ all:$(EXEC)
 com_lib: $(OBJ)	
 
 test_navdata: $(OBJ) test_navdata.o
-	$(CC) $(CFLAGS) -march=$(ARCH) -o $@ $^ $(STATIC)
+	$(CC) $(CFLAGS) -march=$(ARCH) -o $@ $^ 
 
 $(EXEC):$(OBJ) test-message_drone.o
-	$(CC) $(CFLAGS) -march=$(ARCH) -o $@ $^ $(STATIC)
+	$(CC) $(CFLAGS) -march=$(ARCH) -o $@ $^ 
 
 %.o: %.c %.h
-	$(CC) $(CFLAGS) -march=$(ARCH) -c $< -o $@
+	$(CC) $(CFLAGS) -march=$(ARCH) -c $< $(INCLUDE) -o $@
 
 clean:
 	rm -rf *.o *~ *.elf
