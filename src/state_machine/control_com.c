@@ -41,8 +41,8 @@ void* thread_com(void* arg)
 	int i = 0;
 	int lg_message =  LG_MESS_DEFAUT;
 	order_recept = 0;
-	dest.x = 1.083333333;
-	dest.y = 1.1;
+	dest.x = 2.1666666;//1.083333333;
+	dest.y = 7.7;//1.1;
 	//char * msg = malloc(sizeof(char)*lg_message);
 	
 	while(1)
@@ -138,13 +138,13 @@ void* thread_com(void* arg)
 			if(i==1010)
 				order_recept = 1;
 		}
+		//else if(i==1801){
+		//	order_recept = 2; //land
+		//}
 		else if(i==1801){
-			order_recept = 2; //land
-		}
-		else if(i==1802){
 			order_recept = 9; //start_mission
 		}
-		else if(i>1802){
+		else if(i>1801){
 			order_recept = 11; //attérisage
 		}
 		//printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);

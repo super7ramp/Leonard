@@ -200,6 +200,10 @@ void break_drone()
     pitch_power = pitch_power + 0.2;
     for(i = 0 ; i < 200 ; i++)
       SWITCH_DRONE_COMMANDE(4);
+    pitch_power = 0;
+    for(i = 0 ; i < 100 ; i++)
+        SWITCH_DRONE_COMMANDE(4);
+
 }
 
 Navdata return_navdata()
@@ -224,9 +228,9 @@ void calcul_mission()
 
     read_data_bluetooth(&C_blue.x,&C_blue.y);
 
-    printf("Enter first x and first y\n");
-    scanf("%f", &(C_blue.x));
-    scanf("%f", &(C_blue.y));
+    //printf("Enter first x and first y\n");
+    //scanf("%f", &(C_blue.x));
+    //scanf("%f", &(C_blue.y));
 
     //printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
     //printf("Destination point: (%f, %f)\n", destination.x, destination.y);
@@ -256,7 +260,7 @@ void calcul_mission()
 
         while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
         {
-            //SWITCH_DRONE_COMMANDE(5);
+            SWITCH_DRONE_COMMANDE(5);
             Main_Nav = return_navdata();
             printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d",
                     Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
@@ -265,19 +269,36 @@ void calcul_mission()
         pitch_move = FRONT;
         pitch_power = 0.2;
 
-        int j = 0;
         while(sqrt(pow(startPoint.x-C_blue.x,2) + pow(startPoint.y-C_blue.y,2)) > ERROR_COORD)
         {
-            //SWITCH_DRONE_COMMANDE(4); 
-            //read_data_bluetooth(&C_blue.x,&C_blue.y);
-            printf("(Start point not found) Enter x and y\n");
-            scanf("%f", &(C_blue.x));
-            scanf("%f", &(C_blue.y));
+            int j = 0;
+            while(j < 5000) {
+                pitch_move = FRONT;
+                pitch_power = 0.2;
+                SWITCH_DRONE_COMMANDE(4);// less than 1s in theory
+                j++;
+            }
+            break_drone();
+            sleep(5);
+            read_data_bluetooth(&C_blue.x,&C_blue.y);
+
+            //printf("(Start point not found) Enter x and y\n");
+            //scanf("%f", &(C_blue.x));
+            //scanf("%f", &(C_blue.y));
 
             printf("\rBT location: X = %f, Y = %f (want to go to (%f, %f)", C_blue.x, C_blue.y, startPoint.x, startPoint.y);
         }
 
         path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+
+        // FIXME: do it better
+        if (path == NULL)
+        {
+
+            fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
+            stop_mission();
+            return;
+        }
     }
 
     printf("Path to follow\n");
@@ -321,7 +342,7 @@ void calcul_mission()
         //Début de la rotation
         while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
         {
-            //SWITCH_DRONE_COMMANDE(5);
+            SWITCH_DRONE_COMMANDE(5);
             Main_Nav = return_navdata();
             printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  ", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
         }
@@ -343,12 +364,21 @@ void calcul_mission()
 
         while((sqrt(pow(path[indice]->x-C_blue.x,2) + pow(path[indice]->y-C_blue.y,2)) > ERROR_COORD) && (findy_lost != 1))
         {
-            //SWITCH_DRONE_COMMANDE(4);
+            
+            int j = 0;
+            while (j < 5000) {
+                pitch_move = FRONT;
+                pitch_power = 0.2;
+                SWITCH_DRONE_COMMANDE(4);
+                j++;
+            }
+            break_drone();
+            sleep(5);
             read_data_bluetooth(&C_blue.x,&C_blue.y);
 
-            printf("main move, enter x and y\n");
-            scanf("%f", &(C_blue.x));
-            scanf("%f", &(C_blue.y));
+            //printf("main move, enter x and y\n");
+            //scanf("%f", &(C_blue.x));
+            //scanf("%f", &(C_blue.y));
 
             printf("\rGoing to (%f, %f), currently at (%f, %f)", path[indice]->x, path[indice]->y, C_blue.x, C_blue.y);
 
