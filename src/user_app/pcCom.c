@@ -30,7 +30,8 @@ void * receiverThread(void* arg)
 	
 	initReceiver();
 	setUser(1);
-	recevoir(lg_message, msgRcv);
+	while(1)
+		recevoir(lg_message, msgRcv);
 	return NULL;
 }
 
@@ -42,7 +43,7 @@ void * coordinatesThread(void* arg)
 	int n = *((int*)arg);
 	
 	while (1) {
-		sleep(n);
+		sleep(5);
 		
 		pthread_mutex_lock(&messageMutex);
 		emettre(lg_message, msgSend, "11 ");
@@ -191,7 +192,6 @@ int main (int argc, char** argv)
 	
 	return 0;
 }
-
 
 
 

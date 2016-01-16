@@ -16,9 +16,9 @@
 void afficher_messageR(char *message, int lg);
 void afficher_reception (int lg_message, char * message);
 int initReceiver();
+int recevoir2(int lg_message, char * message);
 int recevoir(int lg_message, char * message);
 int closeReceiver();
 void  setUser(int u);
 
 #endif
-
