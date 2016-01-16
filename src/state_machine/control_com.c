@@ -34,27 +34,29 @@ char *str_sub (const char *s, unsigned int start, unsigned int end)
 void* thread_com(void* arg)
 {
 	//init socket
-	//initReceiver();
-	
+	initReceiver();
+	sleep(1);
+	initSender("192.168.1.2");
 	int order_recept;
 	ORDER = NOTDONE;
 	int i = 0;
 	int lg_message =  LG_MESS_DEFAUT;
 	order_recept = 0;
-	dest.x = 2.1666666;//1.083333333;
-	dest.y = 7.7;//1.1;
-	//char * msg = malloc(sizeof(char)*lg_message);
-	
+	dest.x = 1.083333333;
+	dest.y = 1.1;
+	char * msg = malloc(sizeof(char)*lg_message);
+    char s[50] = "";
+
 	while(1)
 	{
-	
-		//recevoir(lg_message, msg);
+        
+		recevoir2(lg_message, msg);
 		//récupération des donnée envoyé par le connectin Wifi
 		//recept_orders_send_by_the_user
 		//envoie de l'ordre reçu;
 
-		//order_recept = atoi(str_sub(msg,0,1));
-		//printf("\n\n\n\nValeur de order_recept%d\n\n\n", order_recept);
+		order_recept = atoi(str_sub(msg,0,1));
+		//printf("Valeur de order_recept = %d\n", order_recept);
 		if (ORDER == NOTDONE)
 		{
 			switch(order_recept){
@@ -64,14 +66,26 @@ void* thread_com(void* arg)
 				
 				case 1:
 					calibMagn();
+					i=0;
 					break;
 
 				case 2:
-					land();
+					while(i<500)
+					{
+						land();						
+						i++;
+					}
+					i=0;
 					break;
 
 				case 3:
-					takeOff();
+					printf("décollage\n");
+					while(i<500)
+					{
+						takeOff();						
+						i++;
+					}
+					i=0;
 					break;
 
 				case 4:
@@ -104,11 +118,11 @@ void* thread_com(void* arg)
 					break; 
 
 				case 9:
-					//dest.x = atof(str_sub(msg,3,7));
-					//dest.y = atof(str_sub(msg,9,13));
-					printf("start_mission => communication\n");
-					start_mission(dest.x, dest.y);
-					ORDER = DONE;
+					dest.x = atof(str_sub(msg,3,7));
+					dest.y = atof(str_sub(msg,9,13));
+					printf("start_mission => communication with x=[%f] et y=[%f]\n", dest.x, dest.y);
+					//start_mission(dest.x, dest.y);
+					//ORDER = DONE;
 					break;
 
 				case 10:
@@ -116,20 +130,27 @@ void* thread_com(void* arg)
 					break;
 
 				case 11 :
-					//Main_Nav = return_navdata();
+					Main_Nav = return_navdata();
 					//send_navdata_to_the_user_via_socket
+					sprintf(s, "%f", Main_Nav.magneto.heading_fusion_unwrapped);
+					emettre(lg_message, msg, s);
+					break;
+
+				case 12 :
 					break;
 
 				default:
 					break;
 			}
+			order_recept = 12;
 		}
 		else if(order_recept==10)
 		{
 			stop_mission();
+			ORDER = NOTDONE;
 		}
 //		 Code pour la simulation de recepton de donnée Wifi	
-		if(i<1000){
+	/*	if(i<1000){
 			//printf("decolle\n");
 			order_recept = 3; //takeOff
 		}
@@ -138,13 +159,13 @@ void* thread_com(void* arg)
 			if(i==1010)
 				order_recept = 1;
 		}
-		//else if(i==1801){
-		//	order_recept = 2; //land
-		//}
 		else if(i==1801){
+			order_recept = 2; //land
+		}
+		else if(i==1802){
 			order_recept = 9; //start_mission
 		}
-		else if(i>1801){
+		else if(i>1802){
 			order_recept = 11; //attérisage
 		}
 		//printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
@@ -152,5 +173,5 @@ void* thread_com(void* arg)
 		//printf("Debut de la pause de 20ms dans thread_com\n");
 		usleep(10000);
 		//printf("Fin de la pause de 20ms dans le thread_com\n");
-	}  
+	*/}  
 }

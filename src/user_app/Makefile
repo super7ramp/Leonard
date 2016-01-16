@@ -1,19 +1,18 @@
-CC=arm-linux-gnueabi-gcc
+CC=gcc
 CFLAGS=-W -Wall
-ARCH=armv7-a
-LFLAGS=-lpthread -lpcap -L ../../lib/libpcap/lib
+LFLAGS=-lpthread
 SRC= $(wildcard *.c)
 OBJ=$(SRC:.c=.o)
-EXEC=test_com.elf
+EXEC=test_com
 
 
 all:$(EXEC) 
 
 $(EXEC):$(OBJ)
-	$(CC) $(CFLAGS) -march=$(ARCH) -o $@ $^ $(LFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS)
 
 %.o: %.c %.h
-	$(CC) $(CFLAGS) -march=$(ARCH) -c $< -o $@ $(LFLAGS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf *.o *~ *.elf
+	rm -rf *.o *~ 

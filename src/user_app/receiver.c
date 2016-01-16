@@ -62,6 +62,36 @@ int initReceiver() {
 			fprintf(stderr, "com: Erreur listen()\n");
 			exit(1);
 		}
+
+
+	if ((id_sock_bis = accept(id_socketR,(struct sockaddr *) &adr_local, (socklen_t *) &lg_adr_local))== -1) {
+		fprintf(stderr, "recv: Erreur accept()\n"); 
+		exit(1);
+	}
+	return 0;
+}
+
+/* fonction appelée dans reception() */
+int recevoir2(int lg_message, char * message) {
+	int retour;
+	int num_reception;
+	
+	/* reception */
+	num_reception = 1;
+	retour = 1;
+
+	retour = read(id_sock_bis, message, lg_message);
+
+	if (retour == -1) {
+		fprintf(stderr, "Echec de la réception\n");
+		perror("Error :");
+		exit(1);
+	}
+	if (retour > 0 && user) 
+		afficher_reception(retour, message);
+
+	num_reception++; 
+	
 	return 0;
 }
 
@@ -71,18 +101,13 @@ int recevoir(int lg_message, char * message) {
 	int retour;
 	int num_reception;
 	
-	if ((id_sock_bis = accept(id_socketR,(struct sockaddr *) &adr_local, (socklen_t *) &lg_adr_local))== -1) {
-		fprintf(stderr, "recv: Erreur accept()\n"); 
-		exit(1);
-	}
-
 	/* reception */
 	num_reception = 1;
 	retour = 1;
 
 	while(retour > 0) {
 
-		retour = recv(id_sock_bis, message, lg_message, 0);
+		retour = read(id_sock_bis, message, lg_message);
 		
 		if (retour == -1) {
 			fprintf(stderr, "Echec de la réception\n");
@@ -126,5 +151,4 @@ int closeReceiver() {
 void setUser(int u) {
 	user = u;
 }
-
 
