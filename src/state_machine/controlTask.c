@@ -24,10 +24,10 @@ int rotate_to_desired_angle(float angle)
     struct timespec init, current;
     int timeout = 0;
 
-    clock_gettime(CLOCK_MONOTONIC, &init)
+    clock_gettime(CLOCK_MONOTONIC, &init);
     Main_Nav = return_navdata();
 
-    while(!timeout && (Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0)))
+    while(!timeout && (Main_Nav.magneto.heading_fusion_unwrapped > (angle + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle - 3.0)))
     {
         // Timeout check
         clock_gettime(CLOCK_MONOTONIC, &current);
@@ -47,6 +47,87 @@ int rotate_to_desired_angle(float angle)
         return -1;
 
     return 0;
+}
+
+/** \brief Move to given coordinates, without checking the map
+  * \param Destination coordinates
+  * \return 0 if no error */
+int move_to(struct coordinates_ dest)
+{
+    struct coordinates_ current = { 0.0, 0.0 };
+
+    sleep(5); // Wait for the drone to stabilize 
+    read_data_bluetooth(&current.x, &current.y);
+
+    pitch_move = FRONT;
+    pitch_power = 0.2;
+
+    while(sqrt(pow(dest.x-current.x,2) + pow(dest.y-current.y,2)) > ERROR_COORD)
+    {
+        int j = 0;
+        while(j < 5000) {
+            pitch_move = FRONT;
+            pitch_power = 0.2;
+            SWITCH_DRONE_COMMANDE(4);
+            j++;
+        }
+        break_drone();
+        sleep(5);
+        read_data_bluetooth(&current.x,&current.y);
+
+        //printf("(Start point not found) Enter x and y\n");
+        //scanf("%f", &(C_blue.x));
+        //scanf("%f", &(C_blue.y));
+
+        printf("\rBT location: X = %f, Y = %f (want to go to (%f, %f)", current.x, current.y, dest.x, dest.y);
+    }
+
+    return 0;
+}
+
+/** \brief Move to given destination, check the map to detect any faulty path
+  * \param nextPoint Next point coordinates
+  * \param path Shortest path
+  * \return 0 if we reached destination; > 0 if a drift is detected */
+int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
+{
+    int check = 0;
+    int findy_lost = 0;
+    struct coordinates_ current = { 0.0, 0.0 };
+
+    sleep(5); // Wait for the drone to stabilize 
+    read_data_bluetooth(&current.x, &current.y);
+    
+    //printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
+    //printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
+
+    while((sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2)) > ERROR_COORD) && (findy_lost != 1))
+    {
+        int j = 0;
+        while (j < 5000) {
+            pitch_move = FRONT;
+            pitch_power = 0.2;
+            SWITCH_DRONE_COMMANDE(4);
+            j++;
+        }
+        break_drone();
+        sleep(3);
+        read_data_bluetooth(&current.x,&current.y);
+
+        //printf("main move, enter x and y\n");
+        //scanf("%f", &(C_blue.x));
+        //scanf("%f", &(C_blue.y));
+
+        printf("\rGoing to (%f, %f), currently at (%f, %f)", nextPoint.x, nextPoint.y, current.x, current.y);
+
+        if((check = find_point(graph, current.x, current.y)) != -1)
+        {
+            if((check = find_point_in_path(path, current.x, current.y)) == -1)
+            findy_lost = 1;
+        }
+    }
+
+    return findy_lost;
 }
 
 void* controlTask(void* arg)
@@ -267,6 +348,8 @@ void calcul_mission()
     C_blue.x = 0.0;
     C_blue.y = 0.0;
 
+    // Wait for the data to stabilize
+    sleep(3);
     read_data_bluetooth(&C_blue.x,&C_blue.y);
 
     //printf("Enter first x and first y\n");
@@ -299,40 +382,28 @@ void calcul_mission()
         computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
         yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
 
-        // FIXME: check returned value
-        rotate_to_desired_angle(angle_desire);
-
-        pitch_move = FRONT;
-        pitch_power = 0.2;
-
-        while(sqrt(pow(startPoint.x-C_blue.x,2) + pow(startPoint.y-C_blue.y,2)) > ERROR_COORD)
+        if(rotate_to_desired_angle(angle_desire) == -1)
         {
-            int j = 0;
-            while(j < 5000) {
-                pitch_move = FRONT;
-                pitch_power = 0.2;
-                SWITCH_DRONE_COMMANDE(4);// less than 1s in theory
-                j++;
-            }
+            fprintf(stderr, "[%s:%d] Error: Rotation to desired angle failed\n", __FILE__, __LINE__);
             break_drone();
-            sleep(5);
-            read_data_bluetooth(&C_blue.x,&C_blue.y);
-
-            //printf("(Start point not found) Enter x and y\n");
-            //scanf("%f", &(C_blue.x));
-            //scanf("%f", &(C_blue.y));
-
-            printf("\rBT location: X = %f, Y = %f (want to go to (%f, %f)", C_blue.x, C_blue.y, startPoint.x, startPoint.y);
+            stop_mission();
+            free(graph);
+            return;
         }
 
+        move_to(startPoint);
+
+        break_drone();
+        
+        read_data_bluetooth(&C_blue.x,&C_blue.y);
+        
         path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
 
-        // FIXME: do it better
         if (path == NULL)
         {
-
             fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
             stop_mission();
+            free(graph);
             return;
         }
     }
@@ -375,55 +446,26 @@ void calcul_mission()
         yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
         //printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
 
-        // FIXME: check returned value
-        rotate_to_desired_angle(angle_desire);
-
-        //Début du déplacement FRONT
-        pitch_move = FRONT;
-        pitch_power = 0.2;
-
-        //printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
-        //printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
-
-        //envoie commande pitch tant qu'on est pas a la coordonnée bluetooth
-        float dist = sqrt(pow(path[indice]->x-C_blue.x,2) + pow(path[indice]->y-C_blue.y,2));
-        printf("distance = %.2f\n", dist);
-        printf("\rGoal (%f, %f), currently at (%f, %f)", path[indice]->x, path[indice]->y, C_blue.x, C_blue.y);
-        printf("findy lost? %d\n", findy_lost);
-
-        while((sqrt(pow(path[indice]->x-C_blue.x,2) + pow(path[indice]->y-C_blue.y,2)) > ERROR_COORD) && (findy_lost != 1))
+        if (rotate_to_desired_angle(angle_desire) == -1)
         {
-            
-            int j = 0;
-            while (j < 5000) {
-                pitch_move = FRONT;
-                pitch_power = 0.2;
-                SWITCH_DRONE_COMMANDE(4);
-                j++;
-            }
             break_drone();
-            sleep(5);
-            read_data_bluetooth(&C_blue.x,&C_blue.y);
-
-            //printf("main move, enter x and y\n");
-            //scanf("%f", &(C_blue.x));
-            //scanf("%f", &(C_blue.y));
-
-            printf("\rGoing to (%f, %f), currently at (%f, %f)", path[indice]->x, path[indice]->y, C_blue.x, C_blue.y);
-
-            if((check = find_point(graph, C_blue.x, C_blue.y)) != -1)
-            {
-                if((check = find_point_in_path(path, C_blue.x, C_blue.y)) == -1)
-                findy_lost = 1;
-            }
+            stop_mission();
+            free(graph);
+            return;
         }
- 
+
+        // Let's move to next point
+        findy_lost = move_to_next_point(nextPoint, (const node_t **) path);
+
         // Stop the drone movement
         break_drone();
+       
+        sleep(3); 
+        read_data_bluetooth(&C_blue.x,&C_blue.y);
 
-        //if the drone is lost, we calculate a new path and we re-initialize the variable "indice"
-        //else decrementation of "indice"
-        if(findy_lost == 1)
+        // If the drone is lost, we calculate a new path and we re-initialize the variable "indice"
+        // Else decrementation of "indice"
+        if(findy_lost > 0)
         {
             printf("Findy deviated, recalculating path...\n");
             path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
@@ -444,6 +486,7 @@ void calcul_mission()
         }
 
     }
+
     stop_mission();
     printf("fin mission\n");
     free(path);
