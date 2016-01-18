@@ -2,11 +2,52 @@
 
 #define THRESHOLD 0.001
 
-//return the index of a point in the path
+/** \brief Get the index of a point in the path
+  * \param path The path of nodes
+  * \param other_x x coordinate
+  * \param other_y y coordinate
+  * \return The index of the point in the path; -1 if not found */
 int find_point_in_path (node_t ** path, float other_x, float other_y);
 
-//return the index of the closest node to the current position of the drone in the graph
+/** \brief Get the index of the closest node to the current position of the drone in the graph
+  * \param graph The graph_t structure (our map)
+  * \param current_x Current x coordinate
+  * \param current_y Current y coordinate
+  * \return The index */
 int find_closest_node(graph_t *graph, float current_x, float current_y);
+
+/** \brief Rotate to desired angle
+  * \param Desired angle in degrees
+  * \return 0 if no error; -1 if error */
+int rotate_to_desired_angle(float angle)
+{
+    struct timespec init, current;
+    int timeout = 0;
+
+    clock_gettime(CLOCK_MONOTONIC, &init)
+    Main_Nav = return_navdata();
+
+    while(!timeout && (Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0)))
+    {
+        // Timeout check
+        clock_gettime(CLOCK_MONOTONIC, &current);
+        timeout = (current.tv_sec - init.tv_sec) > ROTATION_TIMEOUT;
+
+        // Keep sending rotation command
+        SWITCH_DRONE_COMMANDE(5);
+        Main_Nav = return_navdata();
+
+        //printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d",
+        //Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
+
+        usleep(20000);
+    }
+
+    if (timeout)
+        return -1;
+
+    return 0;
+}
 
 void* controlTask(void* arg)
 { 
@@ -258,13 +299,8 @@ void calcul_mission()
         computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
         yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
 
-        while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
-        {
-            SWITCH_DRONE_COMMANDE(5);
-            Main_Nav = return_navdata();
-            printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d",
-                    Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
-        }
+        // FIXME: check returned value
+        rotate_to_desired_angle(angle_desire);
 
         pitch_move = FRONT;
         pitch_power = 0.2;
@@ -339,15 +375,8 @@ void calcul_mission()
         yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
         //printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
 
-        //Début de la rotation
-        while(Main_Nav.magneto.heading_fusion_unwrapped > (angle_desire + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle_desire - 3.0))
-        {
-            SWITCH_DRONE_COMMANDE(5);
-            Main_Nav = return_navdata();
-            printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d  ", Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
-        }
-
-        printf("\n");
+        // FIXME: check returned value
+        rotate_to_desired_angle(angle_desire);
 
         //Début du déplacement FRONT
         pitch_move = FRONT;

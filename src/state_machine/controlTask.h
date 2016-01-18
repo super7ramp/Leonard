@@ -92,6 +92,11 @@
 #define NAME_MAP_DEMO "demo_map"
 
 /**
+ * \brief Maximum duration of rotation phase, i.e. cap finding (in seconds)
+ */
+#define ROTATION_TIMEOUT 25
+
+/**
  * \brief Control task. This task manages le movement of the drone.
  * \param[in]	arg
  */
