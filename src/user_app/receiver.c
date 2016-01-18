@@ -72,7 +72,7 @@ int initReceiver() {
 }
 
 /* fonction appelée dans reception() */
-int recevoir2(int lg_message, char * message) {
+int recevoir(int lg_message, char * message) {
 	int retour;
 	int num_reception;
 	
@@ -91,34 +91,6 @@ int recevoir2(int lg_message, char * message) {
 		afficher_reception(retour, message);
 
 	num_reception++; 
-	
-	return 0;
-}
-
-
-/* fonction appelée dans reception() */
-int recevoir(int lg_message, char * message) {
-	int retour;
-	int num_reception;
-	
-	/* reception */
-	num_reception = 1;
-	retour = 1;
-
-	while(retour > 0) {
-
-		retour = read(id_sock_bis, message, lg_message);
-		
-		if (retour == -1) {
-			fprintf(stderr, "Echec de la réception\n");
-			exit(1);
-		}
-
-		if (retour > 0 && user) 
-			afficher_reception(retour, message);
-
-		num_reception++; 
-	}
 	
 	return 0;
 }
