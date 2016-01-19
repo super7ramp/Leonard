@@ -50,7 +50,7 @@ void* thread_com(void* arg)
 	while(1)
 	{
         
-		recevoir2(lg_message, msg);
+		recevoir(lg_message, msg);
 		//récupération des donnée envoyé par le connectin Wifi
 		//recept_orders_send_by_the_user
 		//envoie de l'ordre reçu;

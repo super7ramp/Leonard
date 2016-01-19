@@ -11,8 +11,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
-#include "sender.h"
-#include "receiver.h"
+#include "../com/tcp_sender.h"
+#include "../com/tcp_receiver.h"
 #include "../common.h"
 
 #define LG_MESS_DEFAUT	30

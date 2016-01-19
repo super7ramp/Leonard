@@ -11,8 +11,8 @@
 #include "controlTask.h"
 #include "var_coord.h"
 #include "../com/parameters.h"
-#include "../user_app/sender.h"
-#include "../user_app/receiver.h"
+#include "../com/tcp_sender.h"
+#include "../com/tcp_receiver.h"
 
 
 

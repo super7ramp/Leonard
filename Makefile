@@ -2,7 +2,7 @@
 CC=arm-linux-gnueabi-gcc 
 CFLAGS=-Wall
 ARCH=armv7-a
-LIB = -lpthread -lpcap -L lib/libpcap/lib -lm
+LIB = -lpthread -lpcap -L lib/libpcap/lib -lm -lrt
 INCLUDE = -I lib/libpcap/include 
 
 BASEDIR=$(shell pwd)
@@ -77,7 +77,7 @@ clean:
 	rm -f $(MOVEMENTDIR)/*.o
 	rm -f $(SHORTESTPATHDIR)/*.o
 	rm -f $(STATEMACHINEDIR)/*.o
-	rm -f $(KCGDIR)
+	rm -f $(KCGDIR)/*.o
 	rm -f $(TESTDIR)/*.o
 	rm -f $(DOCDIR)/html
 	rm -rf Control_Law.elf
