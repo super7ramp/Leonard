@@ -5,6 +5,7 @@ LFLAGS=-lpthread
 SRC=uart.c parser.c localisation.c display.c
 OBJ=$(SRC:.c=.o)
 EXEC=computeLocation.elf
+EXEC2=diagnostic.elf
 
 
 all:$(EXEC) 
@@ -14,6 +15,9 @@ bluetooth_lib: $(OBJ)
 $(EXEC):$(OBJ) main.o
 	$(CC) $(CFLAGS) -march=$(ARCH) -o $@ $^ $(LFLAGS)
 
+$(EXEC2):$(OBJ) diagnostic.o
+	$(CC) $(CFLAGS) -march=$(ARCH) -o $@ $^ $(LFLAGS)
+	
 %.o: %.c %.h parameters.h
 	$(CC) $(CFLAGS) -march=$(ARCH) -c $< -o $@ $(LFLAGS)
 

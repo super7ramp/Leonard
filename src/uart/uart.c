@@ -78,5 +78,10 @@ void read_port(char *rawResponse, int *size)
     }
 }
 
+void closeBluetoothCom(void)
+{
+  close_port(fd);
+}
+
 
 

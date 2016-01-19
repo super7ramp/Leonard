@@ -25,6 +25,9 @@ DOCDIR=$(BASEDIR)/doc
 
 all: $(EXEC)
 
+diagnostic:
+	cd $(BLUETOOTHDIR) && $(MAKE) diagnostic.elf && mv diagnostic.elf $(BASEDIR)/	
+
 directories:
 	cd $(BASEDIR)
 	mkdir -p $(BUILDDIR)
@@ -80,4 +83,4 @@ clean:
 	rm -f $(KCGDIR)/*.o
 	rm -f $(TESTDIR)/*.o
 	rm -f $(DOCDIR)/html
-	rm -rf Control_Law.elf
+	rm -rf *.elf

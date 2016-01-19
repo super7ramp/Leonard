@@ -35,5 +35,9 @@ void serial_config(int fd);
  */
 void read_port();
 
+/*
+ * Call this function to end BT com.
+ */
+void closeBluetoothCom(void);
 
 #endif
