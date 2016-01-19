@@ -59,15 +59,14 @@ int move_to(struct coordinates_ dest)
     sleep(5); // Wait for the drone to stabilize 
     read_data_bluetooth(&current.x, &current.y);
 
-    pitch_move = FRONT;
-    pitch_power = 0.2;
-
     while(sqrt(pow(dest.x-current.x,2) + pow(dest.y-current.y,2)) > ERROR_COORD)
     {
+        printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current.x, current.y, dest.x, dest.y);
+        
         int j = 0;
         while(j < 5000) {
             pitch_move = FRONT;
-            pitch_power = 0.2;
+            pitch_power = 0.1;
             SWITCH_DRONE_COMMANDE(4);
             j++;
         }
@@ -75,11 +74,11 @@ int move_to(struct coordinates_ dest)
         sleep(5);
         read_data_bluetooth(&current.x,&current.y);
 
+        printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current.x, current.y, dest.x, dest.y);
         //printf("(Start point not found) Enter x and y\n");
         //scanf("%f", &(C_blue.x));
         //scanf("%f", &(C_blue.y));
 
-        printf("\rBT location: X = %f, Y = %f (want to go to (%f, %f)", current.x, current.y, dest.x, dest.y);
     }
 
     return 0;
@@ -103,22 +102,24 @@ int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
 
     while((sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2)) > ERROR_COORD) && (findy_lost != 1))
     {
+        printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
+        
         int j = 0;
         while (j < 5000) {
             pitch_move = FRONT;
-            pitch_power = 0.2;
+            pitch_power = 0.1;
             SWITCH_DRONE_COMMANDE(4);
             j++;
         }
         break_drone();
         sleep(3);
         read_data_bluetooth(&current.x,&current.y);
+        
+        printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
 
         //printf("main move, enter x and y\n");
         //scanf("%f", &(C_blue.x));
         //scanf("%f", &(C_blue.y));
-
-        printf("\rGoing to (%f, %f), currently at (%f, %f)", nextPoint.x, nextPoint.y, current.x, current.y);
 
         if((check = find_point(graph, current.x, current.y)) != -1)
         {
@@ -319,7 +320,7 @@ void break_drone()
 */
     int i;
     pitch_move = BACK;
-    pitch_power = pitch_power + 0.2;
+    pitch_power = pitch_power + 0.1;
     for(i = 0 ; i < 200 ; i++)
       SWITCH_DRONE_COMMANDE(4);
     pitch_power = 0;
