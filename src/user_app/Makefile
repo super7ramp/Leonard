@@ -3,7 +3,7 @@ CFLAGS=-W -Wall
 LFLAGS=-lpthread
 SRC= $(wildcard *.c) 
 OBJ=$(SRC:.c=.o)
-EXEC=test_com
+EXEC=Findy
 
 all:clean $(EXEC) 
 
