@@ -51,15 +51,20 @@ int rotate_to_desired_angle(float angle)
 
 /** \brief Move to given coordinates, without checking the map
   * \param Destination coordinates
-  * \return 0 if no error */
+  * \return 0 if no error, > 0 if error */
 int move_to(struct coordinates_ dest)
 {
     struct coordinates_ current = { 0.0, 0.0 };
+    float distance, lastDistance;
+    int findy_lost = 0;
 
     sleep(5); // Wait for the drone to stabilize 
     read_data_bluetooth(&current.x, &current.y);
 
-    while(sqrt(pow(dest.x-current.x,2) + pow(dest.y-current.y,2)) > ERROR_COORD)
+    distance = sqrt(pow(dest.x-current.x,2) + pow(dest.y-current.y,2));
+    lastDistance = distance;
+
+    while(distance > ERROR_COORD && !findy_lost)
     {
         printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current.x, current.y, dest.x, dest.y);
         
@@ -75,13 +80,16 @@ int move_to(struct coordinates_ dest)
         read_data_bluetooth(&current.x,&current.y);
 
         printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current.x, current.y, dest.x, dest.y);
-        //printf("(Start point not found) Enter x and y\n");
-        //scanf("%f", &(C_blue.x));
-        //scanf("%f", &(C_blue.y));
 
+        // Check if we're going in the wrong direction
+        lastDistance = distance;
+        distance = sqrt(pow(dest.x-current.x,2) + pow(dest.y-current.y,2));
+
+        if (distance > lastDistance)
+            findy_lost = 1;
     }
 
-    return 0;
+    return findy_lost;
 }
 
 /** \brief Move to given destination, check the map to detect any faulty path
@@ -92,6 +100,7 @@ int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
 {
     int check = 0;
     int findy_lost = 0;
+    float lastDistance, distance;
     struct coordinates_ current = { 0.0, 0.0 };
 
     sleep(5); // Wait for the drone to stabilize 
@@ -100,7 +109,9 @@ int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
     //printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
     //printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
 
-    while((sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2)) > ERROR_COORD) && (findy_lost != 1))
+    distance = sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2));
+    lastDistance = distance;
+    while((distance > ERROR_COORD) && (findy_lost != 1))
     {
         printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
         
@@ -117,15 +128,19 @@ int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
         
         printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
 
-        //printf("main move, enter x and y\n");
-        //scanf("%f", &(C_blue.x));
-        //scanf("%f", &(C_blue.y));
-
+        // Check if we have drifted to another point
         if((check = find_point(graph, current.x, current.y)) != -1)
         {
             if((check = find_point_in_path(path, current.x, current.y)) == -1)
             findy_lost = 1;
         }
+    
+        // Check if we're going in the wrong direction
+        lastDistance = distance;
+        distance = sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2));
+
+        if (distance > lastDistance)
+            findy_lost = 1;
     }
 
     return findy_lost;
@@ -371,32 +386,37 @@ void calcul_mission()
         return;
         */
 
-        index = find_closest_node(graph, C_blue.x, C_blue.y);
-        startPoint.x = graph->nodes[index].x;
-        startPoint.y = graph->nodes[index].y;
+        int startNotFound = 1;
 
-        Main_Nav = return_navdata();
-
-        angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped;
-        angle_desire = computeDesiredAngle(C_blue, startPoint);
-
-        computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
-        yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
-
-        if(rotate_to_desired_angle(angle_desire) == -1)
+        while(startNotFound)
         {
-            fprintf(stderr, "[%s:%d] Error: Rotation to desired angle failed\n", __FILE__, __LINE__);
+            index = find_closest_node(graph, C_blue.x, C_blue.y);
+            startPoint.x = graph->nodes[index].x;
+            startPoint.y = graph->nodes[index].y;
+
+            Main_Nav = return_navdata();
+
+            angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped;
+            angle_desire = computeDesiredAngle(C_blue, startPoint);
+
+            computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
+            yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+
+            if(rotate_to_desired_angle(angle_desire) == -1)
+            {
+                fprintf(stderr, "[%s:%d] Error: Rotation to desired angle failed\n", __FILE__, __LINE__);
+                break_drone();
+                stop_mission();
+                free(graph);
+                return;
+            }
+
+            // If the move_to doesn't succeed, we try again
+            startNotFound = move_to(startPoint);
             break_drone();
-            stop_mission();
-            free(graph);
-            return;
+            sleep(3);
+            read_data_bluetooth(&C_blue.x,&C_blue.y);
         }
-
-        move_to(startPoint);
-
-        break_drone();
-        
-        read_data_bluetooth(&C_blue.x,&C_blue.y);
         
         path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
 
