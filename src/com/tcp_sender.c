@@ -1,4 +1,4 @@
-#include "sender.h"
+#include "tcp_sender.h"
 
 int id_socketS = -1;
 int portS = 1234;

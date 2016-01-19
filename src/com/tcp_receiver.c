@@ -1,4 +1,4 @@
-#include "receiver.h"
+#include "tcp_receiver.h"
 
 
 	int id_socketR = -1;
