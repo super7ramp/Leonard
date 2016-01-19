@@ -96,8 +96,8 @@ int main (int argc, char** argv)
 
 		pthread_mutex_lock(&displayMutex);
 		printf("What do you want to do ?\n");
-		printf("0 -> Calibration (le drone doit être posé à plat)\n");
-		printf("1 -> Calibration magnétique\n");
+		printf("0 -> Calibration (drone must lay flat on the floor)\n");
+		printf("1 -> Magnetic calibration\n");
 		printf("2 -> landing\n");
 		printf("3 -> take off\n");
 		printf("4 -> move roll \n");
@@ -107,7 +107,7 @@ int main (int argc, char** argv)
 		printf("8 -> anti emergency\n");
 		printf("9 -> start mission\n");
 		printf("10 -> stop mission\n");
-		printf("Pour fermer le programme tapez -1\n");
+		printf("-1 to close the programm\n");
 		
 		pthread_mutex_unlock(&displayMutex);
 		
