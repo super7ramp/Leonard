@@ -20,7 +20,7 @@ int check_flag (const int *flags, int size);
 node_t **dijkstra(float current_x, float current_y, float dest_x, float dest_y, graph_t *map)
 {
     int flag[map->numberOfNodes];
-    int cost[map->numberOfNodes];
+    float cost[map->numberOfNodes];
     node_t **previous;
     node_t **path;
     int start_point;
@@ -103,18 +103,10 @@ node_t **dijkstra(float current_x, float current_y, float dest_x, float dest_y, 
 
     i = 0;
     path[i] = &(map->nodes[end_point]);
-    index = find_index_map(map, dest_x, dest_y);
+    index = end_point;
 
-    if (index < 0)
-    {
-        fprintf(stderr, "[%s:%d] Error: Cannot find index of point [%f,%f]\n", __FILE__, __LINE__, dest_x, dest_y);
-        free(previous);
-        free(path);
-        return NULL;
-    }
-
-    while((previous[index]->x != map->nodes[start_point].x) ||
-          (previous[index]->y != map->nodes[start_point].y))
+    while(fabs(previous[index]->x - map->nodes[start_point].x) > FLOAT_COMPARISON_THRESHOLD ||
+          fabs(previous[index]->y - map->nodes[start_point].y) > FLOAT_COMPARISON_THRESHOLD)
     {
         i++;
 	index = find_index_map(map, previous[index]->x, previous[index]->y);
@@ -132,7 +124,6 @@ node_t **dijkstra(float current_x, float current_y, float dest_x, float dest_y, 
     }
     */
 
-    //return previous;
 
     free(previous);
     return path;
