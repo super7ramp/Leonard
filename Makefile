@@ -16,6 +16,7 @@ MOVEMENTDIR=$(SRCDIR)/movement
 STATEMACHINEDIR=$(SRCDIR)/state_machine
 SHORTESTPATHDIR=$(SRCDIR)/shortest_path
 KCGDIR=$(STATEMACHINEDIR)/KCG
+APPDIR=$(SRCDIR)/user_app
 EXEC=Control_Law.elf
 
 OBJS =$(wildcard $(BLUETOOTHDIR)/*.o) $(wildcard $(COMDIR)/*.o) $(wildcard $(MOVEMENTDIR)/*.o) $(wildcard $(STATEMACHINEDIR)/*.o) $(wildcard $(SHORTESTPATHDIR)/*.o) $(wildcard $(KCGDIR)/*.o)
@@ -25,6 +26,11 @@ DOCDIR=$(BASEDIR)/doc
 
 all: $(EXEC)
 
+diagnostic:
+	cd $(BLUETOOTHDIR) && $(MAKE) diagnostic.elf && mv diagnostic.elf $(BASEDIR)/	
+
+Findy : 
+	cd $(APPDIR) && $(MAKE) && mv $@ $(BASEDIR)/.
 directories:
 	cd $(BASEDIR)
 	mkdir -p $(BUILDDIR)
@@ -80,4 +86,5 @@ clean:
 	rm -f $(KCGDIR)/*.o
 	rm -f $(TESTDIR)/*.o
 	rm -f $(DOCDIR)/html
-	rm -rf Control_Law.elf
+	rm -rf *.elf
+	rm -f Findy
