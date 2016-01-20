@@ -2,6 +2,17 @@
 
 #define THRESHOLD 0.001
 
+/**
+ * \brief The different mission states used in calcul_mission()
+ */
+typedef enum {
+    INIT = 0, //< the mission has not started yet
+    LOST,     //< the drone is not on a known node
+    DRIFTED,  //< the drone is on a known node, but shouldn't be there
+    RUNNING,  //< normal state, the drone is moving as expected
+    FINISHED  //< mission is over
+} mission_state_t;
+
 /** \brief Get the index of a point in the path
   * \param path The path of nodes
   * \param other_x x coordinate
@@ -95,13 +106,14 @@ int move_to(struct coordinates_ dest)
 /** \brief Move to given destination, check the map to detect any faulty path
   * \param nextPoint Next point coordinates
   * \param path Shortest path
-  * \return 0 if we reached destination; > 0 if a drift is detected */
+  * \return 0 if we reached destination; 1 if the drone get lost; 2 if the drone drifted */
 int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
 {
-    int check = 0;
     int findy_lost = 0;
     float lastDistance, distance;
-    struct coordinates_ current = { 0.0, 0.0 };
+    struct coordinates_ current;
+    current.x = 0.0;
+    current.y = 0.0;
 
     sleep(5); // Wait for the drone to stabilize 
     read_data_bluetooth(&current.x, &current.y);
@@ -111,7 +123,7 @@ int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
 
     distance = sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2));
     lastDistance = distance;
-    while((distance > ERROR_COORD) && (findy_lost != 1))
+    while((distance > ERROR_COORD) && !findy_lost)
     {
         printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
         
@@ -128,19 +140,21 @@ int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
         
         printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
 
-        // Check if we have drifted to another point
-        if((check = find_point(graph, current.x, current.y)) != -1)
-        {
-            if((check = find_point_in_path(path, current.x, current.y)) == -1)
-            findy_lost = 1;
-        }
-    
         // Check if we're going in the wrong direction
         lastDistance = distance;
         distance = sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2));
 
         if (distance > lastDistance)
-            findy_lost = 1;
+        {
+            // Check if we have drifted to another point
+            if(find_point(graph, current.x, current.y) != -1)
+            {
+                //if((check = find_point_in_path(path, current.x, current.y)) == -1)
+                findy_lost = 1;
+            }
+            else
+                findy_lost = 2;
+        }
     }
 
     return findy_lost;
@@ -357,156 +371,211 @@ void calcul_mission()
     struct coordinates_ startPoint;
     int indice = 0;
     int index = 0;
-    int check = 0;
-    int findy_lost = 0;
+    int bad_move = 0;
     float angle_actuel, calcul_x, calcul_y, angle_desire;
+    node_t **path = NULL;
 
     C_blue.x = 0.0;
     C_blue.y = 0.0;
 
-    // Wait for the data to stabilize
-    sleep(3);
-    read_data_bluetooth(&C_blue.x,&C_blue.y);
+    mission_state_t state = INIT;
 
-    //printf("Enter first x and first y\n");
-    //scanf("%f", &(C_blue.x));
-    //scanf("%f", &(C_blue.y));
-
-    //printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
-    //printf("Destination point: (%f, %f)\n", destination.x, destination.y);
-
-    node_t **path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
-
-    if (path == NULL)
+    while(state != FINISHED)
     {
-        /*
-        // Destination point not found, cannot do the mission
-        fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
-        stop_mission();
-        return;
-        */
-
-        int startNotFound = 1;
-
-        while(startNotFound)
+        switch(state)
         {
-            index = find_closest_node(graph, C_blue.x, C_blue.y);
-            startPoint.x = graph->nodes[index].x;
-            startPoint.y = graph->nodes[index].y;
+            case INIT:
 
-            Main_Nav = return_navdata();
+                printf("[Mission state: INIT]\n");
 
-            angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped;
-            angle_desire = computeDesiredAngle(C_blue, startPoint);
+                // Wait for the data to stabilize
+                sleep(3);
+                read_data_bluetooth(&C_blue.x,&C_blue.y);
 
-            computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
-            yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+                printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
+                printf("Destination point: (%f, %f)\n", destination.x, destination.y);
 
-            if(rotate_to_desired_angle(angle_desire) == -1)
-            {
-                fprintf(stderr, "[%s:%d] Error: Rotation to desired angle failed\n", __FILE__, __LINE__);
+                path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+
+                if (path == NULL)
+                    state = LOST;
+                else
+                {
+                    printf("Path to follow\n");
+                    int i;
+                    for(i = 0 ; path[i] != NULL ; i++)
+                    {
+                        indice = i;
+                        printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
+                    }
+                    state = RUNNING;
+                }
+
+            break;
+
+            case LOST:
+
+                printf("[Mission state: LOST]\n");
+
+                sleep(3);
+                read_data_bluetooth(&C_blue.x,&C_blue.y);
+
+                index = find_closest_node(graph, C_blue.x, C_blue.y);
+                startPoint.x = graph->nodes[index].x;
+                startPoint.y = graph->nodes[index].y;
+
+                Main_Nav = return_navdata();
+
+                angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped;
+                angle_desire = computeDesiredAngle(C_blue, startPoint);
+
+                computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
+                yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+
+                if(rotate_to_desired_angle(angle_desire) == -1)
+                {
+                    fprintf(stderr, "[%s:%d] Error: Rotation to desired angle failed\n", __FILE__, __LINE__);
+                    break_drone();
+                    stop_mission();
+                    free(graph);
+                    return;
+                }
+
+                bad_move = move_to(startPoint);
+                break_drone();
+
+                // If we find a start point, we can switch to state RUNNING
+                if(!bad_move)
+                {
+                    read_data_bluetooth(&C_blue.x,&C_blue.y);
+                    path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+
+                    if(path == NULL)
+                    {
+                        fprintf(stderr, "[%s:%d] Error: Bluetooth Data too unstable, aborting\n", __FILE__, __LINE__);
+                        break_drone();
+                        stop_mission();
+                        free(graph);
+                        return;
+                    }
+
+                    printf("Path to follow\n");
+                    int i;
+                    for(i = 0 ; path[i] != NULL ; i++)
+                    {
+                        indice = i;
+                        printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
+                    }
+                    state = RUNNING;
+                }
+
+            break;
+
+            case DRIFTED:
+
+                printf("[Mission state: DRIFTED]\n");
+
+                // Pretty much the same that LOST, at the difference that we think that we know where we are
+                sleep(3);
+                read_data_bluetooth(&C_blue.x,&C_blue.y);
+
+                path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
+
+                if (path == NULL)
+                {
+                    // Mmh, Bluetooth data unstable, going to LOST
+                    state = LOST;
+                }
+                else
+                {
+                    printf("New path to follow\n");
+                    int i;
+                    for(i = 0 ; path[i] != NULL ; i++)
+                    {
+                        indice = i;
+                        printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
+                    }
+                    state = RUNNING;
+                }
+
+
+            break;
+
+            case RUNNING:
+
+                printf("[Mission state: RUNNING]\n");
+
+                sleep(3);
+                read_data_bluetooth(&C_blue.x,&C_blue.y);
+
+                // Let's start
+                indice--;
+
+                if (indice <= 0)
+                {
+                    state = FINISHED;
+                }
+                else
+                {
+                    // FIXME: Cast path[indice] from node_t to coordinates_ since we don't use the samee structure...
+                    nextPoint.x = path[indice]->x;
+                    nextPoint.y = path[indice]->y;
+
+                    Main_Nav = return_navdata();
+                    angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped;
+                    angle_desire = computeDesiredAngle(C_blue, nextPoint);
+
+                    /*
+                     * angle désiré
+                     */
+
+                    //calcul the new angle_desire
+                    computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
+
+                    //printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
+
+                    //calculating the direction of rotation of the Z-axis for optimum positioning.
+                    yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+                    //printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
+
+                    if (rotate_to_desired_angle(angle_desire) == -1)
+                    {
+                        break_drone();
+                        stop_mission();
+                        free(graph);
+                        return;
+                    }
+
+                    // Let's move to next point
+                    bad_move = move_to_next_point(nextPoint, (const node_t **) path);
+
+                    // Stop the drone movement
+                    break_drone();
+
+                    if(bad_move == 1)
+                        state = LOST;
+                    else if(bad_move == 2)
+                        state = DRIFTED;
+                    else
+                        printf("One step made\n");
+                }
+
+            break;
+
+            case FINISHED:
+                printf("[Mission state: FINISHED]\n");
+            break;
+
+            default:
+                fprintf(stderr, "[%s:%d] Error: Unknown mission state\n", __FILE__, __LINE__);
                 break_drone();
                 stop_mission();
                 free(graph);
                 return;
-            }
-
-            // If the move_to doesn't succeed, we try again
-            startNotFound = move_to(startPoint);
-            break_drone();
-            sleep(3);
-            read_data_bluetooth(&C_blue.x,&C_blue.y);
-        }
-        
-        path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
-
-        if (path == NULL)
-        {
-            fprintf(stderr, "[%s:%d] Error: destination point not found, mission aborted\n", __FILE__, __LINE__);
-            stop_mission();
-            free(graph);
-            return;
+            break;
         }
     }
 
-    printf("Path to follow\n");
-    int i;
-    for(i = 0 ; path[i] != NULL ; i++)
-    {
-        indice = i;
-        printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
-    }
-
-    // Let's start
-    indice = indice - 1;
-  
-    while(indice >= 0) 
-    {
-        //printf("Valeurs des coordonnees bluetooth   (x,y) = (%2.f,%2.f) \n" ,C_blue.x,C_blue.y);
-        //printf("Valeurs des coordonnees à atteindre (x,y) = (%2.f,%2.f) \n" ,path[indice]->x, path[indice]->y);
-        int mission_finie = 0;
-
-        // FIXME: Cast path[indice] from node_t to coordinates_ since we don't use the samee structure...
-        nextPoint.x = path[indice]->x;
-        nextPoint.y = path[indice]->y;
-
-        Main_Nav = return_navdata();
-        angle_actuel = Main_Nav.magneto.heading_fusion_unwrapped; 
-        angle_desire = computeDesiredAngle(C_blue, nextPoint);
-
-        /* 
-         * angle désiré
-         */
-
-        //calcul the new angle_desire
-        computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
-
-        //printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
-
-        //calculating the direction of rotation of the Z-axis for optimum positioning.
-        yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
-        //printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
-
-        if (rotate_to_desired_angle(angle_desire) == -1)
-        {
-            break_drone();
-            stop_mission();
-            free(graph);
-            return;
-        }
-
-        // Let's move to next point
-        findy_lost = move_to_next_point(nextPoint, (const node_t **) path);
-
-        // Stop the drone movement
-        break_drone();
-       
-        sleep(3); 
-        read_data_bluetooth(&C_blue.x,&C_blue.y);
-
-        // If the drone is lost, we calculate a new path and we re-initialize the variable "indice"
-        // Else decrementation of "indice"
-        if(findy_lost > 0)
-        {
-            printf("Findy deviated, recalculating path...\n");
-            path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
-            printf("New path to follow:\n");
-            for(i = 0 ; path[i] != NULL ; i++)
-            {
-                indice = i;
-                printf("%s (%f,%f)\n", path[i]->name, path[i]->x, path[i]->y);
-            }
-            indice--;
-            findy_lost = 0;
-        }
-        else
-        {
-            // Reached first step successfully
-            printf("One step made\n");
-            indice = indice - 1;
-        }
-
-    }
 
     stop_mission();
     printf("fin mission\n");
