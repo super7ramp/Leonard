@@ -195,7 +195,7 @@ char *set_gaz(char *message, direction dir, float power)
     switch(dir)
     {
         case DOWN:
-            command.progressive=1;
+            command.progressive=0;
             command.lrTilt=0;
             command.fbTilt=0;
             command.verticalSpeed=-(power);
@@ -207,7 +207,7 @@ char *set_gaz(char *message, direction dir, float power)
         break;
 
         case UP:
-            command.progressive=1;
+            command.progressive=0;
             command.lrTilt=0;
             command.fbTilt=0;
             command.verticalSpeed=power;
