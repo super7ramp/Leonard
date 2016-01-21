@@ -2,7 +2,7 @@
 #define __SHORTEST_PATH_H
 
 #define INFINITE	999
-#define ERROR_COORD	0.5
+#define ERROR_COORD	0.75
 
 #include <stdio.h>
 #include <stdlib.h>
