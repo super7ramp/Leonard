@@ -10,6 +10,7 @@ typedef enum {
     LOST,     //< the drone is not on a known node
     DRIFTED,  //< the drone is on a known node, but shouldn't be there
     RUNNING,  //< normal state, the drone is moving as expected
+    ARRIVED,  //< mission succeeded (transient state)
     FINISHED  //< mission is over
 } mission_state_t;
 
@@ -61,26 +62,23 @@ int rotate_to_desired_angle(float angle)
 }
 
 /** \brief Move to given coordinates, without checking the map
-  * \param Destination coordinates
+  * \param dest Destination coordinates
+  * \param current Pointer to current coordinates (will be updated)
   * \return 0 if no error, > 0 if error */
-int move_to(struct coordinates_ dest)
+int move_to(struct coordinates_ dest, struct coordinates_ *current)
 {
-    struct coordinates_ current = { 0.0, 0.0 };
     float distance, lastDistance;
     int findy_lost = 0;
 
-    sleep(5); // Wait for the drone to stabilize 
-    read_data_bluetooth(&current.x, &current.y);
-
-    distance = sqrt(pow(dest.x-current.x,2) + pow(dest.y-current.y,2));
+    distance = sqrt(pow(dest.x-current->x,2) + pow(dest.y-current->y,2));
     lastDistance = distance;
 
     while(distance > ERROR_COORD && !findy_lost)
     {
-        printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current.x, current.y, dest.x, dest.y);
+        printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current->x, current->y, dest.x, dest.y);
         
         int j = 0;
-        while(j < 5000) {
+        while(j < 6000) {
             pitch_move = FRONT;
             pitch_power = 0.1;
             SWITCH_DRONE_COMMANDE(4);
@@ -88,13 +86,13 @@ int move_to(struct coordinates_ dest)
         }
         break_drone();
         sleep(5);
-        read_data_bluetooth(&current.x,&current.y);
+        read_data_bluetooth(&(current->x),&(current->y));
 
-        printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current.x, current.y, dest.x, dest.y);
+        printf("BT location: X = %f, Y = %f (want to go to (%f, %f)\n", current->x, current->y, dest.x, dest.y);
 
         // Check if we're going in the wrong direction
         lastDistance = distance;
-        distance = sqrt(pow(dest.x-current.x,2) + pow(dest.y-current.y,2));
+        distance = sqrt(pow(dest.x-current->x,2) + pow(dest.y-current->y,2));
 
         if (distance > lastDistance)
             findy_lost = 1;
@@ -106,50 +104,46 @@ int move_to(struct coordinates_ dest)
 /** \brief Move to given destination, check the map to detect any faulty path
   * \param nextPoint Next point coordinates
   * \param path Shortest path
+  * \param current Pointer to current coordinates (will be updated)
   * \return 0 if we reached destination; 1 if the drone get lost; 2 if the drone drifted */
-int move_to_next_point(struct coordinates_ nextPoint, const node_t **path)
+int move_to_next_point(struct coordinates_ nextPoint, const node_t **path, struct coordinates_ *current)
 {
     int findy_lost = 0;
     float lastDistance, distance;
-    struct coordinates_ current;
-    current.x = 0.0;
-    current.y = 0.0;
 
-    sleep(5); // Wait for the drone to stabilize 
-    read_data_bluetooth(&current.x, &current.y);
-    
-    //printf("Valeur de tab_algo_x[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->x, C_blue.x);
-    //printf("Valeur de tab_algo_y[%d] = %.2f |&&| Valeur de C_blue.x = %.2f\n", indice, path[indice]->y, C_blue.y);
-
-    distance = sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2));
+    distance = sqrt(pow(nextPoint.x-current->x,2) + pow(nextPoint.y-current->y,2));
     lastDistance = distance;
     while((distance > ERROR_COORD) && !findy_lost)
     {
-        printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
+        printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current->x, current->y);
         
         int j = 0;
-        while (j < 5000) {
+        while (j < 6000) {
             pitch_move = FRONT;
             pitch_power = 0.1;
             SWITCH_DRONE_COMMANDE(4);
             j++;
         }
         break_drone();
-        sleep(3);
-        read_data_bluetooth(&current.x,&current.y);
-        
-        printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current.x, current.y);
+        sleep(5);
+        read_data_bluetooth(&(current->x),&(current->y));
+
+        printf("Going to (%f, %f), currently at (%f, %f)\n", nextPoint.x, nextPoint.y, current->x, current->y);
 
         // Check if we're going in the wrong direction
         lastDistance = distance;
-        distance = sqrt(pow(nextPoint.x-current.x,2) + pow(nextPoint.y-current.y,2));
+        distance = sqrt(pow(nextPoint.x-current->x,2) + pow(nextPoint.y-current->y,2));
+        printf("Last distance: %f - Current distance: %f\n", lastDistance, distance);
 
         if (distance > lastDistance)
         {
+            printf("We are farther than before...\n");
+
             // Check if we have drifted to another point
-            if(find_point(graph, current.x, current.y) != -1)
+            if(find_point(graph, current->x, current->y) == -1)
             {
                 //if((check = find_point_in_path(path, current.x, current.y)) == -1)
+                printf("(%f, %f) is not accessible on the map\n", current->x, current->y);
                 findy_lost = 1;
             }
             else
@@ -311,14 +305,14 @@ void calibMagn() //OK
 //FONCTIONS : EMERGENCY
 void emergency_() //OK
 {
-	printf("controlTask : emergency called\n");
+	//printf("controlTask : emergency called\n");
 	pthread_mutex_lock(&mutex_control);
 	inC.flag_emergency = 1;
 	pthread_mutex_unlock(&mutex_control);
 }
 void anti_emergency_() //OK
 {
-  printf("controlTask : emergency called\n");
+  //printf("controlTask : emergency called\n");
   pthread_mutex_lock(&mutex_control);
   inC.falg_antiemergency = 1;
   pthread_mutex_unlock(&mutex_control);
@@ -389,7 +383,7 @@ void calcul_mission()
                 printf("[Mission state: INIT]\n");
 
                 // Wait for the data to stabilize
-                sleep(3);
+                sleep(5);
                 read_data_bluetooth(&C_blue.x,&C_blue.y);
 
                 printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
@@ -441,13 +435,16 @@ void calcul_mission()
                     return;
                 }
 
-                bad_move = move_to(startPoint);
+                bad_move = move_to(startPoint, &C_blue);
                 break_drone();
 
                 // If we find a start point, we can switch to state RUNNING
                 if(!bad_move)
                 {
-                    read_data_bluetooth(&C_blue.x,&C_blue.y);
+
+                    printf("BT location: X = %f, Y = %f\n", &C_blue.x, &C_blue.y);
+                    printf("Destination point: (%f, %f)\n", destination.x, destination.y);
+
                     path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
 
                     if(path == NULL)
@@ -479,6 +476,9 @@ void calcul_mission()
                 sleep(3);
                 read_data_bluetooth(&C_blue.x,&C_blue.y);
 
+                printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
+                printf("Destination point: (%f, %f)\n", destination.x, destination.y);
+
                 path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
 
                 if (path == NULL)
@@ -508,12 +508,15 @@ void calcul_mission()
                 sleep(3);
                 read_data_bluetooth(&C_blue.x,&C_blue.y);
 
+                printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
+                printf("Destination point: (%f, %f)\n", destination.x, destination.y);
+
                 // Let's start
                 indice--;
 
                 if (indice <= 0)
                 {
-                    state = FINISHED;
+                    state = ARRIVED;
                 }
                 else
                 {
@@ -547,7 +550,7 @@ void calcul_mission()
                     }
 
                     // Let's move to next point
-                    bad_move = move_to_next_point(nextPoint, (const node_t **) path);
+                    bad_move = move_to_next_point(nextPoint, (const node_t **) path, &C_blue);
 
                     // Stop the drone movement
                     break_drone();
@@ -562,8 +565,14 @@ void calcul_mission()
 
             break;
 
+            case ARRIVED:
+                printf("[Mission state: ARRIVED]\n");
+                printf("You're arrived to destination\n");
+                state = FINISHED;
+            break;
+
             case FINISHED:
-                printf("[Mission state: FINISHED]\n");
+                // We never go here
             break;
 
             default:
@@ -576,6 +585,7 @@ void calcul_mission()
         }
     }
 
+    printf("[Mission state: FINISHED]\n");
 
     stop_mission();
     printf("fin mission\n");
@@ -632,6 +642,7 @@ void SWITCH_DRONE_COMMANDE(int _order)
         case 8 :
             calibrate_magneto(message);
             sleep(3);
+            /*
             while(1)
             {
               set_yaw(message, RIGHT, 0.1);
@@ -652,17 +663,20 @@ void SWITCH_DRONE_COMMANDE(int _order)
               }
               nav_prec = nav_suiv;
             }
+            */
             inC.flag_calibM = 0;
             break;
 
         case 9 :
-            set_emergency(message);
+            //set_emergency(message);
             inC.flag_emergency = 0;
+            set_gaz(message, UP, 0.2);// this is an ugly hack (don't commit this)
             break;
 
         case 10 :
-            anti_emergency(message);
+            //anti_emergency(message);
             inC.falg_antiemergency = 0;
+            set_gaz(message, UP, 0.0);// this is an ugly hack (don't commit this)
             break;
 
         case 20 : 

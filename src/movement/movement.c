@@ -81,6 +81,7 @@ float computeDirection(float angle_actuel, float angle_desire, float power, dire
 
 void computeOffsetMag(float* angle_desire, float nav_prec, float nav_suiv)
 {
+    /*
   if(*angle_desire > nav_prec)// (180.0 + Main_Nav.magneto.heading_unwrapped)) 
   {
     *angle_desire = *angle_desire - 360.0;
@@ -89,4 +90,5 @@ void computeOffsetMag(float* angle_desire, float nav_prec, float nav_suiv)
   {
     *angle_desire = *angle_desire + 360.0;
   }
+  */
 }
