@@ -363,6 +363,7 @@ void calcul_mission()
     struct coordinates_ C_blue; //coordinates of drone
     struct coordinates_ nextPoint;
     struct coordinates_ startPoint;
+    mission_state_t state;
     int indice = 0;
     int index = 0;
     int bad_move = 0;
@@ -372,7 +373,15 @@ void calcul_mission()
     C_blue.x = 0.0;
     C_blue.y = 0.0;
 
-    mission_state_t state = INIT;
+
+    // First of all, check if the given destination is valid
+    if(find_point(graph, destination.x, destination.y) == -1)
+    {
+        printf("Invalid destination: (%.2f, %.2f)\n", destination.x, destination.y);
+        state = FINISHED;
+    }
+    else
+        state = INIT;
 
     while(state != FINISHED)
     {
