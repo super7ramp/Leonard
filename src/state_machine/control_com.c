@@ -29,14 +29,28 @@ char *str_sub (const char *s, unsigned int start, unsigned int end)
    return new_s;
 }
 
-
+// Ugly hack because we don't have time anymore: get the IP adress of the first valid device connected to the drone
+char *getPcIPAdress()
+{
+    FILE *out;
+    char *buf = calloc(32, sizeof(char));
+    out = popen("arp -a | grep -v incomplete | grep -oE '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*' | head -n 1", "r");
+    fgets(buf, 32, out);
+    fclose(out);
+    return buf;
+}
 
 void* thread_com(void* arg)
 {
 	//init socket
 	initReceiver();
 	sleep(1);
-	initSender("192.168.1.2");
+
+    char *destIP;
+    destIP = getPcIPAdress();
+
+	initSender(destIP);
+    free(destIP);
 	int order_recept;
 	ORDER = NOTDONE;
 	int i = 0;
@@ -121,8 +135,8 @@ void* thread_com(void* arg)
 					dest.x = atof(str_sub(msg,3,7));
 					dest.y = atof(str_sub(msg,9,13));
 					printf("start_mission => communication with x=[%f] et y=[%f]\n", dest.x, dest.y);
-					//start_mission(dest.x, dest.y);
-					//ORDER = DONE;
+					start_mission(dest.x, dest.y);
+					ORDER = DONE;
 					break;
 
 				case 10:
@@ -149,8 +163,9 @@ void* thread_com(void* arg)
 			stop_mission();
 			ORDER = NOTDONE;
 		}
-//		 Code pour la simulation de recepton de donnée Wifi	
-	/*	if(i<1000){
+//		 Code pour la simulation de recepton de donnée Wifi
+/*
+		if(i<1000){
 			//printf("decolle\n");
 			order_recept = 3; //takeOff
 		}
@@ -159,19 +174,25 @@ void* thread_com(void* arg)
 			if(i==1010)
 				order_recept = 1;
 		}
-		else if(i==1801){
-			order_recept = 2; //land
-		}
-		else if(i==1802){
+                else if(i>1801 && i<1950){
+                        order_recept = 7; // go up
+                }
+                else if(i==1951){
+                        order_recept = 8;
+                }
+		//else if(i==1801){
+		//	order_recept = 2; //land
+		//}
+		else if(i==1952){
 			order_recept = 9; //start_mission
 		}
-		else if(i>1802){
+		else if(i>1952){
 			order_recept = 11; //attérisage
 		}
 		//printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
 		i++;
 		//printf("Debut de la pause de 20ms dans thread_com\n");
-		usleep(10000);
+		usleep(20000);
 		//printf("Fin de la pause de 20ms dans le thread_com\n");
 	*/}  
 }
