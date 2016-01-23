@@ -34,8 +34,9 @@ char *getPcIPAdress()
 {
     FILE *out;
     char *buf = calloc(32, sizeof(char));
-    out = popen("arp -a | grep -v incomplete | grep -oE '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*' | head -n 1", "r");
+    out = popen("echo -n $(arp -a | grep -v incomplete | grep -oE '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*' | head -n 1)", "r");
     fgets(buf, 32, out);
+    printf("Detected device: %s", buf);
     fclose(out);
     return buf;
 }
