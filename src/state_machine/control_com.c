@@ -19,8 +19,9 @@ int str_sub(const char *in, char *out, unsigned int start, unsigned int end)
     if(start > end || start >= input_length || (output_length + 1) > MAX_SUB_STR_LENGTH)
         return -2;
 
-    memcpy(out, &in[start], MIN(output_length, input_length - start + 1));
-    out[output_length+1] = '\0';
+    size_t copied_length = MIN(output_length, input_length - start + 1);
+    memcpy(out, &in[start], copied_length);
+    out[copied_length] = '\0';
 
     return 0;
 }
