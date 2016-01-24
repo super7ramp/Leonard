@@ -107,7 +107,7 @@ int main (int argc, char** argv)
 		printf("8 -> anti emergency\n");
 		printf("9 -> start mission\n");
 		printf("10 -> stop mission\n");
-		printf("-1 to close the programm\n");
+		printf("-1 to close the program\n");
 		
 		pthread_mutex_unlock(&displayMutex);
 		
