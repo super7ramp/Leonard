@@ -38,165 +38,174 @@ char *getPcIPAdress()
 
 void* thread_com(void* arg)
 {
-    //init socket
-    initReceiver();
-    sleep(1);
-
-    char *destIP;
-    destIP = getPcIPAdress();
-
-    initSender(destIP);
-    free(destIP);
+    char *destIP = NULL;
     int order_recept;
     ORDER = NOTDONE;
     int i = 0;
     int lg_message =  LG_MESS_DEFAUT;
-    order_recept = 0;
-    dest.x = 1.083333333;
-    dest.y = 1.1;
     char msg[LG_MESS_DEFAUT];
     char s[MAX_SUB_STR_LENGTH];
     char send_buf[MAX_SEND_BUF_LENGTH];
 
+    //dest.x = 1.083333333;
+    //dest.y = 1.1;
+
     while(1)
     {
+        initReceiver();
+        sleep(1);
 
-        recevoir(lg_message, msg);
-        //récupération des donnée envoyé par le connectin Wifi
-        //recept_orders_send_by_the_user
-        //envoie de l'ordre reçu;
+        destIP = getPcIPAdress();
+        initSender(destIP);
+        free(destIP);
+        destIP = NULL;
 
-        if(str_sub(msg,s,0,1) < 0)
-            order_recept = 11;
-        else
-            order_recept = atoi(s);
+        int eof = 0;
+        order_recept = 0;
 
-        //printf("Message reçu: %s\n", msg);
-        printf("Valeur de order_recept = %d\n\n", order_recept);
-        if (ORDER == NOTDONE)
+        // If the client disconnects, eof (end-of-file) will switch to 1
+        while(!eof)
         {
-            switch(order_recept){
-                case 0:
-                    calibHor();
-                    break;
+            eof = recevoir(lg_message, msg);
 
-                case 1:
-                    calibMagn();
-                    i=0;
-                    break;
+            if(str_sub(msg,s,0,1) < 0)
+                order_recept = 11;
+            else
+                order_recept = atoi(s);
 
-                case 2:
-                    while(i<500)
-                    {
-                        land();
-                        i++;
-                    }
-                    i=0;
-                    break;
+            printf("Message reçu: %s\n", msg);
+            printf("Valeur de order_recept = %d\n\n", order_recept);
+            if (ORDER == NOTDONE)
+            {
+                switch(order_recept){
+                    case 0:
+                        calibHor();
+                        break;
 
-                case 3:
-                    printf("décollage\n");
-                    while(i<500)
-                    {
-                        takeOff();
-                        i++;
-                    }
-                    i=0;
-                    break;
+                    case 1:
+                        calibMagn();
+                        i=0;
+                        break;
 
-                case 4:
-                    //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
-                    //move_Roll(atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)));
+                    case 2:
+                        while(i<500)
+                        {
+                            land();
+                            i++;
+                        }
+                        i=0;
+                        break;
 
-                    //move_Roll(0, 0.0);
-                    break;
+                    case 3:
+                        printf("décollage\n");
+                        while(i<500)
+                        {
+                            takeOff();
+                            i++;
+                        }
+                        i=0;
+                        break;
 
-                case 5:
-                    //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
-                    //move_Pitch(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,6)));
+                    case 4:
+                        //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
+                        //move_Roll(atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)));
 
-                    //move_Pitch(1, 0.0);
-                    break;
+                        //move_Roll(0, 0.0);
+                        break;
 
-                case 6:
-                    //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)) );
-                    //move_PitchRoll(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)));
+                    case 5:
+                        //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
+                        //move_Pitch(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,6)));
 
-                    //move_PitchRoll(1, 0, 0.0, 0.0);
-                    break;
+                        //move_Pitch(1, 0.0);
+                        break;
 
-                case 7:
-                    emergency_();
-                    break;
+                    case 6:
+                        //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)) );
+                        //move_PitchRoll(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)));
 
-                case 8:
-                    anti_emergency_();
-                    break;
+                        //move_PitchRoll(1, 0, 0.0, 0.0);
+                        break;
 
-                case 9:
-                    str_sub(msg, s, 3, 7);
-                    dest.x = atof(s);
-                    str_sub(msg, s, 9, 13);
-                    dest.y = atof(s);
-                    printf("start_mission => communication with x=[%f] et y=[%f]\n", dest.x, dest.y);
-                    start_mission(dest.x, dest.y);
-                    ORDER = DONE;
-                    break;
+                    case 7:
+                        emergency_();
+                        break;
 
-                case 10:
-                    stop_mission();
-                    break;
+                    case 8:
+                        anti_emergency_();
+                        break;
 
-                case 11 :
-                    Main_Nav = return_navdata();
-                    //send_navdata_to_the_user_via_socket
-                    sprintf(send_buf, "%f", Main_Nav.magneto.heading_fusion_unwrapped);
-                    emettre(lg_message, msg, send_buf);
-                    break;
+                    case 9:
+                        str_sub(msg, s, 3, 7);
+                        dest.x = atof(s);
+                        str_sub(msg, s, 9, 13);
+                        dest.y = atof(s);
+                        printf("start_mission => communication with x=[%f] et y=[%f]\n", dest.x, dest.y);
+                        start_mission(dest.x, dest.y);
+                        ORDER = DONE;
+                        break;
 
-                case 12 :
-                    break;
+                    case 10:
+                        stop_mission();
+                        break;
 
-                default:
-                    break;
+                    case 11 :
+                        Main_Nav = return_navdata();
+                        //send_navdata_to_the_user_via_socket
+                        sprintf(send_buf, "%f", Main_Nav.magneto.heading_fusion_unwrapped);
+                        emettre(lg_message, msg, send_buf);
+                        break;
+
+                    case 12 :
+                        break;
+
+                    default:
+                        break;
+                }
+                order_recept = 12;
             }
-            order_recept = 12;
+            else if(order_recept==10)
+            {
+                stop_mission();
+                ORDER = NOTDONE;
+            }
+            //		 Code pour la simulation de recepton de donnée Wifi
+            /*
+               if(i<1000){
+            //printf("decolle\n");
+            order_recept = 3; //takeOff
+            }
+            else if(i>1000 && i<1800){
+            order_recept = 11; //reset_com
+            if(i==1010)
+            order_recept = 1;
+            }
+            else if(i>1801 && i<1950){
+            order_recept = 7; // go up
+            }
+            else if(i==1951){
+            order_recept = 8;
+            }
+            //else if(i==1801){
+            //	order_recept = 2; //land
+            //}
+            else if(i==1952){
+            order_recept = 9; //start_mission
+            }
+            else if(i>1952){
+            order_recept = 11; //attérisage
+            }
+            //printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
+            i++;
+            //printf("Debut de la pause de 20ms dans thread_com\n");
+            usleep(20000);
+            //printf("Fin de la pause de 20ms dans le thread_com\n");
+             */
         }
-        else if(order_recept==10)
-        {
-            stop_mission();
-            ORDER = NOTDONE;
-        }
-        //		 Code pour la simulation de recepton de donnée Wifi
-        /*
-           if(i<1000){
-        //printf("decolle\n");
-        order_recept = 3; //takeOff
-        }
-        else if(i>1000 && i<1800){
-        order_recept = 11; //reset_com
-        if(i==1010)
-        order_recept = 1;
-        }
-        else if(i>1801 && i<1950){
-        order_recept = 7; // go up
-        }
-        else if(i==1951){
-        order_recept = 8;
-        }
-        //else if(i==1801){
-        //	order_recept = 2; //land
-        //}
-        else if(i==1952){
-        order_recept = 9; //start_mission
-        }
-        else if(i>1952){
-        order_recept = 11; //attérisage
-        }
-        //printf("order_recept = %d  et i = %d et batterie =  \n", order_recept,i);
-        i++;
-        //printf("Debut de la pause de 20ms dans thread_com\n");
-        usleep(20000);
-        //printf("Fin de la pause de 20ms dans le thread_com\n");
-         */}
+
+        // We got disconnected
+        closeSender();
+        closeReceiver();
+        sleep(1);
+    }
 }

@@ -38,6 +38,13 @@ int initReceiver() {
 		exit(1);
 	}
 
+        /* Add the SO_REUSEADDR option (useful for reconnecting) */
+        int yes = 1;
+        if (setsockopt(id_socketR, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+                perror("setsockopt");
+                exit(1);
+        }
+
 	/* construction @ socket */
 	memset((char *)&adr_local, 0, lg_adr_local); //reset
 	adr_local.sin_family = AF_INET;
@@ -83,10 +90,17 @@ int recevoir(int lg_message, char * message) {
 	retour = read(id_sock_bis, message, lg_message);
 
 	if (retour == -1) {
+            // FIXME: this should be handled properly (i.e. no brutal exit)
 		fprintf(stderr, "Echec de la réception\n");
 		perror("Error :");
 		exit(1);
 	}
+
+        if (retour == 0) {
+            // Connection closed or EOF
+            return 1;
+        }
+
 	if (retour > 0 && user) 
 		afficher_reception(retour, message);
 
