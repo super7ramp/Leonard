@@ -1,32 +1,28 @@
 #include "control_com.h"
 
-char *str_sub (const char *s, unsigned int start, unsigned int end)
+#define MAX_SUB_STR_LENGTH  32
+#define MAX_SEND_BUF_LENGTH 32
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
+// Extract a substring from a string
+int str_sub(const char *in, char *out, unsigned int start, unsigned int end)
 {
-   char *new_s = NULL;
+    // Return -1 if in or out is not allocated
+    if(!in || !out)
+        return -1;
 
-   if (s != NULL && start < end)
-   {
-/* (1)*/
-      new_s = malloc (sizeof (*new_s) * (end - start + 2));
-      if (new_s != NULL)
-      {
-         int i;
+    size_t input_length = strlen(in);
+    size_t output_length = (end - start + 1);
 
-/* (2) */
-         for (i = start; i <= end; i++)
-         {
-/* (3) */
-            new_s[i-start] = s[i];
-         }
-         new_s[i-start] = '\0';
-      }
-      else
-      {
-         fprintf (stderr, "Memoire insuffisante\n");
-         exit (EXIT_FAILURE);
-      }
-   }
-   return new_s;
+    // Return -2 if the given size parameters are invalid
+    // The output_length + 1 check is for the \0 character
+    if(start > end || start >= input_length || (output_length + 1) > MAX_SUB_STR_LENGTH)
+        return -2;
+
+    memcpy(out, &in[start], MIN(output_length, input_length - start + 1));
+    out[output_length+1] = '\0';
+
+    return 0;
 }
 
 // Ugly hack because we don't have time anymore: get the IP adress of the first valid device connected to the drone
@@ -36,7 +32,6 @@ char *getPcIPAdress()
     char *buf = calloc(32, sizeof(char));
     out = popen("echo -n $(arp -a | grep -v incomplete | grep -oE '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*' | head -n 1)", "r");
     fgets(buf, 32, out);
-    printf("Detected device: %s", buf);
     fclose(out);
     return buf;
 }
@@ -59,8 +54,9 @@ void* thread_com(void* arg)
 	order_recept = 0;
 	dest.x = 1.083333333;
 	dest.y = 1.1;
-	char * msg = malloc(sizeof(char)*lg_message);
-    char s[50] = "";
+    char msg[LG_MESS_DEFAUT];
+    char s[MAX_SUB_STR_LENGTH];
+    char send_buf[MAX_SEND_BUF_LENGTH];
 
 	while(1)
 	{
@@ -70,8 +66,13 @@ void* thread_com(void* arg)
 		//recept_orders_send_by_the_user
 		//envoie de l'ordre reçu;
 
-		order_recept = atoi(str_sub(msg,0,1));
-		//printf("Valeur de order_recept = %d\n", order_recept);
+                if(str_sub(msg,s,0,1) < 0)
+                    order_recept = 11;
+                else
+		    order_recept = atoi(s);
+
+                //printf("Message reçu: %s\n", msg);
+		printf("Valeur de order_recept = %d\n\n", order_recept);
 		if (ORDER == NOTDONE)
 		{
 			switch(order_recept){
@@ -133,8 +134,10 @@ void* thread_com(void* arg)
 					break; 
 
 				case 9:
-					dest.x = atof(str_sub(msg,3,7));
-					dest.y = atof(str_sub(msg,9,13));
+                                        str_sub(msg, s, 3, 7);
+					dest.x = atof(s);
+                                        str_sub(msg, s, 9, 13);
+					dest.y = atof(s);
 					printf("start_mission => communication with x=[%f] et y=[%f]\n", dest.x, dest.y);
 					start_mission(dest.x, dest.y);
 					ORDER = DONE;
@@ -147,8 +150,8 @@ void* thread_com(void* arg)
 				case 11 :
 					Main_Nav = return_navdata();
 					//send_navdata_to_the_user_via_socket
-					sprintf(s, "%f", Main_Nav.magneto.heading_fusion_unwrapped);
-					emettre(lg_message, msg, s);
+					sprintf(send_buf, "%f", Main_Nav.magneto.heading_fusion_unwrapped);
+					emettre(lg_message, msg, send_buf);
 					break;
 
 				case 12 :
