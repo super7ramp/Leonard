@@ -49,7 +49,7 @@ void* thread_com(void* arg)
     char send_buf[MAX_SEND_BUF_LENGTH];
 
     float sending_B_Px = 0.0;
-    float sending_B_PY = 0.0;
+    float sending_B_Py = 0.0;
 
     while(1)
     {
