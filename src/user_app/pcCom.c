@@ -8,19 +8,25 @@ char beaconsLocation[NUMBER_BEACONS][20];
 
 
 void initBeaconsLocation(char beacon[NUMBER_BEACONS][20], int size) {
-	sprintf(beacon[0], "0.00  0.00 ");
-	sprintf(beacon[1], "0.00  %2.2f ", (float) H/2);
-	sprintf(beacon[2], "0.00  %2.2f ", (float) H);
-	sprintf(beacon[3], "%2.2f  %2.2f ", (float) W, (float) H);
-	sprintf(beacon[4], "%2.2f  %2.2f ", (float) W, (float) H/2);
-	sprintf(beacon[5], "%2.2f  0.00 ", (float) W);
-	sprintf(beacon[6], "%2.2f  %2.2f ", (float) W/2, (float) H/4);
-	sprintf(beacon[7], "%2.2f  %2.2f ", (float) W/2, (float) 3*H/4);
-	
-	/*int i;
-	for (i=0; i<8; i ++)
-		printf(" %d : %s\n", i, beacon[i]);
-	*/
+
+    // This is hard coded
+    // We could reuse functions in the shortest_path folder (map_common.h for example)
+    // But this means we have to compile them in both architectures (x86 and arm), which
+    // is not handled yet
+    float margin = 1.1;
+    sprintf(beacon[0], "%.2f  %.2f ", margin, margin);
+    sprintf(beacon[1], "%.2f  %.2f ", margin, (float) H/2);
+    sprintf(beacon[2], "%.2f  %.2f ", margin, (float) H - margin);
+    sprintf(beacon[3], "%.2f  %.2f ", (float) W - margin, (float) H - margin);
+    sprintf(beacon[4], "%.2f  %.2f ", (float) W - margin, (float) H/2);
+    sprintf(beacon[5], "%.2f  %.2f ", (float) W - margin, margin);
+    sprintf(beacon[6], "%.2f  %.2f ", (float) W/2, (float) H/4 - margin);
+    sprintf(beacon[7], "%.2f  %.2f ", (float) W/2, (float) 3*H/4 - margin);
+
+    /*int i;
+    for (i=0; i<8; i ++)
+        printf(" %d : %s\n", i, beacon[i]);
+    */
 }
 
 
@@ -43,7 +49,7 @@ void * coordinatesThread(void* arg)
 	int n = *((int*)arg);
 	
 	while (1) {
-		sleep(5);
+		sleep(1);
 		
 		pthread_mutex_lock(&messageMutex);
 		emettre(lg_message, msgSend, "11 ");
@@ -107,7 +113,7 @@ int main (int argc, char** argv)
 		printf("8 -> anti emergency\n");
 		printf("9 -> start mission\n");
 		printf("10 -> stop mission\n");
-		printf("-1 to close the program\n");
+		printf("-1 to close the programm\n");
 		
 		pthread_mutex_unlock(&displayMutex);
 		
