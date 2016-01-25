@@ -110,24 +110,33 @@ void* thread_com(void* arg)
                         break;
 
                     case 4:
-                        //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
-                        //move_Roll(atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)));
-
-                        //move_Roll(0, 0.0);
+                        while(i<200)
+                        {
+                            move_Roll(FRONT, 0.2);
+                            i++;
+                        }
+                        move_Roll(BACK, 0.0);
+                        i=0;
                         break;
 
                     case 5:
-                        //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,6)) );
-                        //move_Pitch(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,6)));
-
-                        //move_Pitch(1, 0.0);
+                        while(i<200)
+                        {
+                            move_Pitch(LEFT, 0.2);
+                            i++;
+                        }
+                        move_Pitch(RIGHT, 0.0);
+                        i=0;
                         break;
 
                     case 6:
-                        //printf("VAleur de move_Roll(%d,%f)\n",atoi(str_sub(msg,2,2)), atof(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)) );
-                        //move_PitchRoll(atoi(str_sub(msg,2,2)), atoi(str_sub(msg,4,4)), atof(str_sub(msg,6,8)), atof(str_sub(msg,10,12)));
-
-                        //move_PitchRoll(1, 0, 0.0, 0.0);
+                        while(i<200)
+                        {
+                            move_PitchRoll(FRONT, LEFT, 0.2, 0.2);
+                            i++;
+                        }
+                        move_PitchRoll(BACK, RIGHT, 0.2, 0.2);
+                        i=0;
                         break;
 
                     case 7:
