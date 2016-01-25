@@ -385,6 +385,10 @@ void calcul_mission()
 
     while(state != FINISHED)
     {
+        if(inC.flag_control_s == STATE_MANUAL)
+        {
+            state = FINISHED;
+        }
         switch(state)
         {
             case INIT:
@@ -581,7 +585,7 @@ void calcul_mission()
             break;
 
             case FINISHED:
-                // We never go here
+                // if stop mission called
             break;
 
             default:
