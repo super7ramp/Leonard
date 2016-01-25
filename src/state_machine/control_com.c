@@ -67,15 +67,17 @@ void* thread_com(void* arg)
         // If the client disconnects, eof (end-of-file) will switch to 1
         while(!eof)
         {
+            //printf("avant recevoir\n");
             eof = recevoir(lg_message, msg);
+            //printf("après recevoir\n");
 
             if(str_sub(msg,s,0,1) < 0)
                 order_recept = 11;
             else
                 order_recept = atoi(s);
 
-            printf("Message reçu: %s\n", msg);
-            printf("Valeur de order_recept = %d\n\n", order_recept);
+            //printf("Message reçu: %s\n", msg);
+            //printf("Valeur de order_recept = %d\n\n", order_recept);
             if (ORDER == NOTDONE)
             {
                 switch(order_recept){
@@ -98,7 +100,7 @@ void* thread_com(void* arg)
                         break;
 
                     case 3:
-                        printf("décollage\n");
+                        //printf("décollage\n");
                         while(i<500)
                         {
                             takeOff();
@@ -170,6 +172,14 @@ void* thread_com(void* arg)
             {
                 stop_mission();
                 ORDER = NOTDONE;
+            }
+            else if(order_recept == 11)
+            {
+                //Main_Nav = return_navdata();
+                read_data_bluetooth(&sending_B_Px,&sending_B_Py);
+                //send_navdata_to_the_user_via_socket
+                sprintf(send_buf, "%f, %f", sending_B_Px, sending_B_Py);
+                emettre(lg_message, msg, send_buf);
             }
             //		 Code pour la simulation de recepton de donnée Wifi
             /*
