@@ -28,6 +28,10 @@ int find_point_in_path (node_t ** path, float other_x, float other_y);
   * \return The index */
 int find_closest_node(graph_t *graph, float current_x, float current_y);
 
+void go_up();
+
+void break_drone();
+
 /** \brief Rotate to desired angle
   * \param Desired angle in degrees
   * \return 0 if no error; -1 if error */
@@ -39,7 +43,7 @@ int rotate_to_desired_angle(float angle)
     clock_gettime(CLOCK_MONOTONIC, &init);
     Main_Nav = return_navdata();
 
-    while(!timeout && (Main_Nav.magneto.heading_fusion_unwrapped > (angle + 3.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle - 3.0)))
+    while(!timeout && (Main_Nav.magneto.heading_fusion_unwrapped > (angle + 5.0) || Main_Nav.magneto.heading_fusion_unwrapped < (angle - 5.0)))
     {
         // Timeout check
         clock_gettime(CLOCK_MONOTONIC, &current);
@@ -49,10 +53,8 @@ int rotate_to_desired_angle(float angle)
         SWITCH_DRONE_COMMANDE(5);
         Main_Nav = return_navdata();
 
-        //printf("\rValeur de angle_trouve et angle désiree = %f, %f     ,Bat = %d",
-        //Main_Nav.magneto.heading_fusion_unwrapped, angle_desire,Main_Nav.demo.vbat_flying_percentage);
-
-        usleep(20000);
+        printf("\r[Rotation] Current: %f - Desired: %f", Main_Nav.magneto.heading_fusion_unwrapped, angle);
+        usleep(10000);
     }
 
     if (timeout)
@@ -80,7 +82,7 @@ int move_to(struct coordinates_ dest, struct coordinates_ *current)
         int j = 0;
         while(j < 6000) {
             pitch_move = FRONT;
-            pitch_power = 0.1;
+            pitch_power = 0.15;
             SWITCH_DRONE_COMMANDE(4);
             j++;
         }
@@ -120,7 +122,7 @@ int move_to_next_point(struct coordinates_ nextPoint, const node_t **path, struc
         int j = 0;
         while (j < 6000) {
             pitch_move = FRONT;
-            pitch_power = 0.1;
+            pitch_power = 0.15;
             SWITCH_DRONE_COMMANDE(4);
             j++;
         }
@@ -214,7 +216,7 @@ void* controlTask(void* arg)
 
     system_state_machine_reset(&outC);
     system_state_machine(&inC,&outC); //CODE SCADE
-    printf("ordre genere par la machine scade = %d\r", outC.order_called);
+    //printf("ordre genere par la machine scade = %d\r", outC.order_called);
 
     SWITCH_DRONE_COMMANDE(outC.order_called);//SWITCH pour l'envoi des ordres
     
@@ -323,6 +325,7 @@ void start_mission(float x_destination, float y_destination)
 {
   printf("controlTask : start_mission called\n");
   pthread_mutex_lock(&mutex_control);
+  go_up(); // take a bit more altitude
   destination.x = x_destination;
   destination.y = y_destination;
   inC.flag_control_s = STATE_MISSION;
@@ -332,6 +335,7 @@ void start_mission(float x_destination, float y_destination)
 void stop_mission()  //fonction appelée dans la boucle whil(1) déjà protégée par un mutex
 {
   printf("controlTask : end_mission called\n");
+  force_land();
   inC.flag_control_s = STATE_MANUAL;
   ORDER = NOTDONE;
 }
@@ -350,6 +354,23 @@ void break_drone()
     for(i = 0 ; i < 100 ; i++)
         SWITCH_DRONE_COMMANDE(4);
 
+}
+
+// Make the drone take altitude 
+void go_up()
+{
+    int i;
+    for(i = 0 ; i < 100 ; i++)
+      SWITCH_DRONE_COMMANDE(9);
+    for(i = 0 ; i < 100 ; i++)
+        SWITCH_DRONE_COMMANDE(10);
+}
+
+void force_land()
+{
+    int i;
+    for(i = 0 ; i < 300 ; i++)
+      SWITCH_DRONE_COMMANDE(1);
 }
 
 Navdata return_navdata()
@@ -437,7 +458,7 @@ void calcul_mission()
                 angle_desire = computeDesiredAngle(C_blue, startPoint);
 
                 computeOffsetMag(&angle_desire, nav_prec, nav_suiv);
-                yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+                yaw_power = computeDirection(angle_actuel, angle_desire, 0.3, &yaw_move);
 
                 if(rotate_to_desired_angle(angle_desire) == -1)
                 {
@@ -448,6 +469,9 @@ void calcul_mission()
                     return;
                 }
 
+                // Let the drone stabilize itself
+                sleep(1);
+
                 bad_move = move_to(startPoint, &C_blue);
                 break_drone();
 
@@ -455,7 +479,7 @@ void calcul_mission()
                 if(!bad_move)
                 {
 
-                    printf("BT location: X = %f, Y = %f\n", &C_blue.x, &C_blue.y);
+                    printf("BT location: X = %f, Y = %f\n", C_blue.x, C_blue.y);
                     printf("Destination point: (%f, %f)\n", destination.x, destination.y);
 
                     path = dijkstra(C_blue.x, C_blue.y, destination.x, destination.y, graph);
@@ -551,7 +575,7 @@ void calcul_mission()
                     //printf("Calcul angle desire final v1 : %2.f\n", angle_desire);
 
                     //calculating the direction of rotation of the Z-axis for optimum positioning.
-                    yaw_power = computeDirection(angle_actuel, angle_desire, 0.2, &yaw_move);
+                    yaw_power = computeDirection(angle_actuel, angle_desire, 0.3, &yaw_move);
                     //printf("Valeur de la puissance mise : %1.f, Valeur de l'angle souhaité = %2.f, valeur de l'angle actuel = %2.f sens de rotation = %d\n", yaw_power, angle_desire, angle_actuel, yaw_move);
 
                     if (rotate_to_desired_angle(angle_desire) == -1)
@@ -561,6 +585,9 @@ void calcul_mission()
                         free(graph);
                         return;
                     }
+
+                    // Let the drone stabilize itself
+                    sleep(1);
 
                     // Let's move to next point
                     bad_move = move_to_next_point(nextPoint, (const node_t **) path, &C_blue);
@@ -655,7 +682,7 @@ void SWITCH_DRONE_COMMANDE(int _order)
         case 8 :
             calibrate_magneto(message);
             sleep(3);
-            /*
+
             while(1)
             {
               set_yaw(message, RIGHT, 0.1);
@@ -676,7 +703,9 @@ void SWITCH_DRONE_COMMANDE(int _order)
               }
               nav_prec = nav_suiv;
             }
-            */
+
+            set_yaw(message, LEFT, 0.0);
+
             inC.flag_calibM = 0;
             break;
 
