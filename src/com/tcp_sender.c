@@ -77,7 +77,7 @@ int emettre(int lg_message, char * message, char * contenu)
 		fprintf(stderr, "send: Erreur envoi\n");
 		exit(1);
 	}
-	afficher_envoi(retour, message); // retour = longueur message envoyé
+	//afficher_envoi(retour, message); // retour = longueur message envoyé
   
 	return 0; // tout s'est bien passé
 
