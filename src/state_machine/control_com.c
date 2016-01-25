@@ -48,8 +48,8 @@ void* thread_com(void* arg)
     char s[MAX_SUB_STR_LENGTH];
     char send_buf[MAX_SEND_BUF_LENGTH];
 
-    //dest.x = 1.083333333;
-    //dest.y = 1.1;
+    float sending_B_Px = 0.0;
+    float sending_B_PY = 0.0;
 
     while(1)
     {
@@ -151,9 +151,10 @@ void* thread_com(void* arg)
                         break;
 
                     case 11 :
-                        Main_Nav = return_navdata();
+                        //Main_Nav = return_navdata();
+                        read_data_bluetooth(&sending_B_Px,&sending_B_Py);
                         //send_navdata_to_the_user_via_socket
-                        sprintf(send_buf, "%f", Main_Nav.magneto.heading_fusion_unwrapped);
+                        sprintf(send_buf, "%f, %f", sending_B_Px, sending_B_Py);
                         emettre(lg_message, msg, send_buf);
                         break;
 
