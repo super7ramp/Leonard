@@ -63,7 +63,7 @@ The generated program is named `Findy`.
 ##### Drone hardware
 
 In order to make the drone detect the beacons, you need to plug the BLE Nano under the drone, on the available Serial pins. The Ble Nano takes his power from the drone too. The BLE Nano is mounted on a board which has to be connected respecting the following schematic:
-![](https://www.github.com/super7ramp/Leonard/captures/pinout.jpg)
+![](https://sites.google.com/site/projetsecinsa/projets-2015-2016/project-leonard/pinout.jpg?attredirects=0)
 
 ##### Drone software
 
@@ -97,7 +97,7 @@ Once your map is ready, you’ll have to rename it `demo_map` and install it on 
 To flash a new program you need a CC debugger and the Bluegiga SDK (available on their website, you need to create an account).
 You can refer to datasheet and user application provided in the github to write your own program. Once you have written your script, you need to plug the beacon following this schematic :
 
-![](https://www.github.com/super7ramp/Leonard/captures/pinout2.jpg)
+![](https://sites.google.com/site/projetsecinsa/projets-2015-2016/project-leonard/pinout2.jpg?attredirects=0)
 
 Open the “BLE Update Tool” that you can found in the SDK folder. Make sure that the CC debugger is well detect clicking on “Refresh”. Push the button on the CC debugger and make sure the led is green (if not, make sure you have plug correctly the CC debugger and the the beacon is switched on). Click on “Info” : the tool should provide you information about the BLE112 module embedded on the drone. Click on “Browse” and fin your .bgproj file. You can now click on “Update” to update your beacon firmware.
 
