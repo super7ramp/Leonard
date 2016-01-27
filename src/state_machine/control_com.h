@@ -13,6 +13,7 @@
 #include "../com/parameters.h"
 #include "../com/tcp_sender.h"
 #include "../com/tcp_receiver.h"
+#include "../com/message_drone.h"
 
 
 

@@ -110,32 +110,36 @@ void* thread_com(void* arg)
                         break;
 
                     case 4:
-                        while(i<200)
+                        while(i<100)
                         {
-                            move_Roll(FRONT, 0.2);
+                            move_Roll(LEFT, 0.1);
+                            usleep(20000);
                             i++;
                         }
-                        move_Roll(BACK, 0.0);
+                        move_Roll(RIGHT, 0.0);
                         i=0;
                         break;
 
                     case 5:
-                        while(i<200)
+                        i = 0;
+                        while(i<100)
                         {
-                            move_Pitch(LEFT, 0.2);
+                            move_Pitch(FRONT, 0.1);
+                            usleep(20000);
                             i++;
                         }
-                        move_Pitch(RIGHT, 0.0);
+                        move_Pitch(BACK, 0.0);
                         i=0;
                         break;
 
                     case 6:
-                        while(i<200)
+                        i = 0;
+                        while(i<100)
                         {
-                            move_PitchRoll(FRONT, LEFT, 0.2, 0.2);
+                            move_PitchRoll(FRONT, LEFT, 0.1, 0.1);
                             i++;
                         }
-                        move_PitchRoll(BACK, RIGHT, 0.2, 0.2);
+                        move_PitchRoll(BACK, RIGHT, 0.0, 0.0);
                         i=0;
                         break;
 

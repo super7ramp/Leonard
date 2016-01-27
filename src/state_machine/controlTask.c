@@ -261,6 +261,7 @@ void move_Pitch(direction pitch_dir, float p_power) //OK
 {
   //printf("controlTask : move_Pitch called\n");
   pthread_mutex_lock(&mutex_control);
+  //printf("power: %f\n", p_power);
   pitch_move  = pitch_dir;
   pitch_power = p_power;
   inC.flag_pitchcalled = 1;
@@ -654,11 +655,13 @@ void SWITCH_DRONE_COMMANDE(int _order)
             break;
 
         case 3 :
+            //printf("case 3 : set_roll, roll_power=%f\n", roll_power);
             set_roll(message, roll_move, roll_power);
             inC.flag_rollcalled = 0;
             break;
 
         case 4 :
+            //printf("case 4 : set_pitch, pitch_power=%f, yaw_power=%f\n", pitch_power, yaw_power);
             set_pitch(message, pitch_move, pitch_power);
             inC.flag_pitchcalled = 0;
             break;

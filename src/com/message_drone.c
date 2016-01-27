@@ -138,7 +138,7 @@ char *set_roll(char *message, direction dir, float power)
         break;
 
         default:
-            printf("Error enum direction\n");
+            printf("Error enum direction : %d\n", dir);
         break;
     }
 
