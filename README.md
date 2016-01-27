@@ -75,7 +75,7 @@ To send it on the drone you need to...
 3. Put the executable with ftp:
 ```bash
  $ ftp 192.168.1.1
- $ put Control_Law.elf
+ ftp> put Control_Law.elf
 ```
 
 It will be send in the `/data/video` folder of the drone filesystem.
@@ -87,7 +87,7 @@ The map is written in a simple text format. You’ll find a description of the f
 Once your map is ready, you’ll have to rename it `demo_map` and install it on the drone:
 ```bash
  $ ftp 192.168.1.1
- $ put demo_map
+ ftp> put demo_map
 ```
 
 **Warning:** in this first release, the bluetooth beacons position and geolocation parameters are hardcoded. Therefore you’ll need to edit `src/uart/parser.c` in addition to your map file.
@@ -107,10 +107,10 @@ First, deploy the beacons in the room. Once is done, you can switch on the drone
 **Warning:** In this first release, the magnetometer control is not as robust as it should. Make sure to positionate your drone’s head approximately 90° counterclockwise from the north before starting the executable, in order to be sure that the calibration goes well.
 
 There is no daemon to start our drone program so you’ll have to connect to the drone with telnet in order to launch it.
-```bash
+```
  $ telnet 192.168.1.1
- $ cd /data/video/
- $ ./Control_Law.elf
+ # cd /data/video/
+ # ./Control_Law.elf
 ```
 
 Once the drone program is launched, you can launch the user application from your computer to control the drone and ask it to go to a destination.
