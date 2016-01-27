@@ -90,11 +90,16 @@ Once your map is ready, you’ll have to rename it `demo_map` and install it on 
  ftp> put demo_map
 ```
 
-**Warning:** in this first release, the bluetooth beacons position and geolocation parameters are hardcoded. Therefore you’ll need to edit `src/uart/parser.c` in addition to your map file.
+**Warning:** in this first release, the bluetooth beacons position and geolocation parameters are hardcoded. Therefore you’ll need to edit `src/uart/parser.c` in addition to your map file and rebuild th project.
 
 #### Beacons software
 
-[TODO]
+To flash a new program you need a CC debugger and the Bluegiga SDK (available on their website, you need to create an account).
+You can refer to datasheet and user application provided in the github to write your own program. Once you have written your script, you need to plug the beacon following this schematic :
+
+![](https://www.github.com/super7ramp/Leonard/captures/pinout2.jpg)
+
+Open the “BLE Update Tool” that you can found in the SDK folder. Make sure that the CC debugger is well detect clicking on “Refresh”. Push the button on the CC debugger and make sure the led is green (if not, make sure you have plug correctly the CC debugger and the the beacon is switched on). Click on “Info” : the tool should provide you information about the BLE112 module embedded on the drone. Click on “Browse” and fin your .bgproj file. You can now click on “Update” to update your beacon firmware.
 
 #### User application
 
