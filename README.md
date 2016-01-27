@@ -27,6 +27,8 @@ There are two programs:
 * One embedded on the drone, which controls the drone movements.
 * One running on a computer, which communicates with the drone.
 
+The procedure described here has been tested on Linux, you'll have to adjust it if you want to use other platforms.
+
 ### Compilation
 
 You need a cross-compiler in order to compile the embedded program (drone side).
@@ -51,6 +53,7 @@ The user program (pc side) needs to be compiled separately:
  $ make
 ```
 
+The Makefile in `src/user_app` defines GCC as compiler, just change the `CC` variable if you want to use something else.
 The generated program is named `Findy`.
 
 ### Installation
