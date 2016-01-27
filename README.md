@@ -23,12 +23,44 @@ For more details, please visit [our website](https://sites.google.com/site/proje
 
 ## Get it started
 
+There are two programs:
+* One embedded on the drone, which controls the drone movements.
+* One running on a computer, which communicates with the drone.
+
 ### Compilation
 
-[TODO]
+You need a cross-compiler in order to compile the embedded program (drone side).
+
+If you use Ubuntu, you can use the ARM cross-compiler from the repositories.
+```bash
+ $ sudo apt-get install gcc-arm-linux-gnueabi
+```
+
+Note: You can use other cross-compilers, just edit the `CC` variable in the Makefile.
+
+Once you have installed the cross-compiler, you just have to run the Makefile.
+```bash
+ $ make
+```
+
+The generated program is named `Control_Law.elf`.
+
+The user program (pc side) needs to be compiled separately:
+```bash
+ $ cd src/user_app
+ $ make
+```
+
+The generated program is named `Findy`.
 
 ### Installation
 
 [TODO]
 
 ### Use
+
+[TODO]
+[subpoints:
+ * bluetooth beacons position, map
+ * user program
+ * embedded program]
