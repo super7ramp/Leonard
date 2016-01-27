@@ -69,14 +69,14 @@ In order to make the drone detect the beacons, you need to plug the BLE Nano und
 
 The drone program is an ARM executable, therefore designed to be runned on the drone.
 
-To send it on the drone you need to:
+To send it on the drone you need to...
 1. Power on the drone
 2. Connect by Wifi to the drone
 3. Put the executable with ftp:
-   ```bash
-   $ ftp 192.168.1.1
-   $ put Control_Law.elf
-   ```
+```bash
+ $ ftp 192.168.1.1
+ $ put Control_Law.elf
+```
 
 It will be send in the `/data/video` folder of the drone filesystem.
 
