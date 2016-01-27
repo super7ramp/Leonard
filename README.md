@@ -90,7 +90,7 @@ Once your map is ready, you’ll have to rename it `demo_map` and install it on 
  ftp> put demo_map
 ```
 
-**Warning:** in this first release, the bluetooth beacons position and geolocation parameters are hardcoded. Therefore you’ll need to edit `src/uart/parser.c` in addition to your map file and rebuild th project.
+**Warning:** in this first release, the bluetooth beacons position and geolocation parameters are hardcoded. Therefore you’ll need to edit `src/uart/parser.c` in addition to your map file and rebuild the project.
 
 #### Beacons software
 
